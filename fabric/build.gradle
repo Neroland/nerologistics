@@ -10,6 +10,7 @@ plugins {
 def mc = stonecutter.current.version
 def fabricApi = project.findProperty("fabric_api_version_${mc}")
 def jeiVersion = project.findProperty("jei_version_${mc}")
+def nerolandcoreVersion = project.findProperty('nerolandcore_version')
 
 // This node's projectDir is <loader>/versions/<v>; the authoritative loader source +
 // resources live in the BRANCH root (fabric/). Resolve branch-root paths via the parent.
@@ -30,6 +31,15 @@ dependencies {
     if (fabricApi != null) {
         implementation "net.fabricmc.fabric-api:fabric-api:${fabricApi}"
     }
+
+    // Neroland Core — REQUIRED shared foundation (energy/fluid seams, capability + tag discovery the
+    // routing graph consumes). Plain `implementation` (NOT `include`) — matching how fabric-api is
+    // declared here: this de-obf 26.x Loom setup omits `mappings`, so there is no intermediary→named
+    // remap and Loom's `modImplementation` configuration isn't available. Core's classes land on the
+    // compile + dev-runtime classpath and Fabric Loader discovers it as a mod via its bundled
+    // fabric.mod.json. Resolved from mavenLocal()/GitHub Packages. Core loads BEFORE NeroLogistics
+    // (see fabric.mod.json depends).
+    implementation "za.co.neroland.nerolandcore:nerolandcore-fabric-${mc}:${nerolandcoreVersion}"
 
     // Sentry SDK (telemetry/NeroLogisticsTelemetry): compile against it + embed it as a jar-in-jar so the
     // shipped Fabric jar carries it. Counterpart to the NeoForge JarJar bundling.

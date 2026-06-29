@@ -11,6 +11,7 @@ plugins {
 def mc = stonecutter.current.version
 def forgeVersion = project.findProperty("forge_version_${mc}")
 def jeiVersion = project.findProperty("jei_version_${mc}")
+def nerolandcoreVersion = project.findProperty('nerolandcore_version')
 
 if (!forgeVersion) {
     throw new GradleException("Missing forge_version_${mc} in gradle.properties")
@@ -72,6 +73,10 @@ dependencies {
 
     implementation 'io.sentry:sentry:8.45.0'
     jarJar(group: 'io.sentry', name: 'sentry', version: '8.45.0')
+
+    // Neroland Core — REQUIRED shared foundation; loads BEFORE NeroLogistics (see mods.toml dependency).
+    // Resolved from mavenLocal()/GitHub Packages (nerolandcore-forge-<mc>).
+    implementation "za.co.neroland.nerolandcore:nerolandcore-forge-${mc}:${nerolandcoreVersion}"
 
     // JEI common API only; Forge 26.x loader artifacts are not yet published on the pinned JEI lines.
     if (jeiVersion) {
