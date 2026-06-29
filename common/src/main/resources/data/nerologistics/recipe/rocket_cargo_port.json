@@ -1,0 +1,4 @@
+{ "type": "minecraft:crafting_shaped", "category": "misc",
+  "key": { "I": "minecraft:iron_ingot", "E": "minecraft:ender_pearl", "C": "minecraft:chest" },
+  "pattern": [ "IEI", "ECE", "III" ],
+  "result": { "id": "nerologistics:rocket_cargo_port" } }

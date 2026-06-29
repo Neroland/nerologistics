@@ -1,0 +1,4 @@
+{ "type": "minecraft:crafting_shaped", "category": "misc",
+  "key": { "I": "minecraft:iron_ingot", "C": "minecraft:chest", "R": "minecraft:redstone", "G": "minecraft:glass" },
+  "pattern": [ "IGI", "RCR", "III" ],
+  "result": { "id": "nerologistics:storage_request_terminal" } }

@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "top": "nerologistics:block/device_top",
+    "front": "nerologistics:block/logistics_dashboard",
+    "side": "nerologistics:block/device_side"
+  }
+}

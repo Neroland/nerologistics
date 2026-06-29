@@ -1,0 +1,36 @@
+{
+  "itemGroup.nerologistics": "NeroLogistics",
+
+  "block.nerologistics.item_duct": "Item Duct",
+  "item.nerologistics.item_duct": "Item Duct",
+  "block.nerologistics.fluid_duct": "Fluid Duct",
+  "item.nerologistics.fluid_duct": "Fluid Duct",
+  "block.nerologistics.energy_cable": "Energy Cable",
+  "item.nerologistics.energy_cable": "Energy Cable",
+
+  "block.nerologistics.wireless_cargo_terminal": "Wireless Cargo Terminal",
+  "item.nerologistics.wireless_cargo_terminal": "Wireless Cargo Terminal",
+  "block.nerologistics.wireless_cargo_terminal.channel": "Wireless channel: %s",
+  "block.nerologistics.storage_request_terminal": "Storage Request Terminal",
+  "item.nerologistics.storage_request_terminal": "Storage Request Terminal",
+  "block.nerologistics.train_cargo_interface": "Train Cargo Interface",
+  "item.nerologistics.train_cargo_interface": "Train Cargo Interface",
+  "block.nerologistics.drone_hub": "Drone Hub",
+  "item.nerologistics.drone_hub": "Drone Hub",
+  "block.nerologistics.drone_hub.channel": "Drone channel: %s",
+
+  "block.nerologistics.rocket_cargo_port": "Rocket Cargo Port",
+  "item.nerologistics.rocket_cargo_port": "Rocket Cargo Port",
+  "block.nerologistics.rocket_cargo_port.channel": "Route channel: %s",
+  "block.nerologistics.rocket_cargo_port.destination": "Destination: %s",
+
+  "block.nerologistics.logistics_dashboard": "Logistics Dashboard",
+  "item.nerologistics.logistics_dashboard": "Logistics Dashboard",
+  "block.nerologistics.logistics_dashboard.header": "=== NeroLogistics Dashboard ===",
+  "block.nerologistics.logistics_dashboard.network": "Network (%s): %s nodes, %s endpoints",
+  "block.nerologistics.logistics_dashboard.throughput": "Throughput — items: %s, fluid: %s mB, energy: %s NE",
+  "block.nerologistics.logistics_dashboard.shipping": "Shipping — launched: %s, delivered: %s, in transit: %s",
+  "block.nerologistics.logistics_dashboard.drones": "Drones dispatched: %s",
+
+  "entity.nerologistics.delivery_drone": "Delivery Drone"
+}

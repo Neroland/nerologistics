@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "bonus_rolls": 0.0,
+      "conditions": [ { "condition": "minecraft:survives_explosion" } ],
+      "entries": [ { "type": "minecraft:item", "name": "nerologistics:train_cargo_interface" } ]
+    }
+  ],
+  "random_sequence": "nerologistics:blocks/train_cargo_interface"
+}

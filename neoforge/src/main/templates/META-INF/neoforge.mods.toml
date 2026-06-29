@@ -1,6 +1,7 @@
 modLoader = "javafml"
 loaderVersion = "[1,)"
 license = "${mod_license}"
+logoFile = "nerologistics_logo.png"
 
 [[mods]]
 modId = "${mod_id}"
@@ -26,4 +27,30 @@ modId = "minecraft"
 type = "required"
 versionRange = "${minecraft_version_range}"
 ordering = "NONE"
+side = "BOTH"
+
+# Neroland Core — required shared foundation; must load BEFORE NeroLogistics (ordering = AFTER).
+[[dependencies.${mod_id}]]
+modId = "nerolandcore"
+type = "required"
+versionRange = "[1.0,2.0)"
+ordering = "AFTER"
+side = "BOTH"
+
+# Nerospace — optional. When present it must load BEFORE NeroLogistics so its planet/station API and
+# rocket cargo routes are available; discovery is via Core tags/capabilities, never a hard import.
+[[dependencies.${mod_id}]]
+modId = "nerospace"
+type = "optional"
+versionRange = "[0,)"
+ordering = "AFTER"
+side = "BOTH"
+
+# Nerotech — optional. When present it must load BEFORE NeroLogistics so its automation handoff surface
+# (auto crafters / item sorters) is available; discovery is via Core tags/capabilities only.
+[[dependencies.${mod_id}]]
+modId = "nerotech"
+type = "optional"
+versionRange = "[0,)"
+ordering = "AFTER"
 side = "BOTH"

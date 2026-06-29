@@ -6,6 +6,7 @@
   "description": "NeroLogistics - multiloader build (Fabric).",
   "authors": ["${mod_authors}"],
   "license": "${mod_license}",
+  "icon": "nerologistics_logo.png",
   "accessWidener": "nerologistics.accesswidener",
   "environment": "*",
   "entrypoints": {
@@ -20,6 +21,11 @@
     "fabricloader": ">=${fabric_loader_version}",
     "minecraft": ">=${minecraft_version}",
     "java": ">=21",
-    "fabric-api": "*"
+    "fabric-api": "*",
+    "nerolandcore": ">=1.0.0"
+  },
+  "suggests": {
+    "nerospace": "*",
+    "nerotech": "*"
   }
 }

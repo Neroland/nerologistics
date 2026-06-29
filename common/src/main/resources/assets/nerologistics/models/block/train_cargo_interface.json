@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "top": "nerologistics:block/device_top",
+    "front": "nerologistics:block/train_cargo_interface",
+    "side": "nerologistics:block/device_side"
+  }
+}

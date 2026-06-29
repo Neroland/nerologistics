@@ -1,0 +1,4 @@
+{ "type": "minecraft:crafting_shaped", "category": "misc",
+  "key": { "I": "minecraft:iron_ingot", "E": "minecraft:ender_pearl", "R": "minecraft:redstone" },
+  "pattern": [ "IRI", "RER", "III" ],
+  "result": { "id": "nerologistics:wireless_cargo_terminal" } }
