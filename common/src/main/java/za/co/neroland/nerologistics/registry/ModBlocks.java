@@ -17,6 +17,7 @@ import za.co.neroland.nerologistics.conduit.RocketCargoPortBlock;
 import za.co.neroland.nerologistics.conduit.StorageRequestTerminalBlock;
 import za.co.neroland.nerologistics.conduit.TrainCargoInterfaceBlock;
 import za.co.neroland.nerologistics.conduit.WirelessCargoTerminalBlock;
+import za.co.neroland.nerologistics.dashboard.LogisticsDashboardBlock;
 import za.co.neroland.nerologistics.registry.RegistrationProvider.RegistryEntry;
 
 /** NeroLogistics conduit blocks, registered cross-loader via {@link RegistrationProvider}. */
@@ -45,6 +46,10 @@ public final class ModBlocks {
     // --- Stage 4: cross-dimension shipping ---------------------------------
     public static final RegistryEntry<RocketCargoPortBlock> ROCKET_CARGO_PORT =
             register("rocket_cargo_port", RocketCargoPortBlock::new);
+
+    // --- Stage 5: dashboards -----------------------------------------------
+    public static final RegistryEntry<LogisticsDashboardBlock> LOGISTICS_DASHBOARD =
+            register("logistics_dashboard", LogisticsDashboardBlock::new);
 
     private static <B extends Block> RegistryEntry<B> register(String name,
             Function<BlockBehaviour.Properties, B> factory) {

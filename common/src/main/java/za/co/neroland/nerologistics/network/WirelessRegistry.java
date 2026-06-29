@@ -19,6 +19,7 @@ import za.co.neroland.nerolandcore.progression.ProgressionGates;
 
 import za.co.neroland.nerologistics.conduit.WirelessCargoTerminalBlockEntity;
 import za.co.neroland.nerologistics.config.NeroLogisticsConfig;
+import za.co.neroland.nerologistics.dashboard.LogisticsMetrics;
 import za.co.neroland.nerologistics.transport.InventoryTransfer;
 
 /**
@@ -127,6 +128,7 @@ public final class WirelessRegistry {
                 if (movedTotal > 0) {
                     stack.shrink(movedTotal);
                     src.setChanged();
+                    LogisticsMetrics.recordItems(level, movedTotal);
                 }
             }
         }

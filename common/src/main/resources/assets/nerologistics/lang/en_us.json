@@ -24,5 +24,13 @@
   "block.nerologistics.rocket_cargo_port.channel": "Route channel: %s",
   "block.nerologistics.rocket_cargo_port.destination": "Destination: %s",
 
+  "block.nerologistics.logistics_dashboard": "Logistics Dashboard",
+  "item.nerologistics.logistics_dashboard": "Logistics Dashboard",
+  "block.nerologistics.logistics_dashboard.header": "=== NeroLogistics Dashboard ===",
+  "block.nerologistics.logistics_dashboard.network": "Network (%s): %s nodes, %s endpoints",
+  "block.nerologistics.logistics_dashboard.throughput": "Throughput — items: %s, fluid: %s mB, energy: %s NE",
+  "block.nerologistics.logistics_dashboard.shipping": "Shipping — launched: %s, delivered: %s, in transit: %s",
+  "block.nerologistics.logistics_dashboard.drones": "Drones dispatched: %s",
+
   "entity.nerologistics.delivery_drone": "Delivery Drone"
 }

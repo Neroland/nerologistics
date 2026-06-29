@@ -60,6 +60,18 @@ public final class NeroLogisticsConfig {
     private static final ConfigValue<Integer> SHIP_INTERVAL_TICKS = SCHEMA.intRange("shipIntervalTicks",
             100, 1, 72_000, true, "ticks between a cargo port's auto-ship attempts");
 
+    // --- Stage 5: dashboards + POPIA/GDPR ----------------------------------
+    // Default OFF: with attribution off, NeroLogistics stores NO personal data at all (everything is
+    // block/network-keyed). Turning it on records cargo-port shipments against the placing player's
+    // UUID only (never a name), retention-pruned and erasable via Core's data-erasure hook.
+    private static final ConfigValue<Boolean> PER_PLAYER_ATTRIBUTION = SCHEMA.bool("perPlayerThroughputAttribution",
+            false, true,
+            "opt-in: attribute cargo-port shipments to the placing player (UUID only); off = no player data");
+
+    private static final ConfigValue<Integer> ATTRIBUTION_RETENTION_DAYS = SCHEMA.intRange("attributionRetentionDays",
+            30, 0, 3_650, true,
+            "days to retain per-player attribution before auto-prune (0 = keep until erased)");
+
     private NeroLogisticsConfig() {
     }
 
@@ -117,6 +129,14 @@ public final class NeroLogisticsConfig {
 
     public static int shipIntervalTicks() {
         return SHIP_INTERVAL_TICKS.get();
+    }
+
+    public static boolean perPlayerThroughputAttribution() {
+        return PER_PLAYER_ATTRIBUTION.get();
+    }
+
+    public static int attributionRetentionDays() {
+        return ATTRIBUTION_RETENTION_DAYS.get();
     }
 
     /** Register the schema with Core's config manager. Called once from {@code NeroLogisticsCommon.init()}. */

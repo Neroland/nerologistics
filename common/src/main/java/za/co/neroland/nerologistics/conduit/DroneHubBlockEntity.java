@@ -16,6 +16,7 @@ import za.co.neroland.nerolandcore.progression.CoreGates;
 import za.co.neroland.nerolandcore.progression.ProgressionGates;
 
 import za.co.neroland.nerologistics.config.NeroLogisticsConfig;
+import za.co.neroland.nerologistics.dashboard.LogisticsMetrics;
 import za.co.neroland.nerologistics.entity.DeliveryDroneEntity;
 import za.co.neroland.nerologistics.network.WirelessRegistry;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
@@ -105,6 +106,7 @@ public class DroneHubBlockEntity extends AbstractTerminalBlockEntity {
             level.addFreshEntity(drone);
             this.buffer.setItem(slot, ItemStack.EMPTY);
             this.energy.consume(perDelivery);
+            LogisticsMetrics.recordDrone(level);
             setChanged();
             return; // one dispatch per window
         }

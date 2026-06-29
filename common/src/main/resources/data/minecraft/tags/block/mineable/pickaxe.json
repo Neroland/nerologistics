@@ -6,5 +6,6 @@
   "nerologistics:storage_request_terminal",
   "nerologistics:train_cargo_interface",
   "nerologistics:drone_hub",
-  "nerologistics:rocket_cargo_port"
+  "nerologistics:rocket_cargo_port",
+  "nerologistics:logistics_dashboard"
 ] }

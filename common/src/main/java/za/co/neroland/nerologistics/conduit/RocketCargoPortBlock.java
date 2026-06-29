@@ -6,7 +6,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
@@ -18,6 +20,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import org.jetbrains.annotations.Nullable;
 
+import za.co.neroland.nerologistics.config.NeroLogisticsConfig;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 
 /** Rocket cargo port block — right-click cycles destination, sneak-right-click cycles channel. */
@@ -43,6 +46,19 @@ public class RocketCargoPortBlock extends BaseEntityBlock {
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new RocketCargoPortBlockEntity(pos, state);
+    }
+
+    @Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer,
+            ItemStack stack) {
+        super.setPlacedBy(level, pos, state, placer, stack);
+        // Record ownership ONLY when per-player attribution is opted in (POPIA/GDPR: default off = no
+        // player data stored). UUID only, erasable via Core's shared data-erasure hook.
+        if (!level.isClientSide() && NeroLogisticsConfig.perPlayerThroughputAttribution()
+                && placer instanceof ServerPlayer player
+                && level.getBlockEntity(pos) instanceof RocketCargoPortBlockEntity port) {
+            port.setOwner(player.getUUID());
+        }
     }
 
     @Override

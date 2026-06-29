@@ -2,6 +2,7 @@ package za.co.neroland.nerologistics.conduit;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -21,6 +22,7 @@ import za.co.neroland.nerolandcore.progression.ProgressionGates;
 
 import za.co.neroland.nerologistics.NeroLogisticsCommon;
 import za.co.neroland.nerologistics.config.NeroLogisticsConfig;
+import za.co.neroland.nerologistics.dashboard.LogisticsMetrics;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 import za.co.neroland.nerologistics.ship.RouteDestination;
 import za.co.neroland.nerologistics.ship.RouteProviders;
@@ -48,6 +50,9 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
     private int channel;
     private int destIndex;
     private boolean joined;
+    /** Placing player's UUID — stored ONLY when per-player attribution is opted in (POPIA/GDPR). */
+    @org.jetbrains.annotations.Nullable
+    private UUID owner;
 
     public RocketCargoPortBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.ROCKET_CARGO_PORT.get(), pos, state, BUFFER_SIZE, ENERGY_CAPACITY, ENERGY_MAX_IO);
@@ -55,6 +60,12 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
 
     public int channel() {
         return this.channel;
+    }
+
+    /** Record the placing player for opt-in attribution. Only call when attribution is enabled. */
+    public void setOwner(UUID owner) {
+        this.owner = owner;
+        setChanged();
     }
 
     public int cycleChannel() {
@@ -83,6 +94,8 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
         super.saveAdditional(output);
         output.putInt("Channel", this.channel);
         output.putInt("DestIndex", this.destIndex);
+        output.putLong("OwnerMost", this.owner == null ? 0L : this.owner.getMostSignificantBits());
+        output.putLong("OwnerLeast", this.owner == null ? 0L : this.owner.getLeastSignificantBits());
     }
 
     @Override
@@ -90,6 +103,9 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
         super.loadAdditional(input);
         this.channel = input.getIntOr("Channel", 0);
         this.destIndex = input.getIntOr("DestIndex", 0);
+        long most = input.getLongOr("OwnerMost", 0L);
+        long least = input.getLongOr("OwnerLeast", 0L);
+        this.owner = (most == 0L && least == 0L) ? null : new UUID(most, least);
     }
 
     @Override
@@ -162,6 +178,8 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
         }
         ShipmentManager.ship(server, payload, dest.dimension(), target,
                 RouteProviders.get().transitTicks(server, dest));
+        LogisticsMetrics.recordShipmentLaunched(level);
+        LogisticsMetrics.recordPlayerShipment(server, this.owner); // no-op unless attribution opted in
         setChanged();
     }
 

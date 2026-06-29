@@ -3,7 +3,10 @@ package za.co.neroland.nerologistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import za.co.neroland.nerolandcore.data.PlayerDataErasure;
+
 import za.co.neroland.nerologistics.config.NeroLogisticsConfig;
+import za.co.neroland.nerologistics.dashboard.LogisticsMetrics;
 import za.co.neroland.nerologistics.registry.ModRegistries;
 
 /**
@@ -26,5 +29,8 @@ public final class NeroLogisticsCommon {
         // Register the config schema with Core's manager, then build all content registries.
         NeroLogisticsConfig.load();
         ModRegistries.init();
+        // POPIA/GDPR: route opt-in per-player attribution through Core's shared erasure hook, so one
+        // erase request (or the inactivity sweep) purges a player here too.
+        PlayerDataErasure.register(LogisticsMetrics::erasePlayer);
     }
 }

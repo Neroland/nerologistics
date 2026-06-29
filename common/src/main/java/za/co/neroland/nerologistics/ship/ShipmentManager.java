@@ -18,6 +18,7 @@ import net.minecraft.world.level.Level;
 
 import org.jetbrains.annotations.Nullable;
 
+import za.co.neroland.nerologistics.dashboard.LogisticsMetrics;
 import za.co.neroland.nerologistics.transport.InventoryTransfer;
 
 /**
@@ -90,8 +91,14 @@ public final class ShipmentManager {
         PENDING.add(new CargoManifest(items, destDim, destPos, arrival));
     }
 
+    /** Number of shipments currently in transit (for the dashboard). */
+    public static int pendingCount() {
+        return PENDING.size();
+    }
+
     /** Deliver any shipments whose arrival tick has passed. Call once per server tick. */
     public static void tick(MinecraftServer server) {
+        LogisticsMetrics.tick(server); // daily attribution retention prune
         if (PENDING.isEmpty()) {
             return;
         }
@@ -129,6 +136,7 @@ public final class ShipmentManager {
                     Containers.dropItemStack(level, pos.getX() + 0.5D, pos.getY() + 1.0D, pos.getZ() + 0.5D, remainder);
                 }
             }
+            LogisticsMetrics.recordShipmentDelivered(level);
         } finally {
             if (forced) {
                 level.setChunkForced(cx, cz, false);

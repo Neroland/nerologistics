@@ -26,6 +26,7 @@ import za.co.neroland.nerolandcore.sideconfig.SideMode;
 
 import za.co.neroland.nerologistics.conduit.AbstractConduitBlockEntity;
 import za.co.neroland.nerologistics.config.NeroLogisticsConfig;
+import za.co.neroland.nerologistics.dashboard.LogisticsMetrics;
 import za.co.neroland.nerologistics.transport.InventoryTransfer;
 
 /**
@@ -75,6 +76,11 @@ public final class ConduitNetwork {
     /** Drop the cached endpoint list; recomputed on next access. */
     public void invalidate() {
         this.endpoints = null;
+    }
+
+    /** Number of external interaction points (faces touching non-conduit blocks). For the dashboard. */
+    public int endpointCount(Level level) {
+        return endpoints(level).size();
     }
 
     private List<ConduitEndpoint> endpoints(Level level) {
@@ -127,6 +133,7 @@ public final class ConduitNetwork {
 
     private void tickItems(Level level, List<ConduitEndpoint> eps) {
         int budget = NeroLogisticsConfig.itemTransferPerTick();
+        final int startBudget = budget;
         List<ConduitEndpoint> sinks = sinks(eps);
         if (sinks.isEmpty()) {
             return;
@@ -174,10 +181,12 @@ public final class ConduitNetwork {
                 }
             }
         }
+        LogisticsMetrics.recordItems(level, (long) startBudget - budget);
     }
 
     private void tickEnergy(Level level, List<ConduitEndpoint> eps) {
         long budget = NeroLogisticsConfig.energyTransferPerTick();
+        final long startBudget = budget;
         List<ConduitEndpoint> sinks = sinks(eps);
         if (sinks.isEmpty()) {
             return;
@@ -217,10 +226,12 @@ public final class ConduitNetwork {
                 budget -= moved;
             }
         }
+        LogisticsMetrics.recordEnergy(level, startBudget - budget);
     }
 
     private void tickFluids(Level level, List<ConduitEndpoint> eps) {
         long budget = NeroLogisticsConfig.fluidTransferPerTick();
+        final long startBudget = budget;
         List<ConduitEndpoint> sinks = sinks(eps);
         if (sinks.isEmpty()) {
             return;
@@ -266,6 +277,7 @@ public final class ConduitNetwork {
                 budget -= drained;
             }
         }
+        LogisticsMetrics.recordFluid(level, startBudget - budget);
     }
 
     private static List<ConduitEndpoint> sinks(List<ConduitEndpoint> eps) {
