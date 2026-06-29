@@ -1,5 +1,9 @@
 { "replace": false, "values": [
   "nerologistics:item_duct",
   "nerologistics:fluid_duct",
-  "nerologistics:energy_cable"
+  "nerologistics:energy_cable",
+  "nerologistics:wireless_cargo_terminal",
+  "nerologistics:storage_request_terminal",
+  "nerologistics:train_cargo_interface",
+  "nerologistics:drone_hub"
 ] }

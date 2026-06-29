@@ -1,0 +1,4 @@
+{ "type": "minecraft:crafting_shaped", "category": "misc",
+  "key": { "I": "minecraft:iron_ingot", "C": "minecraft:chest", "R": "minecraft:rail" },
+  "pattern": [ "IRI", "RCR", "III" ],
+  "result": { "id": "nerologistics:train_cargo_interface" } }

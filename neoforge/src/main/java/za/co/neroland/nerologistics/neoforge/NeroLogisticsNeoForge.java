@@ -1,10 +1,22 @@
 package za.co.neroland.nerologistics.neoforge;
 
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.transfer.item.VanillaContainerWrapper;
+import net.neoforged.neoforge.transfer.item.WorldlyContainerWrapper;
+
+import net.minecraft.world.level.block.entity.BlockEntityType;
+
+import za.co.neroland.nerolandcore.platform.NeoForgeEnergyLookup;
 
 import za.co.neroland.nerologistics.NeroLogisticsCommon;
+import za.co.neroland.nerologistics.conduit.AbstractTerminalBlockEntity;
+import za.co.neroland.nerologistics.registry.ModBlockEntities;
 import za.co.neroland.nerologistics.registry.NeoForgeRegistrationFactory;
 
 /** NeoForge entry point for NeroLogistics. */
@@ -17,5 +29,29 @@ public final class NeroLogisticsNeoForge {
         // attach them to NeroLogistics' mod event bus.
         NeroLogisticsCommon.init();
         NeoForgeRegistrationFactory.registerAll(modEventBus);
+        modEventBus.addListener(NeroLogisticsNeoForge::onRegisterCapabilities);
+        if (FMLEnvironment.getDist() == Dist.CLIENT) {
+            NeoForgeClientSetup.init(modEventBus);
+        }
+    }
+
+    private static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
+        // Energy: cables power the wireless terminal + drone hub via Core's shared energy capability.
+        event.registerBlockEntity(NeoForgeEnergyLookup.ENERGY, ModBlockEntities.WIRELESS_CARGO_TERMINAL.get(),
+                (be, side) -> be.getEnergy());
+        event.registerBlockEntity(NeoForgeEnergyLookup.ENERGY, ModBlockEntities.DRONE_HUB.get(),
+                (be, side) -> be.getEnergy());
+
+        // Items: terminal/interface buffers on the standard item capability for hoppers, Create, AE2, etc.
+        itemCap(event, ModBlockEntities.WIRELESS_CARGO_TERMINAL.get());
+        itemCap(event, ModBlockEntities.STORAGE_REQUEST_TERMINAL.get());
+        itemCap(event, ModBlockEntities.TRAIN_CARGO_INTERFACE.get());
+        itemCap(event, ModBlockEntities.DRONE_HUB.get());
+    }
+
+    private static <T extends AbstractTerminalBlockEntity> void itemCap(RegisterCapabilitiesEvent event,
+            BlockEntityType<T> type) {
+        event.registerBlockEntity(Capabilities.Item.BLOCK, type,
+                (be, side) -> side != null ? new WorldlyContainerWrapper(be, side) : VanillaContainerWrapper.of(be));
     }
 }

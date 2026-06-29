@@ -6,5 +6,18 @@
   "block.nerologistics.fluid_duct": "Fluid Duct",
   "item.nerologistics.fluid_duct": "Fluid Duct",
   "block.nerologistics.energy_cable": "Energy Cable",
-  "item.nerologistics.energy_cable": "Energy Cable"
+  "item.nerologistics.energy_cable": "Energy Cable",
+
+  "block.nerologistics.wireless_cargo_terminal": "Wireless Cargo Terminal",
+  "item.nerologistics.wireless_cargo_terminal": "Wireless Cargo Terminal",
+  "block.nerologistics.wireless_cargo_terminal.channel": "Wireless channel: %s",
+  "block.nerologistics.storage_request_terminal": "Storage Request Terminal",
+  "item.nerologistics.storage_request_terminal": "Storage Request Terminal",
+  "block.nerologistics.train_cargo_interface": "Train Cargo Interface",
+  "item.nerologistics.train_cargo_interface": "Train Cargo Interface",
+  "block.nerologistics.drone_hub": "Drone Hub",
+  "item.nerologistics.drone_hub": "Drone Hub",
+  "block.nerologistics.drone_hub.channel": "Drone channel: %s",
+
+  "entity.nerologistics.delivery_drone": "Delivery Drone"
 }

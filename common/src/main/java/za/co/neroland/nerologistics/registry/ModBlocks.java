@@ -9,9 +9,13 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 
 import za.co.neroland.nerologistics.NeroLogisticsCommon;
+import za.co.neroland.nerologistics.conduit.DroneHubBlock;
 import za.co.neroland.nerologistics.conduit.EnergyCableBlock;
 import za.co.neroland.nerologistics.conduit.FluidDuctBlock;
 import za.co.neroland.nerologistics.conduit.ItemDuctBlock;
+import za.co.neroland.nerologistics.conduit.StorageRequestTerminalBlock;
+import za.co.neroland.nerologistics.conduit.TrainCargoInterfaceBlock;
+import za.co.neroland.nerologistics.conduit.WirelessCargoTerminalBlock;
 import za.co.neroland.nerologistics.registry.RegistrationProvider.RegistryEntry;
 
 /** NeroLogistics conduit blocks, registered cross-loader via {@link RegistrationProvider}. */
@@ -26,6 +30,16 @@ public final class ModBlocks {
             register("fluid_duct", FluidDuctBlock::new);
     public static final RegistryEntry<EnergyCableBlock> ENERGY_CABLE =
             register("energy_cable", EnergyCableBlock::new);
+
+    // --- Stage 3: terminals + drone hub ------------------------------------
+    public static final RegistryEntry<WirelessCargoTerminalBlock> WIRELESS_CARGO_TERMINAL =
+            register("wireless_cargo_terminal", WirelessCargoTerminalBlock::new);
+    public static final RegistryEntry<StorageRequestTerminalBlock> STORAGE_REQUEST_TERMINAL =
+            register("storage_request_terminal", StorageRequestTerminalBlock::new);
+    public static final RegistryEntry<TrainCargoInterfaceBlock> TRAIN_CARGO_INTERFACE =
+            register("train_cargo_interface", TrainCargoInterfaceBlock::new);
+    public static final RegistryEntry<DroneHubBlock> DRONE_HUB =
+            register("drone_hub", DroneHubBlock::new);
 
     private static <B extends Block> RegistryEntry<B> register(String name,
             Function<BlockBehaviour.Properties, B> factory) {
