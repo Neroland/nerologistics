@@ -10,6 +10,7 @@ import za.co.neroland.nerologistics.conduit.DroneHubBlockEntity;
 import za.co.neroland.nerologistics.conduit.EnergyCableBlockEntity;
 import za.co.neroland.nerologistics.conduit.FluidDuctBlockEntity;
 import za.co.neroland.nerologistics.conduit.ItemDuctBlockEntity;
+import za.co.neroland.nerologistics.conduit.RocketCargoPortBlockEntity;
 import za.co.neroland.nerologistics.conduit.StorageRequestTerminalBlockEntity;
 import za.co.neroland.nerologistics.conduit.TrainCargoInterfaceBlockEntity;
 import za.co.neroland.nerologistics.conduit.WirelessCargoTerminalBlockEntity;
@@ -51,6 +52,11 @@ public final class ModBlockEntities {
     public static final RegistryEntry<BlockEntityType<DroneHubBlockEntity>> DRONE_HUB =
             BLOCK_ENTITIES.register("drone_hub",
                     key -> new BlockEntityType<>(DroneHubBlockEntity::new, Set.of(ModBlocks.DRONE_HUB.get())));
+
+    public static final RegistryEntry<BlockEntityType<RocketCargoPortBlockEntity>> ROCKET_CARGO_PORT =
+            BLOCK_ENTITIES.register("rocket_cargo_port",
+                    key -> new BlockEntityType<>(RocketCargoPortBlockEntity::new,
+                            Set.of(ModBlocks.ROCKET_CARGO_PORT.get())));
 
     private ModBlockEntities() {
     }

@@ -47,6 +47,19 @@ public final class NeroLogisticsConfig {
     private static final ConfigValue<Integer> DRONE_ENERGY_PER_DELIVERY = SCHEMA.intRange("droneEnergyPerDelivery",
             512, 0, 10_000_000, true, "NE charged per drone delivery dispatched");
 
+    // --- Stage 4: cross-dimension shipping ---------------------------------
+    private static final ConfigValue<Integer> SHIP_TRANSIT_TICKS = SCHEMA.intRange("shipTransitTicks",
+            1_200, 20, 1_728_000, true, "transit time (ticks) for a cross-dimension cargo shipment");
+
+    private static final ConfigValue<Integer> SHIP_ENERGY_PER_STACK = SCHEMA.intRange("shipEnergyPerStack",
+            10_000, 0, 100_000_000, true, "NE charged per stack in a shipment (deliberately expensive)");
+
+    private static final ConfigValue<Integer> SHIP_FUEL_PER_LAUNCH = SCHEMA.intRange("shipFuelPerLaunch",
+            1, 0, 64, true, "rocket-fuel-tagged items consumed per launch");
+
+    private static final ConfigValue<Integer> SHIP_INTERVAL_TICKS = SCHEMA.intRange("shipIntervalTicks",
+            100, 1, 72_000, true, "ticks between a cargo port's auto-ship attempts");
+
     private NeroLogisticsConfig() {
     }
 
@@ -88,6 +101,22 @@ public final class NeroLogisticsConfig {
 
     public static int droneEnergyPerDelivery() {
         return DRONE_ENERGY_PER_DELIVERY.get();
+    }
+
+    public static int shipTransitTicks() {
+        return SHIP_TRANSIT_TICKS.get();
+    }
+
+    public static int shipEnergyPerStack() {
+        return SHIP_ENERGY_PER_STACK.get();
+    }
+
+    public static int shipFuelPerLaunch() {
+        return SHIP_FUEL_PER_LAUNCH.get();
+    }
+
+    public static int shipIntervalTicks() {
+        return SHIP_INTERVAL_TICKS.get();
     }
 
     /** Register the schema with Core's config manager. Called once from {@code NeroLogisticsCommon.init()}. */

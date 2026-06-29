@@ -32,10 +32,14 @@ public final class ModItems {
     public static final RegistryEntry<BlockItem> DRONE_HUB_ITEM =
             blockItem("drone_hub", ModBlocks.DRONE_HUB);
 
+    // --- Stage 4 ------------------------------------------------------------
+    public static final RegistryEntry<BlockItem> ROCKET_CARGO_PORT_ITEM =
+            blockItem("rocket_cargo_port", ModBlocks.ROCKET_CARGO_PORT);
+
     private static List<RegistryEntry<? extends ItemLike>> creativeOrder() {
         return List.of(ITEM_DUCT_ITEM, FLUID_DUCT_ITEM, ENERGY_CABLE_ITEM,
                 WIRELESS_CARGO_TERMINAL_ITEM, STORAGE_REQUEST_TERMINAL_ITEM,
-                TRAIN_CARGO_INTERFACE_ITEM, DRONE_HUB_ITEM);
+                TRAIN_CARGO_INTERFACE_ITEM, DRONE_HUB_ITEM, ROCKET_CARGO_PORT_ITEM);
     }
 
     private static RegistryEntry<BlockItem> blockItem(String name, RegistryEntry<? extends Block> block) {

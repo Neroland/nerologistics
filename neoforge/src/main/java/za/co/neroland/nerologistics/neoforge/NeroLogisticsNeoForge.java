@@ -7,6 +7,8 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.transfer.item.VanillaContainerWrapper;
 import net.neoforged.neoforge.transfer.item.WorldlyContainerWrapper;
 
@@ -18,6 +20,7 @@ import za.co.neroland.nerologistics.NeroLogisticsCommon;
 import za.co.neroland.nerologistics.conduit.AbstractTerminalBlockEntity;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 import za.co.neroland.nerologistics.registry.NeoForgeRegistrationFactory;
+import za.co.neroland.nerologistics.ship.ShipmentManager;
 
 /** NeoForge entry point for NeroLogistics. */
 @Mod(NeroLogisticsCommon.MOD_ID)
@@ -30,6 +33,8 @@ public final class NeroLogisticsNeoForge {
         NeroLogisticsCommon.init();
         NeoForgeRegistrationFactory.registerAll(modEventBus);
         modEventBus.addListener(NeroLogisticsNeoForge::onRegisterCapabilities);
+        // Drive cross-dimension shipment arrivals once per server tick.
+        NeoForge.EVENT_BUS.addListener((ServerTickEvent.Post event) -> ShipmentManager.tick(event.getServer()));
         if (FMLEnvironment.getDist() == Dist.CLIENT) {
             NeoForgeClientSetup.init(modEventBus);
         }
@@ -41,12 +46,15 @@ public final class NeroLogisticsNeoForge {
                 (be, side) -> be.getEnergy());
         event.registerBlockEntity(NeoForgeEnergyLookup.ENERGY, ModBlockEntities.DRONE_HUB.get(),
                 (be, side) -> be.getEnergy());
+        event.registerBlockEntity(NeoForgeEnergyLookup.ENERGY, ModBlockEntities.ROCKET_CARGO_PORT.get(),
+                (be, side) -> be.getEnergy());
 
         // Items: terminal/interface buffers on the standard item capability for hoppers, Create, AE2, etc.
         itemCap(event, ModBlockEntities.WIRELESS_CARGO_TERMINAL.get());
         itemCap(event, ModBlockEntities.STORAGE_REQUEST_TERMINAL.get());
         itemCap(event, ModBlockEntities.TRAIN_CARGO_INTERFACE.get());
         itemCap(event, ModBlockEntities.DRONE_HUB.get());
+        itemCap(event, ModBlockEntities.ROCKET_CARGO_PORT.get());
     }
 
     private static <T extends AbstractTerminalBlockEntity> void itemCap(RegisterCapabilitiesEvent event,

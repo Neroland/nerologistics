@@ -5,5 +5,6 @@
   "nerologistics:wireless_cargo_terminal",
   "nerologistics:storage_request_terminal",
   "nerologistics:train_cargo_interface",
-  "nerologistics:drone_hub"
+  "nerologistics:drone_hub",
+  "nerologistics:rocket_cargo_port"
 ] }

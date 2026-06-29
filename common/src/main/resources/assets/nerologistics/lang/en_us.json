@@ -19,5 +19,10 @@
   "item.nerologistics.drone_hub": "Drone Hub",
   "block.nerologistics.drone_hub.channel": "Drone channel: %s",
 
+  "block.nerologistics.rocket_cargo_port": "Rocket Cargo Port",
+  "item.nerologistics.rocket_cargo_port": "Rocket Cargo Port",
+  "block.nerologistics.rocket_cargo_port.channel": "Route channel: %s",
+  "block.nerologistics.rocket_cargo_port.destination": "Destination: %s",
+
   "entity.nerologistics.delivery_drone": "Delivery Drone"
 }

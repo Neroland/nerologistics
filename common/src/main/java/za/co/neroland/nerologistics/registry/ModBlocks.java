@@ -13,6 +13,7 @@ import za.co.neroland.nerologistics.conduit.DroneHubBlock;
 import za.co.neroland.nerologistics.conduit.EnergyCableBlock;
 import za.co.neroland.nerologistics.conduit.FluidDuctBlock;
 import za.co.neroland.nerologistics.conduit.ItemDuctBlock;
+import za.co.neroland.nerologistics.conduit.RocketCargoPortBlock;
 import za.co.neroland.nerologistics.conduit.StorageRequestTerminalBlock;
 import za.co.neroland.nerologistics.conduit.TrainCargoInterfaceBlock;
 import za.co.neroland.nerologistics.conduit.WirelessCargoTerminalBlock;
@@ -40,6 +41,10 @@ public final class ModBlocks {
             register("train_cargo_interface", TrainCargoInterfaceBlock::new);
     public static final RegistryEntry<DroneHubBlock> DRONE_HUB =
             register("drone_hub", DroneHubBlock::new);
+
+    // --- Stage 4: cross-dimension shipping ---------------------------------
+    public static final RegistryEntry<RocketCargoPortBlock> ROCKET_CARGO_PORT =
+            register("rocket_cargo_port", RocketCargoPortBlock::new);
 
     private static <B extends Block> RegistryEntry<B> register(String name,
             Function<BlockBehaviour.Properties, B> factory) {
