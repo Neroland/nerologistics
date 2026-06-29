@@ -5,6 +5,7 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 
 import za.co.neroland.nerologistics.client.DeliveryDroneRenderer;
+import za.co.neroland.nerologistics.client.FilterScreen;
 import za.co.neroland.nerologistics.client.StorageRequestScreen;
 import za.co.neroland.nerologistics.registry.ModEntities;
 import za.co.neroland.nerologistics.registry.ModMenuTypes;
@@ -22,6 +23,7 @@ public final class NeoForgeClientSetup {
 
     private static void onRegisterScreens(RegisterMenuScreensEvent event) {
         event.register(ModMenuTypes.STORAGE_REQUEST.get(), StorageRequestScreen::new);
+        event.register(ModMenuTypes.FILTER.get(), FilterScreen::new);
     }
 
     private static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {

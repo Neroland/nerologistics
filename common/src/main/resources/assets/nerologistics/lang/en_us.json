@@ -32,5 +32,9 @@
   "block.nerologistics.logistics_dashboard.shipping": "Shipping — launched: %s, delivered: %s, in transit: %s",
   "block.nerologistics.logistics_dashboard.drones": "Drones dispatched: %s",
 
-  "entity.nerologistics.delivery_drone": "Delivery Drone"
+  "entity.nerologistics.delivery_drone": "Delivery Drone",
+
+  "item.nerologistics.configurator": "Configurator",
+  "item.nerologistics.configurator.set": "%s face set to %s",
+  "item.nerologistics.configurator.read": "%s face is %s"
 }
