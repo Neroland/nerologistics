@@ -14,7 +14,7 @@ to another in-range terminal's buffer, on an interval.
 - Each transfer charges the **sending** terminal's energy buffer (power it with cables); if it has no
   energy, it does not send.
 - Range, per-item energy cost, and the transfer interval are configurable.
-- Gated behind `industrial_power`.
+- Works out of the box — no progression unlock required.
 
 Use a pair to bridge two duct networks across a base without running cable between them.
 
@@ -26,7 +26,7 @@ output buffer with items pulled from the inventories on the adjacent item duct's
 
 - When AE2 is present, its interface is just another inventory on the network and is read through the
   same path — no AE2 dependency, no duplication.
-- Gated behind `industrial_power`.
+- Works out of the box — no progression unlock required.
 
 ## Train Cargo Interface
 

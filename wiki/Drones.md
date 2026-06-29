@@ -10,7 +10,7 @@ The hub stocks an item buffer (fill it with ducts/hoppers) and dispatches **deli
 - It holds a **hard-capped pool** of live drones (`dronesPerHub`); it never dispatches beyond the cap.
 - Each dispatch charges the hub's energy buffer (`droneEnergyPerDelivery`); power it with cables.
 - Targets come from the cheap wireless-channel membership list — no world scan.
-- Gated behind `industrial_power`, and by the `enableDrones` master toggle.
+- Toggle the whole system with the `enableDrones` config (no progression unlock required).
 
 ## Delivery Drone
 

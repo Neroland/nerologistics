@@ -16,8 +16,8 @@ per dimension and rebuilt **incrementally**: placing a conduit merges the adjace
 networks, breaking one splits the survivors back into separate networks. The world is never re-scanned
 to find connections.
 
-A network only transports while Core's **`industrial_power`** progression gate is open (the same gate
-Nerotech opens when you build your first machine).
+Networks work out of the box — no progression unlock or configuration required, whether you play
+NeroLogistics standalone or alongside the other Nero mods.
 
 ## Per-face modes
 

@@ -34,6 +34,8 @@ public class DeliveryDroneEntity extends Entity {
     private BlockPos targetPos = BlockPos.ZERO;
     private ItemStack cargo = ItemStack.EMPTY;
     private int age;
+    /** False until a hub assigns a route; an unassigned (e.g. /summon'ed) drone just hovers. */
+    private boolean dispatched;
 
     @SuppressWarnings("this-escape")
     public DeliveryDroneEntity(EntityType<? extends DeliveryDroneEntity> type, Level level) {
@@ -47,6 +49,7 @@ public class DeliveryDroneEntity extends Entity {
         this.homePos = home.immutable();
         this.targetPos = target.immutable();
         this.cargo = cargo.copy();
+        this.dispatched = true;
         this.setPos(home.getX() + 0.5D, home.getY() + 0.5D, home.getZ() + 0.5D);
     }
 
@@ -75,6 +78,9 @@ public class DeliveryDroneEntity extends Entity {
             dropCargo();
             discard();
             return;
+        }
+        if (!this.dispatched) {
+            return; // unassigned (e.g. /summon'ed) — hover in place until the failsafe age
         }
         Vec3 target = Vec3.atCenterOf(this.targetPos);
         Vec3 here = position();
@@ -117,6 +123,7 @@ public class DeliveryDroneEntity extends Entity {
                 input.getIntOr("TgtZ", 0));
         this.cargo = input.read("Cargo", ItemStack.OPTIONAL_CODEC).orElse(ItemStack.EMPTY);
         this.age = input.getIntOr("Age", 0);
+        this.dispatched = input.getIntOr("Dispatched", 0) != 0;
     }
 
     @Override
@@ -129,5 +136,6 @@ public class DeliveryDroneEntity extends Entity {
         output.putInt("TgtZ", this.targetPos.getZ());
         output.store("Cargo", ItemStack.OPTIONAL_CODEC, this.cargo);
         output.putInt("Age", this.age);
+        output.putInt("Dispatched", this.dispatched ? 1 : 0);
     }
 }

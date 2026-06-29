@@ -44,6 +44,9 @@ value below is **server-authoritative** — the server's values win and sync to 
 
 See [Dashboard & Privacy](Dashboard-and-Privacy.md) for the data posture.
 
+> **Standalone:** NeroLogistics needs only **Neroland Core**. Everything works out of the box with no
+> progression unlock and nothing to configure, whether or not the other Nero mods are installed.
+
 ## See also
 
 - [Conduits](Conduits.md) · [Terminals](Terminals.md) · [Drones](Drones.md) ·

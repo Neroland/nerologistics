@@ -13,8 +13,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Shared base for conduit blocks. A {@link BaseEntityBlock} that renders as a model and wires a
  * server-side ticker driving {@link AbstractConduitBlockEntity#serverTick}. Conduits are
- * non-directional (no facing state) and do not open Core's {@code INDUSTRIAL_POWER} gate — Nerotech
- * is that gate's canonical opener; conduits merely require it to be open before they transport.
+ * non-directional (no facing state).
  */
 public abstract class AbstractConduitBlock extends BaseEntityBlock {
 

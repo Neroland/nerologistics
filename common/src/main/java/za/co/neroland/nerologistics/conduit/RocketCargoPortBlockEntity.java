@@ -17,9 +17,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
-import za.co.neroland.nerolandcore.progression.CoreGates;
-import za.co.neroland.nerolandcore.progression.ProgressionGates;
-
 import za.co.neroland.nerologistics.NeroLogisticsCommon;
 import za.co.neroland.nerologistics.config.NeroLogisticsConfig;
 import za.co.neroland.nerologistics.dashboard.LogisticsMetrics;
@@ -33,7 +30,7 @@ import za.co.neroland.nerologistics.ship.ShipmentManager;
  * cross-dimension shipment of its non-fuel cargo to a same-channel port in the selected destination
  * dimension. Deliberately slow and energy-hungry; consumes rocket fuel <em>by tag</em>
  * ({@code nerologistics:rocket_fuel}) rather than any Nerospace class; gated behind
- * {@link CoreGates#REACHED_ORBIT}. Destinations come from the {@link RouteProviders} seam (a stub until
+ * fuel. Destinations come from the {@link RouteProviders} seam (a stub until
  * a Nerospace-backed provider is registered). Right-click cycles destination; sneak-right-click cycles
  * channel.
  */
@@ -134,7 +131,7 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
             return;
         }
         MinecraftServer server = level.getServer();
-        if (server == null || !ProgressionGates.isServerOpen(server, CoreGates.REACHED_ORBIT)) {
+        if (server == null) {
             return;
         }
         List<RouteDestination> dests = RouteProviders.get().destinations(server);

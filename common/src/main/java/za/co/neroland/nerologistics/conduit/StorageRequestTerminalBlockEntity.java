@@ -17,9 +17,6 @@ import net.minecraft.world.level.storage.ValueOutput;
 
 import org.jetbrains.annotations.Nullable;
 
-import za.co.neroland.nerolandcore.progression.CoreGates;
-import za.co.neroland.nerolandcore.progression.ProgressionGates;
-
 import za.co.neroland.nerologistics.config.NeroLogisticsConfig;
 import za.co.neroland.nerologistics.filter.ItemFilter;
 import za.co.neroland.nerologistics.menu.StorageRequestMenu;
@@ -81,10 +78,6 @@ public class StorageRequestTerminalBlockEntity extends AbstractTerminalBlockEnti
     public static void serverTick(Level level, BlockPos pos, BlockState state,
             StorageRequestTerminalBlockEntity be) {
         if (level.isClientSide()) {
-            return;
-        }
-        if (level.getServer() != null
-                && !ProgressionGates.isServerOpen(level.getServer(), CoreGates.INDUSTRIAL_POWER)) {
             return;
         }
         if (level.getGameTime() % NeroLogisticsConfig.wirelessIntervalTicks() != 0L) {

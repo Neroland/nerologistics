@@ -8,14 +8,10 @@ import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-
-import za.co.neroland.nerolandcore.progression.CoreGates;
-import za.co.neroland.nerolandcore.progression.ProgressionGates;
 
 import za.co.neroland.nerologistics.conduit.WirelessCargoTerminalBlockEntity;
 import za.co.neroland.nerologistics.config.NeroLogisticsConfig;
@@ -26,8 +22,8 @@ import za.co.neroland.nerologistics.transport.InventoryTransfer;
  * Groups wireless cargo terminals by dimension + channel, so terminals sharing a channel form a virtual
  * link with no physical conduit. Once per configurable interval (query-batching window) the registry
  * moves items from terminals whose buffer holds stock to in-range terminals whose buffer has space,
- * charging the sender's Core energy buffer per item. Gated behind {@code INDUSTRIAL_POWER}. Server-side
- * only; membership is cached and only touched on place/break.
+ * charging the sender's Core energy buffer per item. Server-side only; membership is cached and only
+ * touched on place/break.
  */
 public final class WirelessRegistry {
 
@@ -78,10 +74,6 @@ public final class WirelessRegistry {
         last.put(channel, now);
 
         if (!NeroLogisticsConfig.enableWireless()) {
-            return;
-        }
-        MinecraftServer server = level.getServer();
-        if (server != null && !ProgressionGates.isServerOpen(server, CoreGates.INDUSTRIAL_POWER)) {
             return;
         }
         List<BlockPos> list = members(level, channel);

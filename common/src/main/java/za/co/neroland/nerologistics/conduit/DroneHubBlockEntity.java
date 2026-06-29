@@ -12,9 +12,6 @@ import net.minecraft.world.phys.AABB;
 
 import org.jetbrains.annotations.Nullable;
 
-import za.co.neroland.nerolandcore.progression.CoreGates;
-import za.co.neroland.nerolandcore.progression.ProgressionGates;
-
 import za.co.neroland.nerologistics.config.NeroLogisticsConfig;
 import za.co.neroland.nerologistics.dashboard.LogisticsMetrics;
 import za.co.neroland.nerologistics.entity.DeliveryDroneEntity;
@@ -27,7 +24,7 @@ import za.co.neroland.nerologistics.transport.InventoryTransfer;
  * Drone hub: stocks an item buffer (ducts/hoppers fill it) and dispatches a hard-capped pool of delivery
  * drones to wireless cargo terminals on its channel within range, charging energy per delivery. The
  * per-hub cap is enforced by counting this hub's live drones each dispatch window; targets come from the
- * cheap wireless-channel membership list (no world scan). Gated behind {@code INDUSTRIAL_POWER}.
+ * cheap wireless-channel membership list (no world scan).
  */
 public class DroneHubBlockEntity extends AbstractTerminalBlockEntity {
 
@@ -65,10 +62,6 @@ public class DroneHubBlockEntity extends AbstractTerminalBlockEntity {
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, DroneHubBlockEntity be) {
         if (level.isClientSide() || !(level instanceof ServerLevel serverLevel)) {
-            return;
-        }
-        if (level.getServer() != null
-                && !ProgressionGates.isServerOpen(level.getServer(), CoreGates.INDUSTRIAL_POWER)) {
             return;
         }
         if (level.getGameTime() % NeroLogisticsConfig.wirelessIntervalTicks() != 0L) {

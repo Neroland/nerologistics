@@ -10,8 +10,7 @@ the tag). On an interval it launches the non-fuel cargo in its buffer to a **sam
 selected destination dimension**:
 
 - Right-click cycles the **destination**; sneak-right-click cycles the **channel**.
-- A launch is charged energy per stack plus fuel per launch, and only fires while Core's
-  **`reached_orbit`** gate is open.
+- A launch is charged energy per stack plus fuel per launch.
 - Shipping is deliberately **slow and energy-hungry** so it complements crewed rocket travel rather
   than replacing it.
 

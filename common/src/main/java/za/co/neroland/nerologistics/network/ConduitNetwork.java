@@ -7,7 +7,6 @@ import java.util.Set;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
@@ -20,8 +19,6 @@ import za.co.neroland.nerolandcore.energy.NeroEnergyStorage;
 import za.co.neroland.nerolandcore.fluid.NeroFluidStorage;
 import za.co.neroland.nerolandcore.platform.EnergyLookup;
 import za.co.neroland.nerolandcore.platform.FluidLookup;
-import za.co.neroland.nerolandcore.progression.CoreGates;
-import za.co.neroland.nerolandcore.progression.ProgressionGates;
 import za.co.neroland.nerolandcore.sideconfig.SideMode;
 
 import za.co.neroland.nerologistics.conduit.AbstractConduitBlockEntity;
@@ -32,9 +29,8 @@ import za.co.neroland.nerologistics.transport.InventoryTransfer;
 /**
  * One connected component of same-medium conduits in a single dimension. Holds its member
  * positions and a lazily-cached endpoint list (faces touching external inventories). Transport
- * runs at most once per game tick, round-based, bounded by a per-tick throughput budget, and only
- * while Core's {@code INDUSTRIAL_POWER} gate is open server-side. Conduits buffer nothing — a tick
- * moves resources straight from source endpoints to sink endpoints.
+ * runs at most once per game tick, round-based, bounded by a per-tick throughput budget. Conduits
+ * buffer nothing — a tick moves resources straight from source endpoints to sink endpoints.
  */
 public final class ConduitNetwork {
 
@@ -116,10 +112,6 @@ public final class ConduitNetwork {
         }
         this.lastTickGame = now;
 
-        MinecraftServer server = level.getServer();
-        if (server != null && !ProgressionGates.isServerOpen(server, CoreGates.INDUSTRIAL_POWER)) {
-            return; // local transport gated behind INDUSTRIAL_POWER
-        }
         List<ConduitEndpoint> eps = endpoints(level);
         if (eps.isEmpty()) {
             return;
