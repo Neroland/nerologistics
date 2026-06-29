@@ -10,6 +10,7 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 import za.co.neroland.nerologistics.NeroLogisticsCommon;
 import za.co.neroland.nerologistics.registry.ForgeRegistrationFactory;
 import za.co.neroland.nerologistics.ship.ShipmentManager;
+import za.co.neroland.nerologistics.telemetry.NeroLogisticsTelemetry;
 
 /** MinecraftForge entry point for NeroLogistics. */
 @Mod(NeroLogisticsCommon.MOD_ID)
@@ -22,6 +23,9 @@ public final class NeroLogisticsForge {
         // attach them to NeroLogistics' mod bus group.
         NeroLogisticsCommon.init();
         ForgeRegistrationFactory.registerAll(modBusGroup);
+        NeroLogisticsForgeCapabilities.register();
+        // Anonymous, NeroLogistics-only crash reporting (opt-out via config; off in dev unless DSN set).
+        NeroLogisticsTelemetry.init();
         // Drive cross-dimension shipment arrivals once per server tick.
         TickEvent.ServerTickEvent.Post.BUS.addListener(event -> ShipmentManager.tick(event.server()));
         if (FMLEnvironment.dist == Dist.CLIENT) {

@@ -6,6 +6,7 @@
   "description": "NeroLogistics - multiloader build (Fabric).",
   "authors": ["${mod_authors}"],
   "license": "${mod_license}",
+  "icon": "nerologistics_logo.png",
   "accessWidener": "nerologistics.accesswidener",
   "environment": "*",
   "entrypoints": {

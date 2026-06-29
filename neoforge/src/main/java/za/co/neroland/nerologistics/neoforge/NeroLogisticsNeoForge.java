@@ -21,6 +21,7 @@ import za.co.neroland.nerologistics.conduit.AbstractTerminalBlockEntity;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 import za.co.neroland.nerologistics.registry.NeoForgeRegistrationFactory;
 import za.co.neroland.nerologistics.ship.ShipmentManager;
+import za.co.neroland.nerologistics.telemetry.NeroLogisticsTelemetry;
 
 /** NeoForge entry point for NeroLogistics. */
 @Mod(NeroLogisticsCommon.MOD_ID)
@@ -32,6 +33,8 @@ public final class NeroLogisticsNeoForge {
         // attach them to NeroLogistics' mod event bus.
         NeroLogisticsCommon.init();
         NeoForgeRegistrationFactory.registerAll(modEventBus);
+        // Anonymous, NeroLogistics-only crash reporting (opt-out via config; off in dev unless DSN set).
+        NeroLogisticsTelemetry.init();
         modEventBus.addListener(NeroLogisticsNeoForge::onRegisterCapabilities);
         // Drive cross-dimension shipment arrivals once per server tick.
         NeoForge.EVENT_BUS.addListener((ServerTickEvent.Post event) -> ShipmentManager.tick(event.getServer()));

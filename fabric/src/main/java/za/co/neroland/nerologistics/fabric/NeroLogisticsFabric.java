@@ -13,6 +13,7 @@ import za.co.neroland.nerologistics.NeroLogisticsCommon;
 import za.co.neroland.nerologistics.conduit.AbstractTerminalBlockEntity;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 import za.co.neroland.nerologistics.ship.ShipmentManager;
+import za.co.neroland.nerologistics.telemetry.NeroLogisticsTelemetry;
 
 /** Fabric entry point for NeroLogistics. Registration is eager; capabilities are wired here. */
 public final class NeroLogisticsFabric implements ModInitializer {
@@ -21,6 +22,8 @@ public final class NeroLogisticsFabric implements ModInitializer {
     public void onInitialize() {
         NeroLogisticsCommon.LOGGER.info("[NeroLogistics] Fabric bootstrap");
         NeroLogisticsCommon.init();
+        // Anonymous, NeroLogistics-only crash reporting (opt-out via config; off in dev unless DSN set).
+        NeroLogisticsTelemetry.init();
 
         // Energy: terminals/hub/port accept NE from cables on Core's shared energy lookup.
         energy(ModBlockEntities.WIRELESS_CARGO_TERMINAL.get());

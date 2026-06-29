@@ -86,6 +86,12 @@ public final class NeroLogisticsConfig {
             1_024, 1, 1_000_000, true,
             "hard cap on in-transit shipments; ports stop launching at the cap (no unbounded queue)");
 
+    // --- Telemetry (anonymous crash reporting; CLIENT-LOCAL opt-out, not server-synced) ----
+    private static final ConfigValue<Boolean> TELEMETRY_ENABLED = SCHEMA.bool("telemetryEnabled",
+            true, false, "anonymous error reporting to the developers (stack trace + mod/MC/loader/OS/Java "
+            + "versions only — never names, UUIDs, IPs, or world data; POPIA/GDPR-compliant). Set false to "
+            + "opt out");
+
     private NeroLogisticsConfig() {
     }
 
@@ -167,6 +173,10 @@ public final class NeroLogisticsConfig {
 
     public static int maxPendingShipments() {
         return MAX_PENDING_SHIPMENTS.get();
+    }
+
+    public static boolean telemetryEnabled() {
+        return TELEMETRY_ENABLED.get();
     }
 
     /** Register the schema with Core's config manager. Called once from {@code NeroLogisticsCommon.init()}. */
