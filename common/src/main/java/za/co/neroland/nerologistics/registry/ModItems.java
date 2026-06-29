@@ -10,6 +10,7 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 
 import za.co.neroland.nerologistics.NeroLogisticsCommon;
+import za.co.neroland.nerologistics.item.ConfiguratorItem;
 import za.co.neroland.nerologistics.registry.RegistrationProvider.RegistryEntry;
 
 /** NeroLogistics block-items, registered cross-loader via {@link RegistrationProvider}. */
@@ -40,11 +41,15 @@ public final class ModItems {
     public static final RegistryEntry<BlockItem> LOGISTICS_DASHBOARD_ITEM =
             blockItem("logistics_dashboard", ModBlocks.LOGISTICS_DASHBOARD);
 
+    // --- Tools --------------------------------------------------------------
+    public static final RegistryEntry<Item> CONFIGURATOR =
+            ITEMS.register("configurator", key -> new ConfiguratorItem(new Item.Properties().setId(key)));
+
     private static List<RegistryEntry<? extends ItemLike>> creativeOrder() {
         return List.of(ITEM_DUCT_ITEM, FLUID_DUCT_ITEM, ENERGY_CABLE_ITEM,
                 WIRELESS_CARGO_TERMINAL_ITEM, STORAGE_REQUEST_TERMINAL_ITEM,
                 TRAIN_CARGO_INTERFACE_ITEM, DRONE_HUB_ITEM, ROCKET_CARGO_PORT_ITEM,
-                LOGISTICS_DASHBOARD_ITEM);
+                LOGISTICS_DASHBOARD_ITEM, CONFIGURATOR);
     }
 
     private static RegistryEntry<BlockItem> blockItem(String name, RegistryEntry<? extends Block> block) {
