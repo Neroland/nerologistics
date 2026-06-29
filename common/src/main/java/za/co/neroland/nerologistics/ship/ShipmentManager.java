@@ -18,6 +18,7 @@ import net.minecraft.world.level.Level;
 
 import org.jetbrains.annotations.Nullable;
 
+import za.co.neroland.nerologistics.config.NeroLogisticsConfig;
 import za.co.neroland.nerologistics.dashboard.LogisticsMetrics;
 import za.co.neroland.nerologistics.transport.InventoryTransfer;
 
@@ -94,6 +95,11 @@ public final class ShipmentManager {
     /** Number of shipments currently in transit (for the dashboard). */
     public static int pendingCount() {
         return PENDING.size();
+    }
+
+    /** Whether the in-transit queue is at its hard cap (ports must stop launching). */
+    public static boolean atCapacity() {
+        return PENDING.size() >= NeroLogisticsConfig.maxPendingShipments();
     }
 
     /** Deliver any shipments whose arrival tick has passed. Call once per server tick. */

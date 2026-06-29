@@ -77,6 +77,9 @@ public final class WirelessRegistry {
         }
         last.put(channel, now);
 
+        if (!NeroLogisticsConfig.enableWireless()) {
+            return;
+        }
         MinecraftServer server = level.getServer();
         if (server != null && !ProgressionGates.isServerOpen(server, CoreGates.INDUSTRIAL_POWER)) {
             return;

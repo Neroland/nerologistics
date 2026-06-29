@@ -78,7 +78,7 @@ public class DroneHubBlockEntity extends AbstractTerminalBlockEntity {
     }
 
     private void tryDispatch(ServerLevel level, BlockPos pos) {
-        if (this.buffer.isEmpty()) {
+        if (!NeroLogisticsConfig.enableDrones() || this.buffer.isEmpty()) {
             return;
         }
         int perDelivery = NeroLogisticsConfig.droneEnergyPerDelivery();

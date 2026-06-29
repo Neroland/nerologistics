@@ -72,6 +72,20 @@ public final class NeroLogisticsConfig {
             30, 0, 3_650, true,
             "days to retain per-player attribution before auto-prune (0 = keep until erased)");
 
+    // --- Stage 6: per-feature toggles + hardening caps ---------------------
+    private static final ConfigValue<Boolean> ENABLE_WIRELESS = SCHEMA.bool("enableWireless",
+            true, true, "master toggle for wireless cargo terminals");
+
+    private static final ConfigValue<Boolean> ENABLE_DRONES = SCHEMA.bool("enableDrones",
+            true, true, "master toggle for drone hubs + delivery drones");
+
+    private static final ConfigValue<Boolean> ENABLE_CROSS_DIMENSION = SCHEMA.bool("enableCrossDimension",
+            true, true, "master toggle for rocket cargo ports / cross-dimension shipping");
+
+    private static final ConfigValue<Integer> MAX_PENDING_SHIPMENTS = SCHEMA.intRange("maxPendingShipments",
+            1_024, 1, 1_000_000, true,
+            "hard cap on in-transit shipments; ports stop launching at the cap (no unbounded queue)");
+
     private NeroLogisticsConfig() {
     }
 
@@ -137,6 +151,22 @@ public final class NeroLogisticsConfig {
 
     public static int attributionRetentionDays() {
         return ATTRIBUTION_RETENTION_DAYS.get();
+    }
+
+    public static boolean enableWireless() {
+        return ENABLE_WIRELESS.get();
+    }
+
+    public static boolean enableDrones() {
+        return ENABLE_DRONES.get();
+    }
+
+    public static boolean enableCrossDimension() {
+        return ENABLE_CROSS_DIMENSION.get();
+    }
+
+    public static int maxPendingShipments() {
+        return MAX_PENDING_SHIPMENTS.get();
     }
 
     /** Register the schema with Core's config manager. Called once from {@code NeroLogisticsCommon.init()}. */

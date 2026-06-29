@@ -130,6 +130,9 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
     }
 
     private void tryShip(ServerLevel level, BlockPos pos) {
+        if (!NeroLogisticsConfig.enableCrossDimension() || ShipmentManager.atCapacity()) {
+            return;
+        }
         MinecraftServer server = level.getServer();
         if (server == null || !ProgressionGates.isServerOpen(server, CoreGates.REACHED_ORBIT)) {
             return;

@@ -3,14 +3,34 @@
 Player- and contributor-facing documentation for **NeroLogistics**, part of the
 [Neroland ecosystem](../../neroland-mc-ecosystem/README.md). Built on **Neroland Core**.
 
-> **Status:** barebones — this mod is scaffolded (version `0.0.1-alpha.1`) but has no gameplay
-> content yet. Pages will grow as features land. Keep this wiki updated alongside code changes
-> (see [`../AGENTS.md`](../AGENTS.md) / [`../CLAUDE.md`](../CLAUDE.md)).
+> **Status:** alpha (version `0.0.1-alpha.1`), built on Neroland Core across the six cross-loader
+> cells. NeroLogistics is the ecosystem's automation brain — it moves items, fluids, energy and
+> cargo within a base, across a base wirelessly, by drone, and between dimensions. Keep this wiki
+> updated alongside code changes (see [`../AGENTS.md`](../AGENTS.md) / [`../CLAUDE.md`](../CLAUDE.md)).
 
 ## Contents
 
-_No feature pages yet._ Add one page per block, item, machine, or system as it is built, and link it
-here. Keep this page as the index.
+- [Conduits](Conduits.md) — item ducts, fluid ducts and energy cables; per-face modes, filters, and
+  how networks form.
+- [Terminals](Terminals.md) — wireless cargo terminals, the storage request terminal, and the Create
+  train cargo interface.
+- [Drones](Drones.md) — the drone hub and delivery drones (capped pool, channels, energy cost).
+- [Cross-Dimension Shipping](Cross-Dimension-Shipping.md) — the rocket cargo port, routes, rocket fuel,
+  and the orbit gate.
+- [Dashboard & Privacy](Dashboard-and-Privacy.md) — the logistics dashboard and the POPIA/GDPR data
+  posture.
+- [Configuration](Configuration.md) — every config key, with defaults.
+
+Add one page per block, item, or system as it is built, and link it here. Keep this page as the index.
+
+## How it fits together
+
+Everything is built on **Neroland Core**: conduits and cables discover neighbours through Core's
+energy/fluid surfaces and vanilla inventories, machine faces speak Core's **side-config** vocabulary,
+progression is gated by Core's **gates**, config flows through Core's **config manager**, and any
+player data routes through Core's **data-erasure** hook. NeroLogistics never hard-depends on Nerospace,
+Nerotech, Create or AE2 — it interoperates through Core capabilities, tags and seams, so each of those
+is optional.
 
 ## See also
 
