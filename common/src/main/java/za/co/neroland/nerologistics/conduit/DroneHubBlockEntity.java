@@ -87,7 +87,7 @@ public class DroneHubBlockEntity extends AbstractTerminalBlockEntity {
         int range = NeroLogisticsConfig.droneRange();
         int cap = NeroLogisticsConfig.dronesPerHub();
         AABB box = new AABB(pos).inflate(range);
-        int live = level.getEntitiesOfClass(DeliveryDroneEntity, box, d -> pos.equals(d.homePos())).size();
+        int live = level.getEntitiesOfClass(DeliveryDroneEntity.class, box, d -> pos.equals(d.homePos())).size();
         if (live >= cap) {
             return;
         }
@@ -112,11 +112,11 @@ public class DroneHubBlockEntity extends AbstractTerminalBlockEntity {
 
     @Nullable
     private BlockPos findTarget(ServerLevel level, BlockPos pos, int range) {
-        long rangeSq = (long) range * range;
+        double rangeSq = (double) range * range;
         BlockPos best = null;
-        long bestDist = Long.MAX_VALUE;
+        double bestDist = Double.MAX_VALUE;
         for (BlockPos candidate : WirelessRegistry.membersOf(level, this.channel)) {
-            long distSq = pos.distSqr(candidate);
+            double distSq = pos.distSqr(candidate);
             if (distSq > rangeSq || distSq >= bestDist) {
                 continue;
             }
