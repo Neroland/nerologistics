@@ -1,6 +1,7 @@
 package za.co.neroland.nerologistics.forge;
 
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.fml.common.Mod;
@@ -8,6 +9,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 
 import za.co.neroland.nerologistics.NeroLogisticsCommon;
+import za.co.neroland.nerologistics.command.NeroLogisticsCommands;
 import za.co.neroland.nerologistics.registry.ForgeRegistrationFactory;
 import za.co.neroland.nerologistics.ship.ShipmentManager;
 import za.co.neroland.nerologistics.telemetry.NeroLogisticsTelemetry;
@@ -28,6 +30,8 @@ public final class NeroLogisticsForge {
         NeroLogisticsTelemetry.init();
         // Drive cross-dimension shipment arrivals once per server tick.
         TickEvent.ServerTickEvent.Post.BUS.addListener(event -> ShipmentManager.tick(event.server()));
+        // /nerologistics gallery
+        RegisterCommandsEvent.BUS.addListener(event -> NeroLogisticsCommands.register(event.getDispatcher()));
         if (FMLEnvironment.dist == Dist.CLIENT) {
             ForgeClientSetup.init(modBusGroup);
         }

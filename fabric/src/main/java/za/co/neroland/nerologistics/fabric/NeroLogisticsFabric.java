@@ -1,6 +1,7 @@
 package za.co.neroland.nerologistics.fabric;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.transfer.v1.item.ContainerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
@@ -10,6 +11,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import za.co.neroland.nerolandcore.platform.FabricEnergyLookup;
 
 import za.co.neroland.nerologistics.NeroLogisticsCommon;
+import za.co.neroland.nerologistics.command.NeroLogisticsCommands;
 import za.co.neroland.nerologistics.conduit.AbstractTerminalBlockEntity;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 import za.co.neroland.nerologistics.ship.ShipmentManager;
@@ -40,6 +42,10 @@ public final class NeroLogisticsFabric implements ModInitializer {
 
         // Drive cross-dimension shipment arrivals once per server tick.
         ServerTickEvents.END_SERVER_TICK.register(ShipmentManager::tick);
+
+        // /nerologistics gallery
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
+                NeroLogisticsCommands.register(dispatcher));
     }
 
     private static <T extends AbstractTerminalBlockEntity> void energy(BlockEntityType<T> type) {

@@ -8,6 +8,7 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.transfer.item.VanillaContainerWrapper;
 import net.neoforged.neoforge.transfer.item.WorldlyContainerWrapper;
@@ -17,6 +18,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import za.co.neroland.nerolandcore.platform.NeoForgeEnergyLookup;
 
 import za.co.neroland.nerologistics.NeroLogisticsCommon;
+import za.co.neroland.nerologistics.command.NeroLogisticsCommands;
 import za.co.neroland.nerologistics.conduit.AbstractTerminalBlockEntity;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 import za.co.neroland.nerologistics.registry.NeoForgeRegistrationFactory;
@@ -38,6 +40,9 @@ public final class NeroLogisticsNeoForge {
         modEventBus.addListener(NeroLogisticsNeoForge::onRegisterCapabilities);
         // Drive cross-dimension shipment arrivals once per server tick.
         NeoForge.EVENT_BUS.addListener((ServerTickEvent.Post event) -> ShipmentManager.tick(event.getServer()));
+        // /nerologistics gallery
+        NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent event) ->
+                NeroLogisticsCommands.register(event.getDispatcher()));
         if (FMLEnvironment.getDist() == Dist.CLIENT) {
             NeoForgeClientSetup.init(modEventBus);
         }
