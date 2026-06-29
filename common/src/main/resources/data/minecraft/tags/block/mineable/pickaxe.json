@@ -1,0 +1,5 @@
+{ "replace": false, "values": [
+  "nerologistics:item_duct",
+  "nerologistics:fluid_duct",
+  "nerologistics:energy_cable"
+] }

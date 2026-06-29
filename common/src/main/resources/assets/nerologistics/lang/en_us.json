@@ -1,0 +1,10 @@
+{
+  "itemGroup.nerologistics": "NeroLogistics",
+
+  "block.nerologistics.item_duct": "Item Duct",
+  "item.nerologistics.item_duct": "Item Duct",
+  "block.nerologistics.fluid_duct": "Fluid Duct",
+  "item.nerologistics.fluid_duct": "Fluid Duct",
+  "block.nerologistics.energy_cable": "Energy Cable",
+  "item.nerologistics.energy_cable": "Energy Cable"
+}
