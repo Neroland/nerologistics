@@ -20,7 +20,7 @@ public final class StubRouteProvider implements RouteProvider {
         List<RouteDestination> out = new ArrayList<>();
         for (ServerLevel level : server.getAllLevels()) {
             ResourceKey<Level> key = level.dimension();
-            out.add(new RouteDestination(key, key.location().getPath()));
+            out.add(new RouteDestination(key, key.identifier().getPath()));
         }
         return out;
     }

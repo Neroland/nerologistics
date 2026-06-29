@@ -12,6 +12,6 @@ import net.minecraft.world.level.Level;
 public record RouteDestination(ResourceKey<Level> dimension, String name) {
 
     public Identifier id() {
-        return this.dimension.location();
+        return this.dimension.identifier();
     }
 }
