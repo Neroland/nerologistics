@@ -15,6 +15,14 @@ value below is **server-authoritative** — the server's values win and sync to 
 
 See [Network Controller](Controller.md) for how it works.
 
+## Buffers
+
+- **`enableBuffers`** (default `true`) — master toggle for keep-stocked buffer leveling (passive buffers
+  always hold).
+- **`bufferIntervalTicks`** (default `20`) — ticks between a keep-stocked buffer's top-up/overflow passes.
+
+See [Buffers](Buffers.md).
+
 ## Auto-crafting
 
 - **`enableAutoCrafting`** (default `true`) — master toggle for the auto-crafter.

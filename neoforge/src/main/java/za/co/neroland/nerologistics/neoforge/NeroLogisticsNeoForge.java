@@ -64,6 +64,7 @@ public final class NeroLogisticsNeoForge {
         // Items: terminal/interface/storage buffers on the standard item capability for hoppers, Create, AE2, etc.
         itemCap(event, ModBlockEntities.ITEM_STORAGE.get());
         itemCap(event, ModBlockEntities.AUTO_CRAFTER.get());
+        itemCap(event, ModBlockEntities.BUFFER.get());
         itemCap(event, ModBlockEntities.WIRELESS_CARGO_TERMINAL.get());
         itemCap(event, ModBlockEntities.STORAGE_REQUEST_TERMINAL.get());
         itemCap(event, ModBlockEntities.TRAIN_CARGO_INTERFACE.get());

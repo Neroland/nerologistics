@@ -17,6 +17,12 @@
   "item.nerologistics.item_storage": "Item Storage",
   "block.nerologistics.auto_crafter": "Auto-Crafter",
   "item.nerologistics.auto_crafter": "Auto-Crafter",
+  "block.nerologistics.buffer": "Buffer",
+  "item.nerologistics.buffer": "Buffer",
+  "block.nerologistics.buffer.hint": "Sneak-click block to toggle mode",
+  "block.nerologistics.buffer.mode": "Buffer mode: %s",
+  "block.nerologistics.buffer.mode.passive": "passive cache",
+  "block.nerologistics.buffer.mode.keep_stocked": "keep stocked",
 
   "block.nerologistics.item_duct": "Item Duct",
   "item.nerologistics.item_duct": "Item Duct",

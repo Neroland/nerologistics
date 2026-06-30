@@ -13,6 +13,7 @@ import za.co.neroland.nerologistics.conduit.DroneHubBlock;
 import za.co.neroland.nerologistics.conduit.EnergyCableBlock;
 import za.co.neroland.nerologistics.conduit.FluidDuctBlock;
 import za.co.neroland.nerologistics.conduit.AutoCrafterBlock;
+import za.co.neroland.nerologistics.conduit.BufferBlock;
 import za.co.neroland.nerologistics.conduit.ItemDuctBlock;
 import za.co.neroland.nerologistics.conduit.ItemStorageBlock;
 import za.co.neroland.nerologistics.conduit.NetworkControllerBlock;
@@ -46,6 +47,10 @@ public final class ModBlocks {
     // --- Stage 9: native auto-crafting -------------------------------------
     public static final RegistryEntry<AutoCrafterBlock> AUTO_CRAFTER =
             register("auto_crafter", AutoCrafterBlock::new);
+
+    // --- Stage 10: buffer block --------------------------------------------
+    public static final RegistryEntry<BufferBlock> BUFFER =
+            register("buffer", BufferBlock::new);
 
     public static final RegistryEntry<ItemDuctBlock> ITEM_DUCT =
             register("item_duct", ItemDuctBlock::new);

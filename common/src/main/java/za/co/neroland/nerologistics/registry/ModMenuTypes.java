@@ -6,6 +6,7 @@ import net.minecraft.world.inventory.MenuType;
 
 import za.co.neroland.nerologistics.NeroLogisticsCommon;
 import za.co.neroland.nerologistics.menu.AutoCrafterMenu;
+import za.co.neroland.nerologistics.menu.BufferMenu;
 import za.co.neroland.nerologistics.menu.FilterMenu;
 import za.co.neroland.nerologistics.menu.StorageRequestMenu;
 import za.co.neroland.nerologistics.registry.RegistrationProvider.RegistryEntry;
@@ -25,6 +26,9 @@ public final class ModMenuTypes {
 
     public static final RegistryEntry<MenuType<AutoCrafterMenu>> AUTO_CRAFTER =
             MENUS.register("auto_crafter", key -> new MenuType<>(AutoCrafterMenu::new, FeatureFlags.VANILLA_SET));
+
+    public static final RegistryEntry<MenuType<BufferMenu>> BUFFER =
+            MENUS.register("buffer", key -> new MenuType<>(BufferMenu::new, FeatureFlags.VANILLA_SET));
 
     private ModMenuTypes() {
     }

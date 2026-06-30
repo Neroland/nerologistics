@@ -38,6 +38,7 @@ public final class NeroLogisticsFabric implements ModInitializer {
         // and other mods move items in/out (NeroLogistics' own ducts use the vanilla Container directly).
         item(ModBlockEntities.ITEM_STORAGE.get());
         item(ModBlockEntities.AUTO_CRAFTER.get());
+        item(ModBlockEntities.BUFFER.get());
         item(ModBlockEntities.WIRELESS_CARGO_TERMINAL.get());
         item(ModBlockEntities.STORAGE_REQUEST_TERMINAL.get());
         item(ModBlockEntities.TRAIN_CARGO_INTERFACE.get());

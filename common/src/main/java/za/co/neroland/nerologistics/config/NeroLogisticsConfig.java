@@ -45,6 +45,13 @@ public final class NeroLogisticsConfig {
     private static final ConfigValue<Integer> CONTROLLER_MAX_PERCENT = SCHEMA.intRange("controllerMaxPercent",
             500, 100, 100_000, true, "cap on a controller's managed throughput multiplier (100 = no boost)");
 
+    // --- Stage 10: buffer blocks -------------------------------------------
+    private static final ConfigValue<Boolean> ENABLE_BUFFERS = SCHEMA.bool("enableBuffers",
+            true, true, "master toggle for keep-stocked buffer leveling (passive buffers always hold)");
+
+    private static final ConfigValue<Integer> BUFFER_INTERVAL = SCHEMA.intRange("bufferIntervalTicks",
+            20, 1, 1_200, true, "ticks between a keep-stocked buffer's top-up/overflow passes");
+
     // --- Stage 9: native auto-crafting -------------------------------------
     private static final ConfigValue<Boolean> ENABLE_AUTO_CRAFTING = SCHEMA.bool("enableAutoCrafting",
             true, true, "master toggle for the auto-crafter");
@@ -140,6 +147,14 @@ public final class NeroLogisticsConfig {
 
     public static int maxNodesPerNetwork() {
         return MAX_NODES.get();
+    }
+
+    public static boolean enableBuffers() {
+        return ENABLE_BUFFERS.get();
+    }
+
+    public static int bufferIntervalTicks() {
+        return BUFFER_INTERVAL.get();
     }
 
     public static boolean enableAutoCrafting() {

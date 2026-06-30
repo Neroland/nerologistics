@@ -6,6 +6,7 @@ import net.minecraft.client.gui.screens.MenuScreens;
 
 import za.co.neroland.nerologistics.NeroLogisticsCommon;
 import za.co.neroland.nerologistics.client.AutoCrafterScreen;
+import za.co.neroland.nerologistics.client.BufferScreen;
 import za.co.neroland.nerologistics.client.DeliveryDroneRenderer;
 import za.co.neroland.nerologistics.client.FilterScreen;
 import za.co.neroland.nerologistics.client.StorageRequestScreen;
@@ -21,6 +22,7 @@ public final class NeroLogisticsFabricClient implements ClientModInitializer {
         MenuScreens.register(ModMenuTypes.STORAGE_REQUEST.get(), StorageRequestScreen::new);
         MenuScreens.register(ModMenuTypes.FILTER.get(), FilterScreen::new);
         MenuScreens.register(ModMenuTypes.AUTO_CRAFTER.get(), AutoCrafterScreen::new);
+        MenuScreens.register(ModMenuTypes.BUFFER.get(), BufferScreen::new);
         EntityRendererRegistry.register(ModEntities.DELIVERY_DRONE.get(), DeliveryDroneRenderer::new);
     }
 }
