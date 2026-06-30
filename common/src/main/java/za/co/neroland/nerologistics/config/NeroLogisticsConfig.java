@@ -45,6 +45,25 @@ public final class NeroLogisticsConfig {
     private static final ConfigValue<Integer> CONTROLLER_MAX_PERCENT = SCHEMA.intRange("controllerMaxPercent",
             500, 100, 100_000, true, "cap on a controller's managed throughput multiplier (100 = no boost)");
 
+    // --- Stage 12: native trains -------------------------------------------
+    private static final ConfigValue<Boolean> ENABLE_TRAINS = SCHEMA.bool("enableTrains",
+            true, true, "master toggle for native train stations");
+
+    private static final ConfigValue<Integer> TRAIN_INTERVAL = SCHEMA.intRange("trainStationIntervalTicks",
+            100, 1, 72_000, true, "ticks between a load station's bulk haul attempts");
+
+    private static final ConfigValue<Integer> TRAIN_TICKS_PER_BLOCK = SCHEMA.intRange("trainTicksPerBlock",
+            2, 0, 1_200, true, "transit ticks added per block of distance between stations (slower = more travel feel)");
+
+    private static final ConfigValue<Integer> TRAIN_MIN_TRANSIT = SCHEMA.intRange("trainMinTransitTicks",
+            40, 1, 1_728_000, true, "minimum transit time for a train haul");
+
+    private static final ConfigValue<Integer> TRAIN_MAX_RANGE = SCHEMA.intRange("trainMaxRange",
+            2_048, 1, 30_000_000, true, "max block distance a load station ships to an unload station");
+
+    private static final ConfigValue<Integer> TRAIN_BULK_PER_TRIP = SCHEMA.intRange("trainBulkPerTrip",
+            27, 1, 54, true, "max buffer slots a station hauls per trip (bulk)");
+
     // --- Stage 11: drone ports ---------------------------------------------
     private static final ConfigValue<Integer> MAX_DRONES_PER_PORT = SCHEMA.intRange("maxDronesPerPort",
             8, 1, 256, true, "hard cap on drones (parallel lanes) a single drone port counts");
@@ -160,6 +179,30 @@ public final class NeroLogisticsConfig {
 
     public static int maxNodesPerNetwork() {
         return MAX_NODES.get();
+    }
+
+    public static boolean enableTrains() {
+        return ENABLE_TRAINS.get();
+    }
+
+    public static int trainStationIntervalTicks() {
+        return TRAIN_INTERVAL.get();
+    }
+
+    public static int trainTicksPerBlock() {
+        return TRAIN_TICKS_PER_BLOCK.get();
+    }
+
+    public static int trainMinTransitTicks() {
+        return TRAIN_MIN_TRANSIT.get();
+    }
+
+    public static int trainMaxRange() {
+        return TRAIN_MAX_RANGE.get();
+    }
+
+    public static int trainBulkPerTrip() {
+        return TRAIN_BULK_PER_TRIP.get();
     }
 
     public static int maxDronesPerPort() {

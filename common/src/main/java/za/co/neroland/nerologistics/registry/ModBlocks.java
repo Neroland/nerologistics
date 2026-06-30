@@ -23,6 +23,7 @@ import za.co.neroland.nerologistics.conduit.RocketCargoPortBlock;
 import za.co.neroland.nerologistics.conduit.UniversalDuctBlock;
 import za.co.neroland.nerologistics.conduit.StorageRequestTerminalBlock;
 import za.co.neroland.nerologistics.conduit.TrainCargoInterfaceBlock;
+import za.co.neroland.nerologistics.conduit.TrainStationBlock;
 import za.co.neroland.nerologistics.conduit.WirelessCargoTerminalBlock;
 import za.co.neroland.nerologistics.dashboard.LogisticsDashboardBlock;
 import za.co.neroland.nerologistics.registry.RegistrationProvider.RegistryEntry;
@@ -56,6 +57,10 @@ public final class ModBlocks {
     // --- Stage 11: drone port ----------------------------------------------
     public static final RegistryEntry<DronePortBlock> DRONE_PORT =
             register("drone_port", DronePortBlock::new);
+
+    // --- Stage 12: native trains -------------------------------------------
+    public static final RegistryEntry<TrainStationBlock> TRAIN_STATION =
+            register("train_station", TrainStationBlock::new);
 
     public static final RegistryEntry<ItemDuctBlock> ITEM_DUCT =
             register("item_duct", ItemDuctBlock::new);

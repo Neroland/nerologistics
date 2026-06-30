@@ -33,6 +33,12 @@
   "item.nerologistics.drone": "Drone",
   "item.nerologistics.hyperspeed_card": "Hyperspeed Card",
 
+  "block.nerologistics.train_station": "Train Station",
+  "item.nerologistics.train_station": "Train Station",
+  "block.nerologistics.train_station.mode": "Train station: %s",
+  "block.nerologistics.train_station.mode.load": "load (send)",
+  "block.nerologistics.train_station.mode.unload": "unload (receive)",
+
   "block.nerologistics.item_duct": "Item Duct",
   "item.nerologistics.item_duct": "Item Duct",
   "block.nerologistics.fluid_duct": "Fluid Duct",

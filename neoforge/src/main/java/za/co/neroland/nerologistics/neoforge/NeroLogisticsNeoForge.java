@@ -68,6 +68,7 @@ public final class NeroLogisticsNeoForge {
         itemCap(event, ModBlockEntities.AUTO_CRAFTER.get());
         itemCap(event, ModBlockEntities.BUFFER.get());
         itemCap(event, ModBlockEntities.DRONE_PORT.get());
+        itemCap(event, ModBlockEntities.TRAIN_STATION.get());
         itemCap(event, ModBlockEntities.WIRELESS_CARGO_TERMINAL.get());
         itemCap(event, ModBlockEntities.STORAGE_REQUEST_TERMINAL.get());
         itemCap(event, ModBlockEntities.TRAIN_CARGO_INTERFACE.get());

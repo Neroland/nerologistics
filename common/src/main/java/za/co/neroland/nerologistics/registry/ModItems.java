@@ -43,6 +43,10 @@ public final class ModItems {
     public static final RegistryEntry<Item> HYPERSPEED_CARD =
             ITEMS.register("hyperspeed_card", key -> new Item(new Item.Properties().setId(key)));
 
+    // --- Stage 12: native trains --------------------------------------------
+    public static final RegistryEntry<BlockItem> TRAIN_STATION_ITEM =
+            blockItem("train_station", ModBlocks.TRAIN_STATION);
+
     public static final RegistryEntry<BlockItem> ITEM_DUCT_ITEM = blockItem("item_duct", ModBlocks.ITEM_DUCT);
     public static final RegistryEntry<BlockItem> FLUID_DUCT_ITEM = blockItem("fluid_duct", ModBlocks.FLUID_DUCT);
     public static final RegistryEntry<BlockItem> ENERGY_CABLE_ITEM = blockItem("energy_cable", ModBlocks.ENERGY_CABLE);
@@ -74,7 +78,7 @@ public final class ModItems {
                 UNIVERSAL_DUCT_ITEM, ITEM_STORAGE_ITEM, AUTO_CRAFTER_ITEM, BUFFER_ITEM,
                 ITEM_DUCT_ITEM, FLUID_DUCT_ITEM, ENERGY_CABLE_ITEM,
                 WIRELESS_CARGO_TERMINAL_ITEM, STORAGE_REQUEST_TERMINAL_ITEM,
-                TRAIN_CARGO_INTERFACE_ITEM, DRONE_HUB_ITEM, ROCKET_CARGO_PORT_ITEM,
+                TRAIN_CARGO_INTERFACE_ITEM, TRAIN_STATION_ITEM, DRONE_HUB_ITEM, ROCKET_CARGO_PORT_ITEM,
                 DRONE_PORT_ITEM, DRONE, HYPERSPEED_CARD,
                 LOGISTICS_DASHBOARD_ITEM, CONFIGURATOR);
     }

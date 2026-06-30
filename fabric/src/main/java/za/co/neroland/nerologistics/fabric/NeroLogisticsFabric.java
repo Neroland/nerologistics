@@ -40,6 +40,8 @@ public final class NeroLogisticsFabric implements ModInitializer {
         item(ModBlockEntities.ITEM_STORAGE.get());
         item(ModBlockEntities.AUTO_CRAFTER.get());
         item(ModBlockEntities.BUFFER.get());
+        item(ModBlockEntities.DRONE_PORT.get());
+        item(ModBlockEntities.TRAIN_STATION.get());
         item(ModBlockEntities.WIRELESS_CARGO_TERMINAL.get());
         item(ModBlockEntities.STORAGE_REQUEST_TERMINAL.get());
         item(ModBlockEntities.TRAIN_CARGO_INTERFACE.get());

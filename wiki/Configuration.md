@@ -64,6 +64,17 @@ See [Auto-Crafting](Auto-Crafting.md).
 
 See [Drone Ports](Drone-Ports.md).
 
+## Native trains
+
+- **`enableTrains`** (default `true`) — master toggle for native train stations.
+- **`trainStationIntervalTicks`** (default `100`) — ticks between a load station's haul attempts.
+- **`trainTicksPerBlock`** (default `2`) — transit ticks added per block of distance.
+- **`trainMinTransitTicks`** (default `40`) — minimum transit time for a haul.
+- **`trainMaxRange`** (default `2048`) — max distance a load station ships to an unload station.
+- **`trainBulkPerTrip`** (default `27`) — max buffer slots hauled per trip.
+
+See [Trains](Trains.md).
+
 ## Cross-dimension shipping
 
 - **`enableCrossDimension`** (default `true`) — master toggle for rocket cargo ports.

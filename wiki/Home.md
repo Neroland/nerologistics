@@ -19,6 +19,7 @@ Player- and contributor-facing documentation for **NeroLogistics**, part of the
 - [Buffers](Buffers.md) — keep-stocked and passive-cache reservoir blocks.
 - [Drone Ports](Drone-Ports.md) — standalone RF ports that move items point-to-point and between
   networks; drones-as-lanes and the unrendered Hyperspeed upgrade.
+- [Trains](Trains.md) — native cheap bulk hauling between train stations on a named line.
 - [Conduits](Conduits.md) — legacy item ducts, fluid ducts and energy cables; per-face modes, filters,
   and how networks form.
 - [Terminals](Terminals.md) — wireless cargo terminals, the storage request terminal, and the Create
