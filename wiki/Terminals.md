@@ -1,5 +1,12 @@
 # Terminals
 
+> **Redesign note:** the Storage Request Terminal now also recognises the
+> **[Universal Duct](Universal-Duct-and-Storage.md)** (not just the legacy item duct), so it aggregates
+> native **[Item Storage](Universal-Duct-and-Storage.md)** alongside any other inventories on the
+> network. **[Auto-Crafting](Auto-Crafting.md)** adds request-and-build on top of storage. A single
+> tabbed terminal (Items / Fluids / Gas / Crafting / Drone Ports) is the planned successor — see the
+> redesign docs.
+
 Three blocks extend logistics beyond a single conduit line. All three hold an internal buffer that
 hoppers, ducts, Create and other mods can fill and drain (they expose the standard item capability on
 Fabric and NeoForge).
@@ -32,10 +39,12 @@ output buffer with items pulled from the inventories on the adjacent item duct's
 
 A passive buffered inventory that bridges a NeroLogistics item network to **Create** train load/unload.
 NeroLogistics ducts treat it as an ordinary inventory endpoint; Create reaches the same buffer through
-the standard item capability — so trains carry network cargo with **no hard Create dependency**. Best
-for same-dimension long-haul before you unlock rockets.
+the standard item capability — so trains carry network cargo with **no hard Create dependency**. For
+native same-dimension bulk hauling with no other mods, see the **[Train Station](Trains.md)**; this
+interface is the optional Create bridge.
 
 ## See also
 
-- [Conduits](Conduits.md) · [Cross-Dimension Shipping](Cross-Dimension-Shipping.md) ·
-  [Configuration](Configuration.md)
+- [Conduits](Conduits.md) · [Universal Duct & Native Storage](Universal-Duct-and-Storage.md) ·
+  [Auto-Crafting](Auto-Crafting.md) · [Trains](Trains.md) ·
+  [Cross-Dimension Shipping](Cross-Dimension-Shipping.md) · [Configuration](Configuration.md)

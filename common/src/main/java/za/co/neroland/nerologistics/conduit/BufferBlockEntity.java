@@ -155,8 +155,9 @@ public class BufferBlockEntity extends AbstractTerminalBlockEntity implements Me
             if (got > 0) {
                 int inserted = InventoryTransfer.insert(this, Direction.UP, want, got);
                 if (inserted < got) {
-                    // Couldn't fit it all (shouldn't happen — bounded by room); return the remainder.
-                    ext.container.setChanged();
+                    // Couldn't fit it all (shouldn't happen — bounded by room); return the remainder so
+                    // nothing is voided even if the room invariant is ever violated.
+                    InventoryTransfer.insert(ext.container, ext.side, want, got - inserted);
                 }
                 need -= inserted;
             }

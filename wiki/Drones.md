@@ -1,8 +1,13 @@
 # Drones
 
+> **Redesign note:** the **[Drone Port](Drone-Ports.md)** is the current drone block — standalone,
+> RF-powered, with import/export modes, drones-as-lanes, name/Auto routing, and the unrendered
+> **Hyperspeed** upgrade. The **Drone Hub** below is the legacy Stage-3 block, kept for migration. New
+> setups should use Drone Ports.
+
 Drones carry items point-to-point without conduits or wireless links.
 
-## Drone Hub
+## Drone Hub (legacy)
 
 The hub stocks an item buffer (fill it with ducts/hoppers) and dispatches **delivery drones** to
 **wireless cargo terminals on its channel** within range. Right-click to cycle the hub's channel.
@@ -18,9 +23,10 @@ A lightweight non-living entity. It flies in a straight line from its hub to the
 cargo into the destination inventory (dropping any overflow), then despawns. A failsafe age bounds its
 lifetime so a stranded drone never lingers.
 
-> **Note:** the drone currently has a **placeholder renderer** — it works but is invisible. A proper
-> model and texture are a planned visual follow-up.
+> **Note:** the delivery drone's detailed animated model is part of the deferred visual/art pass (see
+> [MODELS.md](../../neroland-mc-ecosystem/nerologistics/MODELS.md) in the umbrella docs). Drone-port
+> **Hyperspeed** transfers deliberately spawn **no** drone entity at all, for performance.
 
 ## See also
 
-- [Terminals](Terminals.md) · [Configuration](Configuration.md)
+- [Drone Ports](Drone-Ports.md) · [Terminals](Terminals.md) · [Configuration](Configuration.md)

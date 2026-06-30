@@ -1,10 +1,18 @@
 # Conduits
 
-Conduits are the local transport backbone: three block types, one per medium.
+> **Redesign note:** the **[Universal Duct](Universal-Duct-and-Storage.md)** is now the default conduit —
+> one cheap duct that carries **items and fluids** on a single line. The separate item/fluid ducts below
+> are kept for migration and still interoperate (a universal duct merges with either). **Energy** still
+> travels on its own **Energy Cable**. For the managed network on top of conduits, see the
+> **[Network Controller](Controller.md)**.
 
-- **Item Duct** — moves items between adjacent inventories.
-- **Fluid Duct** — moves fluids between adjacent Nero fluid tanks/machines.
-- **Energy Cable** — moves Nero energy (NE) between adjacent machines and batteries.
+Conduits are the local transport backbone. The legacy line-up is three block types, one per medium.
+
+- **Item Duct** — moves items between adjacent inventories. *(Superseded by the Universal Duct.)*
+- **Fluid Duct** — moves fluids between adjacent Nero fluid tanks/machines. *(Superseded by the Universal
+  Duct.)*
+- **Energy Cable** — moves Nero energy (NE) between adjacent machines and batteries. *(Still the way to
+  move energy — the universal duct does not carry power.)*
 
 All three are crafted cheaply (a row of iron around glass / copper / redstone, six at a time) and
 mined with a pickaxe.
@@ -58,5 +66,6 @@ use Core's fluid lookup. Loader-native transfer-API and AE2 discovery are a plan
 
 ## See also
 
-- [Terminals](Terminals.md) · [Dashboard & Privacy](Dashboard-and-Privacy.md) ·
+- [Universal Duct & Native Storage](Universal-Duct-and-Storage.md) · [Network Controller](Controller.md)
+  · [Terminals](Terminals.md) · [Dashboard & Privacy](Dashboard-and-Privacy.md) ·
   [Configuration](Configuration.md)
