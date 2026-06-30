@@ -13,9 +13,11 @@ import za.co.neroland.nerologistics.conduit.DroneHubBlock;
 import za.co.neroland.nerologistics.conduit.EnergyCableBlock;
 import za.co.neroland.nerologistics.conduit.FluidDuctBlock;
 import za.co.neroland.nerologistics.conduit.ItemDuctBlock;
+import za.co.neroland.nerologistics.conduit.ItemStorageBlock;
 import za.co.neroland.nerologistics.conduit.NetworkControllerBlock;
 import za.co.neroland.nerologistics.conduit.NetworkModuleBlock;
 import za.co.neroland.nerologistics.conduit.RocketCargoPortBlock;
+import za.co.neroland.nerologistics.conduit.UniversalDuctBlock;
 import za.co.neroland.nerologistics.conduit.StorageRequestTerminalBlock;
 import za.co.neroland.nerologistics.conduit.TrainCargoInterfaceBlock;
 import za.co.neroland.nerologistics.conduit.WirelessCargoTerminalBlock;
@@ -33,6 +35,12 @@ public final class ModBlocks {
             register("network_controller", NetworkControllerBlock::new);
     public static final RegistryEntry<NetworkModuleBlock> NETWORK_MODULE =
             register("network_module", NetworkModuleBlock::new);
+
+    // --- Stage 8: universal duct + native storage --------------------------
+    public static final RegistryEntry<UniversalDuctBlock> UNIVERSAL_DUCT =
+            register("universal_duct", UniversalDuctBlock::new);
+    public static final RegistryEntry<ItemStorageBlock> ITEM_STORAGE =
+            register("item_storage", ItemStorageBlock::new);
 
     public static final RegistryEntry<ItemDuctBlock> ITEM_DUCT =
             register("item_duct", ItemDuctBlock::new);

@@ -1,6 +1,8 @@
 { "replace": false, "values": [
   "nerologistics:network_controller",
   "nerologistics:network_module",
+  "nerologistics:universal_duct",
+  "nerologistics:item_storage",
   "nerologistics:item_duct",
   "nerologistics:fluid_duct",
   "nerologistics:energy_cable",

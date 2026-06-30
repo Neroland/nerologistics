@@ -1,5 +1,7 @@
 package za.co.neroland.nerologistics.conduit;
 
+import java.util.Set;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -45,8 +47,18 @@ public abstract class AbstractConduitBlockEntity extends BlockEntity {
         this.sideConfig = defaultSideConfig(medium().channel());
     }
 
-    /** The single medium this conduit carries. */
+    /** The primary medium this conduit carries (also the channel its face config is stored under). */
     public abstract NetworkMedium medium();
+
+    /**
+     * Every medium this conduit carries. Single-medium conduits (item/fluid/energy ducts) return just
+     * their {@link #medium()}; the universal duct overrides this to join several per-medium networks at
+     * once (e.g. {@code ITEM} + {@code FLUID}). Face modes are shared across a conduit's media — they are
+     * read through {@link #faceMode(Direction)} on the primary channel.
+     */
+    public Set<NetworkMedium> media() {
+        return Set.of(medium());
+    }
 
     private static SideConfig defaultSideConfig(Channel channel) {
         SideConfig config = SideConfig.builder()
@@ -70,7 +82,9 @@ public abstract class AbstractConduitBlockEntity extends BlockEntity {
         if (changed) {
             setChanged();
             if (this.level != null && !this.level.isClientSide()) {
-                NetworkManager.invalidateAt(this.level, medium(), this.worldPosition);
+                for (NetworkMedium m : media()) {
+                    NetworkManager.invalidateAt(this.level, m, this.worldPosition);
+                }
             }
         }
         return changed;
@@ -106,21 +120,27 @@ public abstract class AbstractConduitBlockEntity extends BlockEntity {
     public void setRemoved() {
         super.setRemoved();
         if (this.level != null && !this.level.isClientSide()) {
-            NetworkManager.onRemoved(this.level, this.worldPosition, medium());
+            for (NetworkMedium m : media()) {
+                NetworkManager.onRemoved(this.level, this.worldPosition, m);
+            }
         }
     }
 
-    /** Server ticker target wired by the block: lazily joins the network, then drives transport. */
+    /** Server ticker target wired by the block: lazily joins each medium's network, then drives transport. */
     public static void serverTick(Level level, BlockPos pos, BlockState state, AbstractConduitBlockEntity be) {
         if (level.isClientSide()) {
             return;
         }
         if (!be.joined) {
-            NetworkManager.onPlaced(level, pos, be.medium());
+            for (NetworkMedium m : be.media()) {
+                NetworkManager.onPlaced(level, pos, m);
+            }
             be.joined = true;
         }
         if (level instanceof ServerLevel serverLevel) {
-            NetworkManager.tick(serverLevel, be.medium(), pos);
+            for (NetworkMedium m : be.media()) {
+                NetworkManager.tick(serverLevel, m, pos);
+            }
         }
     }
 }

@@ -59,7 +59,8 @@ public final class NeroLogisticsNeoForge {
         event.registerBlockEntity(NeoForgeEnergyLookup.ENERGY, ModBlockEntities.ROCKET_CARGO_PORT.get(),
                 (be, side) -> be.getEnergy());
 
-        // Items: terminal/interface buffers on the standard item capability for hoppers, Create, AE2, etc.
+        // Items: terminal/interface/storage buffers on the standard item capability for hoppers, Create, AE2, etc.
+        itemCap(event, ModBlockEntities.ITEM_STORAGE.get());
         itemCap(event, ModBlockEntities.WIRELESS_CARGO_TERMINAL.get());
         itemCap(event, ModBlockEntities.STORAGE_REQUEST_TERMINAL.get());
         itemCap(event, ModBlockEntities.TRAIN_CARGO_INTERFACE.get());

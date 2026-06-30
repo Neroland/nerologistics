@@ -10,8 +10,10 @@ import za.co.neroland.nerologistics.conduit.DroneHubBlockEntity;
 import za.co.neroland.nerologistics.conduit.EnergyCableBlockEntity;
 import za.co.neroland.nerologistics.conduit.FluidDuctBlockEntity;
 import za.co.neroland.nerologistics.conduit.ItemDuctBlockEntity;
+import za.co.neroland.nerologistics.conduit.ItemStorageBlockEntity;
 import za.co.neroland.nerologistics.conduit.NetworkControllerBlockEntity;
 import za.co.neroland.nerologistics.conduit.RocketCargoPortBlockEntity;
+import za.co.neroland.nerologistics.conduit.UniversalDuctBlockEntity;
 import za.co.neroland.nerologistics.conduit.StorageRequestTerminalBlockEntity;
 import za.co.neroland.nerologistics.conduit.TrainCargoInterfaceBlockEntity;
 import za.co.neroland.nerologistics.conduit.WirelessCargoTerminalBlockEntity;
@@ -27,6 +29,16 @@ public final class ModBlockEntities {
             BLOCK_ENTITIES.register("network_controller",
                     key -> new BlockEntityType<>(NetworkControllerBlockEntity::new,
                             Set.of(ModBlocks.NETWORK_CONTROLLER.get())));
+
+    public static final RegistryEntry<BlockEntityType<UniversalDuctBlockEntity>> UNIVERSAL_DUCT =
+            BLOCK_ENTITIES.register("universal_duct",
+                    key -> new BlockEntityType<>(UniversalDuctBlockEntity::new,
+                            Set.of(ModBlocks.UNIVERSAL_DUCT.get())));
+
+    public static final RegistryEntry<BlockEntityType<ItemStorageBlockEntity>> ITEM_STORAGE =
+            BLOCK_ENTITIES.register("item_storage",
+                    key -> new BlockEntityType<>(ItemStorageBlockEntity::new,
+                            Set.of(ModBlocks.ITEM_STORAGE.get())));
 
     public static final RegistryEntry<BlockEntityType<ItemDuctBlockEntity>> ITEM_DUCT =
             BLOCK_ENTITIES.register("item_duct",

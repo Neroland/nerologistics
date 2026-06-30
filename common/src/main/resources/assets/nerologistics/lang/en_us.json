@@ -11,6 +11,11 @@
   "block.nerologistics.network_module": "Network Module",
   "item.nerologistics.network_module": "Network Module",
 
+  "block.nerologistics.universal_duct": "Universal Duct",
+  "item.nerologistics.universal_duct": "Universal Duct",
+  "block.nerologistics.item_storage": "Item Storage",
+  "item.nerologistics.item_storage": "Item Storage",
+
   "block.nerologistics.item_duct": "Item Duct",
   "item.nerologistics.item_duct": "Item Duct",
   "block.nerologistics.fluid_duct": "Fluid Duct",

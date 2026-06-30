@@ -33,8 +33,9 @@ public final class NeroLogisticsFabric implements ModInitializer {
         energy(ModBlockEntities.DRONE_HUB.get());
         energy(ModBlockEntities.ROCKET_CARGO_PORT.get());
 
-        // Items: expose terminal/interface buffers on the Fabric Transfer API so hoppers, Create and
-        // other mods move items in/out (NeroLogistics' own ducts use the vanilla Container directly).
+        // Items: expose terminal/interface/storage buffers on the Fabric Transfer API so hoppers, Create
+        // and other mods move items in/out (NeroLogistics' own ducts use the vanilla Container directly).
+        item(ModBlockEntities.ITEM_STORAGE.get());
         item(ModBlockEntities.WIRELESS_CARGO_TERMINAL.get());
         item(ModBlockEntities.STORAGE_REQUEST_TERMINAL.get());
         item(ModBlockEntities.TRAIN_CARGO_INTERFACE.get());
