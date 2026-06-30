@@ -3,6 +3,18 @@
 NeroLogistics config is managed by Neroland Core's config manager (schema id `nerologistics`). Every
 value below is **server-authoritative** — the server's values win and sync to clients.
 
+## Network controller
+
+- **`enableController`** (default `true`) — master toggle for the controller's managed throughput boost.
+- **`controllerUpkeepPerTick`** (default `8`) — NE/tick to keep a controller powered; below this it
+  manages at base speed.
+- **`controllerModuleBonusPercent`** (default `25`) — throughput bonus (%) each connected network module
+  adds to a powered controller.
+- **`controllerMaxModules`** (default `16`) — max modules a controller counts (bounds the flood-fill).
+- **`controllerMaxPercent`** (default `500`) — cap on the managed throughput multiplier (`100` = no boost).
+
+See [Network Controller](Controller.md) for how it works.
+
 ## Local transport (conduits)
 
 - **`itemTransferPerTick`** (default `64`) — max items moved per item network per tick.

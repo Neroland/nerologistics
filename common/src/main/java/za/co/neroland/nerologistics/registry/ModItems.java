@@ -19,6 +19,12 @@ public final class ModItems {
     public static final RegistrationProvider<Item> ITEMS =
             RegistrationProvider.get(Registries.ITEM, NeroLogisticsCommon.MOD_ID);
 
+    // --- Stage 7: network controller + module -------------------------------
+    public static final RegistryEntry<BlockItem> NETWORK_CONTROLLER_ITEM =
+            blockItem("network_controller", ModBlocks.NETWORK_CONTROLLER);
+    public static final RegistryEntry<BlockItem> NETWORK_MODULE_ITEM =
+            blockItem("network_module", ModBlocks.NETWORK_MODULE);
+
     public static final RegistryEntry<BlockItem> ITEM_DUCT_ITEM = blockItem("item_duct", ModBlocks.ITEM_DUCT);
     public static final RegistryEntry<BlockItem> FLUID_DUCT_ITEM = blockItem("fluid_duct", ModBlocks.FLUID_DUCT);
     public static final RegistryEntry<BlockItem> ENERGY_CABLE_ITEM = blockItem("energy_cable", ModBlocks.ENERGY_CABLE);
@@ -46,7 +52,8 @@ public final class ModItems {
             ITEMS.register("configurator", key -> new ConfiguratorItem(new Item.Properties().setId(key)));
 
     private static List<RegistryEntry<? extends ItemLike>> creativeOrder() {
-        return List.of(ITEM_DUCT_ITEM, FLUID_DUCT_ITEM, ENERGY_CABLE_ITEM,
+        return List.of(NETWORK_CONTROLLER_ITEM, NETWORK_MODULE_ITEM,
+                ITEM_DUCT_ITEM, FLUID_DUCT_ITEM, ENERGY_CABLE_ITEM,
                 WIRELESS_CARGO_TERMINAL_ITEM, STORAGE_REQUEST_TERMINAL_ITEM,
                 TRAIN_CARGO_INTERFACE_ITEM, DRONE_HUB_ITEM, ROCKET_CARGO_PORT_ITEM,
                 LOGISTICS_DASHBOARD_ITEM, CONFIGURATOR);

@@ -27,7 +27,8 @@ public final class NeroLogisticsFabric implements ModInitializer {
         // Anonymous, NeroLogistics-only crash reporting (opt-out via config; off in dev unless DSN set).
         NeroLogisticsTelemetry.init();
 
-        // Energy: terminals/hub/port accept NE from cables on Core's shared energy lookup.
+        // Energy: controller/terminals/hub/port accept NE from cables on Core's shared energy lookup.
+        energy(ModBlockEntities.NETWORK_CONTROLLER.get());
         energy(ModBlockEntities.WIRELESS_CARGO_TERMINAL.get());
         energy(ModBlockEntities.DRONE_HUB.get());
         energy(ModBlockEntities.ROCKET_CARGO_PORT.get());

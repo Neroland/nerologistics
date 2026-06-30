@@ -49,7 +49,9 @@ public final class NeroLogisticsNeoForge {
     }
 
     private static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
-        // Energy: cables power the wireless terminal + drone hub via Core's shared energy capability.
+        // Energy: cables power the network controller, wireless terminal + drone hub via Core's shared cap.
+        event.registerBlockEntity(NeoForgeEnergyLookup.ENERGY, ModBlockEntities.NETWORK_CONTROLLER.get(),
+                (be, side) -> be.getEnergy());
         event.registerBlockEntity(NeoForgeEnergyLookup.ENERGY, ModBlockEntities.WIRELESS_CARGO_TERMINAL.get(),
                 (be, side) -> be.getEnergy());
         event.registerBlockEntity(NeoForgeEnergyLookup.ENERGY, ModBlockEntities.DRONE_HUB.get(),

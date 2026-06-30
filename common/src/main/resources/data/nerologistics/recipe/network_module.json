@@ -1,0 +1,4 @@
+{ "type": "minecraft:crafting_shaped", "category": "misc",
+  "key": { "I": "minecraft:iron_ingot", "R": "minecraft:redstone", "Q": "minecraft:quartz" },
+  "pattern": [ "IRI", "RQR", "IRI" ],
+  "result": { "id": "nerologistics:network_module", "count": 2 } }

@@ -1,0 +1,4 @@
+{ "type": "minecraft:crafting_shaped", "category": "misc",
+  "key": { "D": "minecraft:diamond", "R": "minecraft:redstone_block", "E": "minecraft:ender_eye", "I": "minecraft:iron_block" },
+  "pattern": [ "DED", "RIR", "DED" ],
+  "result": { "id": "nerologistics:network_controller" } }

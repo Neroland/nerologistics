@@ -10,6 +10,8 @@ Player- and contributor-facing documentation for **NeroLogistics**, part of the
 
 ## Contents
 
+- [Network Controller](Controller.md) — the optional single brain that manages a network and scales
+  its throughput with network modules.
 - [Conduits](Conduits.md) — item ducts, fluid ducts and energy cables; per-face modes, filters, and
   how networks form.
 - [Terminals](Terminals.md) — wireless cargo terminals, the storage request terminal, and the Create

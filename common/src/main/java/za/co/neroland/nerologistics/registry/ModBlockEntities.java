@@ -10,6 +10,7 @@ import za.co.neroland.nerologistics.conduit.DroneHubBlockEntity;
 import za.co.neroland.nerologistics.conduit.EnergyCableBlockEntity;
 import za.co.neroland.nerologistics.conduit.FluidDuctBlockEntity;
 import za.co.neroland.nerologistics.conduit.ItemDuctBlockEntity;
+import za.co.neroland.nerologistics.conduit.NetworkControllerBlockEntity;
 import za.co.neroland.nerologistics.conduit.RocketCargoPortBlockEntity;
 import za.co.neroland.nerologistics.conduit.StorageRequestTerminalBlockEntity;
 import za.co.neroland.nerologistics.conduit.TrainCargoInterfaceBlockEntity;
@@ -21,6 +22,11 @@ public final class ModBlockEntities {
 
     public static final RegistrationProvider<BlockEntityType<?>> BLOCK_ENTITIES =
             RegistrationProvider.get(Registries.BLOCK_ENTITY_TYPE, NeroLogisticsCommon.MOD_ID);
+
+    public static final RegistryEntry<BlockEntityType<NetworkControllerBlockEntity>> NETWORK_CONTROLLER =
+            BLOCK_ENTITIES.register("network_controller",
+                    key -> new BlockEntityType<>(NetworkControllerBlockEntity::new,
+                            Set.of(ModBlocks.NETWORK_CONTROLLER.get())));
 
     public static final RegistryEntry<BlockEntityType<ItemDuctBlockEntity>> ITEM_DUCT =
             BLOCK_ENTITIES.register("item_duct",

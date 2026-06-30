@@ -28,6 +28,23 @@ public final class NeroLogisticsConfig {
             2_000, 1, 1_000_000, true,
             "max conduits in one network; a conduit that would exceed it stays isolated (no lag spiral)");
 
+    // --- Stage 7: network controller + modular capacity --------------------
+    private static final ConfigValue<Boolean> ENABLE_CONTROLLER = SCHEMA.bool("enableController",
+            true, true, "master toggle for the network controller's managed throughput boost");
+
+    private static final ConfigValue<Integer> CONTROLLER_UPKEEP = SCHEMA.intRange("controllerUpkeepPerTick",
+            8, 0, 1_000_000, true,
+            "NE drawn per tick to keep a controller powered; below this the controller manages at base speed");
+
+    private static final ConfigValue<Integer> CONTROLLER_MODULE_BONUS = SCHEMA.intRange("controllerModuleBonusPercent",
+            25, 0, 1_000, true, "throughput bonus (%) each connected network module adds to a powered controller");
+
+    private static final ConfigValue<Integer> CONTROLLER_MAX_MODULES = SCHEMA.intRange("controllerMaxModules",
+            16, 0, 4_096, true, "max network modules a single controller counts (bounds the flood-fill)");
+
+    private static final ConfigValue<Integer> CONTROLLER_MAX_PERCENT = SCHEMA.intRange("controllerMaxPercent",
+            500, 100, 100_000, true, "cap on a controller's managed throughput multiplier (100 = no boost)");
+
     // --- Stage 3: wireless + drones ----------------------------------------
     private static final ConfigValue<Integer> WIRELESS_RANGE = SCHEMA.intRange("wirelessRange",
             64, 1, 1_024, true, "max block distance between two wireless terminals on the same channel");
@@ -109,6 +126,26 @@ public final class NeroLogisticsConfig {
 
     public static int maxNodesPerNetwork() {
         return MAX_NODES.get();
+    }
+
+    public static boolean enableController() {
+        return ENABLE_CONTROLLER.get();
+    }
+
+    public static int controllerUpkeepPerTick() {
+        return CONTROLLER_UPKEEP.get();
+    }
+
+    public static int controllerModuleBonusPercent() {
+        return CONTROLLER_MODULE_BONUS.get();
+    }
+
+    public static int controllerMaxModules() {
+        return CONTROLLER_MAX_MODULES.get();
+    }
+
+    public static int controllerMaxPercent() {
+        return CONTROLLER_MAX_PERCENT.get();
     }
 
     public static int wirelessRange() {

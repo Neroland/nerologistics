@@ -1,6 +1,16 @@
 {
   "itemGroup.nerologistics": "NeroLogistics",
 
+  "block.nerologistics.network_controller": "Network Controller",
+  "item.nerologistics.network_controller": "Network Controller",
+  "block.nerologistics.network_controller.status": "Controller: %s — %s modules, %s%% throughput",
+  "block.nerologistics.network_controller.status.idle": "idle (not attached to a network)",
+  "block.nerologistics.network_controller.status.active": "active",
+  "block.nerologistics.network_controller.status.conflict": "conflict",
+  "block.nerologistics.network_controller.conflict_hint": "Two controllers share one network. Use a single controller per network and bridge separate networks with drones.",
+  "block.nerologistics.network_module": "Network Module",
+  "item.nerologistics.network_module": "Network Module",
+
   "block.nerologistics.item_duct": "Item Duct",
   "item.nerologistics.item_duct": "Item Duct",
   "block.nerologistics.fluid_duct": "Fluid Duct",

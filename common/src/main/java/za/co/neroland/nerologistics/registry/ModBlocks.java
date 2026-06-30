@@ -13,6 +13,8 @@ import za.co.neroland.nerologistics.conduit.DroneHubBlock;
 import za.co.neroland.nerologistics.conduit.EnergyCableBlock;
 import za.co.neroland.nerologistics.conduit.FluidDuctBlock;
 import za.co.neroland.nerologistics.conduit.ItemDuctBlock;
+import za.co.neroland.nerologistics.conduit.NetworkControllerBlock;
+import za.co.neroland.nerologistics.conduit.NetworkModuleBlock;
 import za.co.neroland.nerologistics.conduit.RocketCargoPortBlock;
 import za.co.neroland.nerologistics.conduit.StorageRequestTerminalBlock;
 import za.co.neroland.nerologistics.conduit.TrainCargoInterfaceBlock;
@@ -25,6 +27,12 @@ public final class ModBlocks {
 
     public static final RegistrationProvider<Block> BLOCKS =
             RegistrationProvider.get(Registries.BLOCK, NeroLogisticsCommon.MOD_ID);
+
+    // --- Stage 7: network controller + modular capacity --------------------
+    public static final RegistryEntry<NetworkControllerBlock> NETWORK_CONTROLLER =
+            register("network_controller", NetworkControllerBlock::new);
+    public static final RegistryEntry<NetworkModuleBlock> NETWORK_MODULE =
+            register("network_module", NetworkModuleBlock::new);
 
     public static final RegistryEntry<ItemDuctBlock> ITEM_DUCT =
             register("item_duct", ItemDuctBlock::new);
