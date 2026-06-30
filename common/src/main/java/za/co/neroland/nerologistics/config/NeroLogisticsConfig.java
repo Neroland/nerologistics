@@ -45,6 +45,19 @@ public final class NeroLogisticsConfig {
     private static final ConfigValue<Integer> CONTROLLER_MAX_PERCENT = SCHEMA.intRange("controllerMaxPercent",
             500, 100, 100_000, true, "cap on a controller's managed throughput multiplier (100 = no boost)");
 
+    // --- Stage 11: drone ports ---------------------------------------------
+    private static final ConfigValue<Integer> MAX_DRONES_PER_PORT = SCHEMA.intRange("maxDronesPerPort",
+            8, 1, 256, true, "hard cap on drones (parallel lanes) a single drone port counts");
+
+    private static final ConfigValue<Integer> DRONE_PORT_RANGE = SCHEMA.intRange("dronePortRange",
+            256, 1, 4_096, true, "max block distance an export port will ship to an import port");
+
+    private static final ConfigValue<Integer> DRONE_PER_DRONE_CAPACITY = SCHEMA.intRange("dronePerDroneCapacity",
+            16, 1, 64, true, "items each drone carries per dispatch (throughput = drones × this)");
+
+    private static final ConfigValue<Integer> DRONE_PORT_ENERGY_PER_STACK = SCHEMA.intRange("dronePortEnergyPerStack",
+            256, 0, 10_000_000, true, "NE charged per drone dispatch from a port");
+
     // --- Stage 10: buffer blocks -------------------------------------------
     private static final ConfigValue<Boolean> ENABLE_BUFFERS = SCHEMA.bool("enableBuffers",
             true, true, "master toggle for keep-stocked buffer leveling (passive buffers always hold)");
@@ -147,6 +160,22 @@ public final class NeroLogisticsConfig {
 
     public static int maxNodesPerNetwork() {
         return MAX_NODES.get();
+    }
+
+    public static int maxDronesPerPort() {
+        return MAX_DRONES_PER_PORT.get();
+    }
+
+    public static int dronePortRange() {
+        return DRONE_PORT_RANGE.get();
+    }
+
+    public static int dronePerDroneCapacity() {
+        return DRONE_PER_DRONE_CAPACITY.get();
+    }
+
+    public static int dronePortEnergyPerStack() {
+        return DRONE_PORT_ENERGY_PER_STACK.get();
     }
 
     public static boolean enableBuffers() {

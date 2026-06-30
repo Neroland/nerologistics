@@ -11,6 +11,7 @@ import za.co.neroland.nerologistics.conduit.EnergyCableBlockEntity;
 import za.co.neroland.nerologistics.conduit.FluidDuctBlockEntity;
 import za.co.neroland.nerologistics.conduit.AutoCrafterBlockEntity;
 import za.co.neroland.nerologistics.conduit.BufferBlockEntity;
+import za.co.neroland.nerologistics.conduit.DronePortBlockEntity;
 import za.co.neroland.nerologistics.conduit.ItemDuctBlockEntity;
 import za.co.neroland.nerologistics.conduit.ItemStorageBlockEntity;
 import za.co.neroland.nerologistics.conduit.NetworkControllerBlockEntity;
@@ -50,6 +51,10 @@ public final class ModBlockEntities {
     public static final RegistryEntry<BlockEntityType<BufferBlockEntity>> BUFFER =
             BLOCK_ENTITIES.register("buffer",
                     key -> new BlockEntityType<>(BufferBlockEntity::new, Set.of(ModBlocks.BUFFER.get())));
+
+    public static final RegistryEntry<BlockEntityType<DronePortBlockEntity>> DRONE_PORT =
+            BLOCK_ENTITIES.register("drone_port",
+                    key -> new BlockEntityType<>(DronePortBlockEntity::new, Set.of(ModBlocks.DRONE_PORT.get())));
 
     public static final RegistryEntry<BlockEntityType<ItemDuctBlockEntity>> ITEM_DUCT =
             BLOCK_ENTITIES.register("item_duct",

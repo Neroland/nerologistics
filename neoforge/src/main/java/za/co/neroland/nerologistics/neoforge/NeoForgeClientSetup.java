@@ -7,6 +7,7 @@ import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import za.co.neroland.nerologistics.client.AutoCrafterScreen;
 import za.co.neroland.nerologistics.client.BufferScreen;
 import za.co.neroland.nerologistics.client.DeliveryDroneRenderer;
+import za.co.neroland.nerologistics.client.DronePortScreen;
 import za.co.neroland.nerologistics.client.FilterScreen;
 import za.co.neroland.nerologistics.client.StorageRequestScreen;
 import za.co.neroland.nerologistics.registry.ModEntities;
@@ -28,6 +29,7 @@ public final class NeoForgeClientSetup {
         event.register(ModMenuTypes.FILTER.get(), FilterScreen::new);
         event.register(ModMenuTypes.AUTO_CRAFTER.get(), AutoCrafterScreen::new);
         event.register(ModMenuTypes.BUFFER.get(), BufferScreen::new);
+        event.register(ModMenuTypes.DRONE_PORT.get(), DronePortScreen::new);
     }
 
     private static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {

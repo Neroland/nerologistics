@@ -1,0 +1,4 @@
+{ "type": "minecraft:crafting_shaped", "category": "misc",
+  "key": { "I": "minecraft:iron_ingot", "R": "minecraft:redstone", "P": "minecraft:phantom_membrane", "E": "minecraft:ender_pearl" },
+  "pattern": [ "RPR", "IEI" ],
+  "result": { "id": "nerologistics:drone", "count": 2 } }

@@ -30,6 +30,7 @@ public final class NeroLogisticsFabric implements ModInitializer {
         // Energy: controller/terminals/hub/port accept NE from cables on Core's shared energy lookup.
         energy(ModBlockEntities.NETWORK_CONTROLLER.get());
         energy(ModBlockEntities.AUTO_CRAFTER.get());
+        energy(ModBlockEntities.DRONE_PORT.get());
         energy(ModBlockEntities.WIRELESS_CARGO_TERMINAL.get());
         energy(ModBlockEntities.DRONE_HUB.get());
         energy(ModBlockEntities.ROCKET_CARGO_PORT.get());

@@ -17,6 +17,8 @@ Player- and contributor-facing documentation for **NeroLogistics**, part of the
 - [Auto-Crafting](Auto-Crafting.md) — the auto-crafter that builds items from network stock using a
   pattern.
 - [Buffers](Buffers.md) — keep-stocked and passive-cache reservoir blocks.
+- [Drone Ports](Drone-Ports.md) — standalone RF ports that move items point-to-point and between
+  networks; drones-as-lanes and the unrendered Hyperspeed upgrade.
 - [Conduits](Conduits.md) — legacy item ducts, fluid ducts and energy cables; per-face modes, filters,
   and how networks form.
 - [Terminals](Terminals.md) — wireless cargo terminals, the storage request terminal, and the Create

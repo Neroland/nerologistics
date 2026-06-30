@@ -54,6 +54,8 @@ public final class NeroLogisticsNeoForge {
                 (be, side) -> be.getEnergy());
         event.registerBlockEntity(NeoForgeEnergyLookup.ENERGY, ModBlockEntities.AUTO_CRAFTER.get(),
                 (be, side) -> be.getEnergy());
+        event.registerBlockEntity(NeoForgeEnergyLookup.ENERGY, ModBlockEntities.DRONE_PORT.get(),
+                (be, side) -> be.getEnergy());
         event.registerBlockEntity(NeoForgeEnergyLookup.ENERGY, ModBlockEntities.WIRELESS_CARGO_TERMINAL.get(),
                 (be, side) -> be.getEnergy());
         event.registerBlockEntity(NeoForgeEnergyLookup.ENERGY, ModBlockEntities.DRONE_HUB.get(),
@@ -65,6 +67,7 @@ public final class NeroLogisticsNeoForge {
         itemCap(event, ModBlockEntities.ITEM_STORAGE.get());
         itemCap(event, ModBlockEntities.AUTO_CRAFTER.get());
         itemCap(event, ModBlockEntities.BUFFER.get());
+        itemCap(event, ModBlockEntities.DRONE_PORT.get());
         itemCap(event, ModBlockEntities.WIRELESS_CARGO_TERMINAL.get());
         itemCap(event, ModBlockEntities.STORAGE_REQUEST_TERMINAL.get());
         itemCap(event, ModBlockEntities.TRAIN_CARGO_INTERFACE.get());

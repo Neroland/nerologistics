@@ -50,10 +50,19 @@ See [Auto-Crafting](Auto-Crafting.md).
 
 ## Drones
 
-- **`enableDrones`** (default `true`) — master toggle for drone hubs and delivery drones.
+- **`enableDrones`** (default `true`) — master toggle for drone hubs, drone ports and delivery drones.
 - **`droneRange`** (default `48`) — max block distance a drone travels from its hub.
 - **`dronesPerHub`** (default `4`) — hard cap on live drones per hub.
 - **`droneEnergyPerDelivery`** (default `512`) — NE charged per delivery dispatched.
+
+### Drone ports
+
+- **`maxDronesPerPort`** (default `8`) — hard cap on drones (lanes) a port counts.
+- **`dronePortRange`** (default `256`) — max distance an export port ships to an import port.
+- **`dronePerDroneCapacity`** (default `16`) — items each drone carries per dispatch.
+- **`dronePortEnergyPerStack`** (default `256`) — NE charged per dispatch.
+
+See [Drone Ports](Drone-Ports.md).
 
 ## Cross-dimension shipping
 

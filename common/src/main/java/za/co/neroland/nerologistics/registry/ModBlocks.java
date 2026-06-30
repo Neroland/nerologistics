@@ -14,6 +14,7 @@ import za.co.neroland.nerologistics.conduit.EnergyCableBlock;
 import za.co.neroland.nerologistics.conduit.FluidDuctBlock;
 import za.co.neroland.nerologistics.conduit.AutoCrafterBlock;
 import za.co.neroland.nerologistics.conduit.BufferBlock;
+import za.co.neroland.nerologistics.conduit.DronePortBlock;
 import za.co.neroland.nerologistics.conduit.ItemDuctBlock;
 import za.co.neroland.nerologistics.conduit.ItemStorageBlock;
 import za.co.neroland.nerologistics.conduit.NetworkControllerBlock;
@@ -51,6 +52,10 @@ public final class ModBlocks {
     // --- Stage 10: buffer block --------------------------------------------
     public static final RegistryEntry<BufferBlock> BUFFER =
             register("buffer", BufferBlock::new);
+
+    // --- Stage 11: drone port ----------------------------------------------
+    public static final RegistryEntry<DronePortBlock> DRONE_PORT =
+            register("drone_port", DronePortBlock::new);
 
     public static final RegistryEntry<ItemDuctBlock> ITEM_DUCT =
             register("item_duct", ItemDuctBlock::new);

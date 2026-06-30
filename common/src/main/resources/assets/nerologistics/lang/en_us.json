@@ -24,6 +24,15 @@
   "block.nerologistics.buffer.mode.passive": "passive cache",
   "block.nerologistics.buffer.mode.keep_stocked": "keep stocked",
 
+  "block.nerologistics.drone_port": "Drone Port",
+  "item.nerologistics.drone_port": "Drone Port",
+  "block.nerologistics.drone_port.hint": "Drones = lanes. Sneak-click block: import/export",
+  "block.nerologistics.drone_port.mode": "Drone port: %s",
+  "block.nerologistics.drone_port.mode.export": "export",
+  "block.nerologistics.drone_port.mode.import": "import",
+  "item.nerologistics.drone": "Drone",
+  "item.nerologistics.hyperspeed_card": "Hyperspeed Card",
+
   "block.nerologistics.item_duct": "Item Duct",
   "item.nerologistics.item_duct": "Item Duct",
   "block.nerologistics.fluid_duct": "Fluid Duct",
