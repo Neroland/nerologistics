@@ -45,6 +45,20 @@ public final class NeroLogisticsConfig {
     private static final ConfigValue<Integer> CONTROLLER_MAX_PERCENT = SCHEMA.intRange("controllerMaxPercent",
             500, 100, 100_000, true, "cap on a controller's managed throughput multiplier (100 = no boost)");
 
+    // --- Stage 9: native auto-crafting -------------------------------------
+    private static final ConfigValue<Boolean> ENABLE_AUTO_CRAFTING = SCHEMA.bool("enableAutoCrafting",
+            true, true, "master toggle for the auto-crafter");
+
+    private static final ConfigValue<Integer> CRAFT_INTERVAL = SCHEMA.intRange("craftIntervalTicks",
+            20, 1, 1_200, true, "ticks between an auto-crafter's crafting passes");
+
+    private static final ConfigValue<Integer> AUTO_CRAFT_ENERGY = SCHEMA.intRange("autoCraftEnergyPerCraft",
+            200, 0, 10_000_000, true, "NE charged per item crafted by an auto-crafter");
+
+    private static final ConfigValue<Integer> AUTO_CRAFTS_PER_INTERVAL = SCHEMA.intRange("autoCraftsPerInterval",
+            4, 1, 4_096, true,
+            "base crafts an auto-crafter runs per interval (scaled by the managing controller's capacity)");
+
     // --- Stage 3: wireless + drones ----------------------------------------
     private static final ConfigValue<Integer> WIRELESS_RANGE = SCHEMA.intRange("wirelessRange",
             64, 1, 1_024, true, "max block distance between two wireless terminals on the same channel");
@@ -126,6 +140,22 @@ public final class NeroLogisticsConfig {
 
     public static int maxNodesPerNetwork() {
         return MAX_NODES.get();
+    }
+
+    public static boolean enableAutoCrafting() {
+        return ENABLE_AUTO_CRAFTING.get();
+    }
+
+    public static int craftIntervalTicks() {
+        return CRAFT_INTERVAL.get();
+    }
+
+    public static int autoCraftEnergyPerCraft() {
+        return AUTO_CRAFT_ENERGY.get();
+    }
+
+    public static int autoCraftsPerInterval() {
+        return AUTO_CRAFTS_PER_INTERVAL.get();
     }
 
     public static boolean enableController() {

@@ -1,0 +1,2 @@
+{ "parent": "minecraft:block/orientable",
+  "textures": { "top": "nerologistics:block/device_top", "front": "nerologistics:block/auto_crafter", "side": "nerologistics:block/device_side" } }

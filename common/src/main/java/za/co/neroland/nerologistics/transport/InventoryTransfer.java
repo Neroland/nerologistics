@@ -105,6 +105,44 @@ public final class InventoryTransfer {
         return inserted;
     }
 
+    /** Total count of items matching {@code match} (by item type) extractable from {@code source}'s {@code side}. */
+    public static int count(Container source, Direction side, ItemStack match) {
+        int total = 0;
+        for (int slot : slotsForFace(source, side)) {
+            ItemStack stack = source.getItem(slot);
+            if (!stack.isEmpty() && ItemStack.isSameItem(stack, match) && canTake(source, slot, stack, side)) {
+                total += stack.getCount();
+            }
+        }
+        return total;
+    }
+
+    /**
+     * Extract up to {@code amount} of items matching {@code match} (by item type) from {@code source}'s
+     * {@code side}. Mutates the container.
+     *
+     * @return the number of items actually extracted.
+     */
+    public static int extract(Container source, Direction side, ItemStack match, int amount) {
+        int got = 0;
+        for (int slot : slotsForFace(source, side)) {
+            if (got >= amount) {
+                break;
+            }
+            ItemStack stack = source.getItem(slot);
+            if (stack.isEmpty() || !ItemStack.isSameItem(stack, match) || !canTake(source, slot, stack, side)) {
+                continue;
+            }
+            int take = Math.min(amount - got, stack.getCount());
+            stack.shrink(take);
+            got += take;
+        }
+        if (got > 0) {
+            source.setChanged();
+        }
+        return got;
+    }
+
     /** A slot the given face may extract from, holding a non-empty stack — or -1 if none. */
     public static int firstExtractableSlot(Container source, Direction side, int afterSlot) {
         int[] slots = slotsForFace(source, side);

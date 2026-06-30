@@ -30,6 +30,8 @@ public final class ModItems {
             blockItem("universal_duct", ModBlocks.UNIVERSAL_DUCT);
     public static final RegistryEntry<BlockItem> ITEM_STORAGE_ITEM =
             blockItem("item_storage", ModBlocks.ITEM_STORAGE);
+    public static final RegistryEntry<BlockItem> AUTO_CRAFTER_ITEM =
+            blockItem("auto_crafter", ModBlocks.AUTO_CRAFTER);
 
     public static final RegistryEntry<BlockItem> ITEM_DUCT_ITEM = blockItem("item_duct", ModBlocks.ITEM_DUCT);
     public static final RegistryEntry<BlockItem> FLUID_DUCT_ITEM = blockItem("fluid_duct", ModBlocks.FLUID_DUCT);
@@ -59,7 +61,7 @@ public final class ModItems {
 
     private static List<RegistryEntry<? extends ItemLike>> creativeOrder() {
         return List.of(NETWORK_CONTROLLER_ITEM, NETWORK_MODULE_ITEM,
-                UNIVERSAL_DUCT_ITEM, ITEM_STORAGE_ITEM,
+                UNIVERSAL_DUCT_ITEM, ITEM_STORAGE_ITEM, AUTO_CRAFTER_ITEM,
                 ITEM_DUCT_ITEM, FLUID_DUCT_ITEM, ENERGY_CABLE_ITEM,
                 WIRELESS_CARGO_TERMINAL_ITEM, STORAGE_REQUEST_TERMINAL_ITEM,
                 TRAIN_CARGO_INTERFACE_ITEM, DRONE_HUB_ITEM, ROCKET_CARGO_PORT_ITEM,

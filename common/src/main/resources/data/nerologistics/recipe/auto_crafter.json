@@ -1,0 +1,4 @@
+{ "type": "minecraft:crafting_shaped", "category": "misc",
+  "key": { "I": "minecraft:iron_ingot", "C": "minecraft:crafting_table", "R": "minecraft:redstone_block", "T": "minecraft:crafter" },
+  "pattern": [ "ICI", "RTR", "ICI" ],
+  "result": { "id": "nerologistics:auto_crafter" } }

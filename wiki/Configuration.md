@@ -15,6 +15,16 @@ value below is **server-authoritative** — the server's values win and sync to 
 
 See [Network Controller](Controller.md) for how it works.
 
+## Auto-crafting
+
+- **`enableAutoCrafting`** (default `true`) — master toggle for the auto-crafter.
+- **`craftIntervalTicks`** (default `20`) — ticks between an auto-crafter's crafting passes.
+- **`autoCraftEnergyPerCraft`** (default `200`) — NE charged per item crafted.
+- **`autoCraftsPerInterval`** (default `4`) — base crafts per pass, scaled by the managing controller's
+  capacity.
+
+See [Auto-Crafting](Auto-Crafting.md).
+
 ## Local transport (conduits)
 
 - **`itemTransferPerTick`** (default `64`) — max items moved per item network per tick.

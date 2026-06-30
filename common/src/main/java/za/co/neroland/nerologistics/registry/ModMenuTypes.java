@@ -5,6 +5,7 @@ import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.MenuType;
 
 import za.co.neroland.nerologistics.NeroLogisticsCommon;
+import za.co.neroland.nerologistics.menu.AutoCrafterMenu;
 import za.co.neroland.nerologistics.menu.FilterMenu;
 import za.co.neroland.nerologistics.menu.StorageRequestMenu;
 import za.co.neroland.nerologistics.registry.RegistrationProvider.RegistryEntry;
@@ -21,6 +22,9 @@ public final class ModMenuTypes {
 
     public static final RegistryEntry<MenuType<FilterMenu>> FILTER =
             MENUS.register("filter", key -> new MenuType<>(FilterMenu::new, FeatureFlags.VANILLA_SET));
+
+    public static final RegistryEntry<MenuType<AutoCrafterMenu>> AUTO_CRAFTER =
+            MENUS.register("auto_crafter", key -> new MenuType<>(AutoCrafterMenu::new, FeatureFlags.VANILLA_SET));
 
     private ModMenuTypes() {
     }

@@ -4,6 +4,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 
+import za.co.neroland.nerologistics.client.AutoCrafterScreen;
 import za.co.neroland.nerologistics.client.DeliveryDroneRenderer;
 import za.co.neroland.nerologistics.client.FilterScreen;
 import za.co.neroland.nerologistics.client.StorageRequestScreen;
@@ -24,6 +25,7 @@ public final class NeoForgeClientSetup {
     private static void onRegisterScreens(RegisterMenuScreensEvent event) {
         event.register(ModMenuTypes.STORAGE_REQUEST.get(), StorageRequestScreen::new);
         event.register(ModMenuTypes.FILTER.get(), FilterScreen::new);
+        event.register(ModMenuTypes.AUTO_CRAFTER.get(), AutoCrafterScreen::new);
     }
 
     private static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {

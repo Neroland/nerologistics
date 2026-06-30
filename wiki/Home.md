@@ -14,6 +14,8 @@ Player- and contributor-facing documentation for **NeroLogistics**, part of the
   its throughput with network modules.
 - [Universal Duct & Native Storage](Universal-Duct-and-Storage.md) — one duct for items + fluids, and
   the native item storage block the network indexes.
+- [Auto-Crafting](Auto-Crafting.md) — the auto-crafter that builds items from network stock using a
+  pattern.
 - [Conduits](Conduits.md) — legacy item ducts, fluid ducts and energy cables; per-face modes, filters,
   and how networks form.
 - [Terminals](Terminals.md) — wireless cargo terminals, the storage request terminal, and the Create

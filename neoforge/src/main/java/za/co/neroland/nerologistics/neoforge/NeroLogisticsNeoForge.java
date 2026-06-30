@@ -52,6 +52,8 @@ public final class NeroLogisticsNeoForge {
         // Energy: cables power the network controller, wireless terminal + drone hub via Core's shared cap.
         event.registerBlockEntity(NeoForgeEnergyLookup.ENERGY, ModBlockEntities.NETWORK_CONTROLLER.get(),
                 (be, side) -> be.getEnergy());
+        event.registerBlockEntity(NeoForgeEnergyLookup.ENERGY, ModBlockEntities.AUTO_CRAFTER.get(),
+                (be, side) -> be.getEnergy());
         event.registerBlockEntity(NeoForgeEnergyLookup.ENERGY, ModBlockEntities.WIRELESS_CARGO_TERMINAL.get(),
                 (be, side) -> be.getEnergy());
         event.registerBlockEntity(NeoForgeEnergyLookup.ENERGY, ModBlockEntities.DRONE_HUB.get(),
@@ -61,6 +63,7 @@ public final class NeroLogisticsNeoForge {
 
         // Items: terminal/interface/storage buffers on the standard item capability for hoppers, Create, AE2, etc.
         itemCap(event, ModBlockEntities.ITEM_STORAGE.get());
+        itemCap(event, ModBlockEntities.AUTO_CRAFTER.get());
         itemCap(event, ModBlockEntities.WIRELESS_CARGO_TERMINAL.get());
         itemCap(event, ModBlockEntities.STORAGE_REQUEST_TERMINAL.get());
         itemCap(event, ModBlockEntities.TRAIN_CARGO_INTERFACE.get());

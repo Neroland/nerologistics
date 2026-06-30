@@ -29,6 +29,7 @@ public final class NeroLogisticsFabric implements ModInitializer {
 
         // Energy: controller/terminals/hub/port accept NE from cables on Core's shared energy lookup.
         energy(ModBlockEntities.NETWORK_CONTROLLER.get());
+        energy(ModBlockEntities.AUTO_CRAFTER.get());
         energy(ModBlockEntities.WIRELESS_CARGO_TERMINAL.get());
         energy(ModBlockEntities.DRONE_HUB.get());
         energy(ModBlockEntities.ROCKET_CARGO_PORT.get());
@@ -36,6 +37,7 @@ public final class NeroLogisticsFabric implements ModInitializer {
         // Items: expose terminal/interface/storage buffers on the Fabric Transfer API so hoppers, Create
         // and other mods move items in/out (NeroLogistics' own ducts use the vanilla Container directly).
         item(ModBlockEntities.ITEM_STORAGE.get());
+        item(ModBlockEntities.AUTO_CRAFTER.get());
         item(ModBlockEntities.WIRELESS_CARGO_TERMINAL.get());
         item(ModBlockEntities.STORAGE_REQUEST_TERMINAL.get());
         item(ModBlockEntities.TRAIN_CARGO_INTERFACE.get());
