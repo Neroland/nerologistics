@@ -5,8 +5,7 @@ Player- and contributor-facing documentation for **NeroLogistics**, part of the
 
 > **Status:** alpha (version `0.0.1-alpha.1`), built on Neroland Core across the six cross-loader
 > cells. NeroLogistics is the ecosystem's automation brain — it moves items, fluids, energy and
-> cargo within a base, across a base wirelessly, by drone, and between dimensions. Keep this wiki
-> updated alongside code changes (see [`../AGENTS.md`](../AGENTS.md) / [`../CLAUDE.md`](../CLAUDE.md)).
+> cargo within a base, across a base wirelessly, by drone, and between dimensions.
 
 ## Contents
 
