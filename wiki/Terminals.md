@@ -9,7 +9,7 @@
 
 Three blocks extend logistics beyond a single conduit line. All three hold an internal buffer that
 hoppers, ducts, Create and other mods can fill and drain (they expose the standard item capability on
-Fabric and NeoForge).
+all three loaders — Fabric, NeoForge and Forge — and accept cable power the same way).
 
 ## Wireless Cargo Terminal
 

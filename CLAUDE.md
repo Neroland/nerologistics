@@ -5,8 +5,8 @@
 ## The mod
 
 - **NeroLogistics** — part of the Neroland sci-fi Minecraft mod ecosystem, built on **Neroland Core**.
-  This repository is currently a **barebones multiloader skeleton** (no gameplay content yet); add
-  shared content under `common/` and wire it through each loader entry point.
+  This repository carries the **implemented Stage 1–13 content** (controller-centric storage +
+  logistics network); add shared content under `common/` and wire it through each loader entry point.
 - Mod id: **`nerologistics`** (matches the registry namespace + every loader manifest). Package root:
   `za.co.neroland.nerologistics`. Author: **Neroland**.
 - Version: **0.0.1-alpha.1**.

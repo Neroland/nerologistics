@@ -5,6 +5,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -69,8 +70,10 @@ public class LogisticsDashboardBlock extends Block {
         LogisticsMetrics.Counters c = LogisticsMetrics.countersOf(level.dimension());
         player.sendSystemMessage(Component.translatable("block.nerologistics.logistics_dashboard.throughput",
                 c.itemsMoved, c.fluidMoved, c.energyMoved));
+        MinecraftServer server = level.getServer();
         player.sendSystemMessage(Component.translatable("block.nerologistics.logistics_dashboard.shipping",
-                c.shipmentsLaunched, c.shipmentsDelivered, ShipmentManager.pendingCount()));
+                c.shipmentsLaunched, c.shipmentsDelivered,
+                server == null ? 0 : ShipmentManager.pendingCount(server)));
         player.sendSystemMessage(Component.translatable("block.nerologistics.logistics_dashboard.drones",
                 c.dronesDispatched));
     }

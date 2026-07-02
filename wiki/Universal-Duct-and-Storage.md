@@ -27,7 +27,8 @@ writes.
 - **On the network.** Universal ducts route items into and out of it, and the
   [Storage Request Terminal](Terminals.md) aggregates its contents into the searchable network index —
   no extra setup, because NeroLogistics discovers inventories through the vanilla container contract.
-- **Interop.** Hoppers, and (on NeoForge/Fabric) the item capability, expose it to other mods; when
+- **Interop.** Hoppers, and the standard item capability (on all three loaders — Fabric, NeoForge and
+  Forge), expose it to other mods; when
   **AE2** is present its interface is just another inventory on the network, read the same way — no hard
   AE2 dependency, no duplication.
 

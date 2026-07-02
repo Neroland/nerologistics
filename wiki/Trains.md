@@ -49,8 +49,8 @@ The train **gameplay** is in; these visuals are a dedicated art pass:
   aware ducts, rotating controller core, drone-port bays + flying drones, station loading arms, etc.),
   with custom block-entity renderers and an animation-quality config.
 
-> Note: like cross-dimension shipping, an in-flight haul is not yet persisted across a server restart
-> (durable saved-data is a shared follow-up).
+> Note: like cross-dimension shipping, an in-flight haul is **persisted** in the shared durable
+> shipment store — a haul in transit survives a server restart and resumes its timer.
 
 ## See also
 

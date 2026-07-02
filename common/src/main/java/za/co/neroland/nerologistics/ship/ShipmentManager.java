@@ -2,7 +2,6 @@ package za.co.neroland.nerologistics.ship;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -23,18 +22,19 @@ import za.co.neroland.nerologistics.dashboard.LogisticsMetrics;
 import za.co.neroland.nerologistics.transport.InventoryTransfer;
 
 /**
- * Tracks cargo ports (per dimension + channel) and in-transit shipments. A shipment is held in memory
- * for its transit time; on arrival the destination chunk is force-loaded <em>only momentarily</em> to
- * deposit the payload (dropping any overflow), then released — so two dimensions are never kept loaded
- * for the transit duration. Driven once per tick from the loader server-tick hooks.
+ * Tracks cargo ports (per dimension + channel) and in-transit shipments. A shipment is held in
+ * {@link ShipmentState} (durable {@code SavedData} on the overworld) for its transit time, so a
+ * shipment in flight <b>survives a server restart</b> and resumes its timer; on arrival the
+ * destination chunk is force-loaded <em>only momentarily</em> to deposit the payload (dropping any
+ * overflow), then released — so two dimensions are never kept loaded for the transit duration.
+ * Driven once per tick from the loader server-tick hooks.
  *
- * <p>v1 limitation: the in-transit queue is not yet persisted across a server restart (durable
- * {@code SavedData} is a follow-up); a shipment in flight during a restart is lost.
+ * <p>The port registry stays in memory: ports re-register themselves as their block entities tick
+ * after a world load, and deliveries resolve the destination container by position, not by registry.
  */
 public final class ShipmentManager {
 
     private static final Map<ResourceKey<Level>, Map<Integer, List<BlockPos>>> PORTS = new HashMap<>();
-    private static final List<CargoManifest> PENDING = new ArrayList<>();
 
     private ShipmentManager() {
     }
@@ -85,37 +85,34 @@ public final class ShipmentManager {
         return null;
     }
 
-    /** Queue a shipment; it materialises after {@code transitTicks}. */
-    public static void ship(MinecraftServer server, List<ItemStack> items, ResourceKey<Level> destDim,
-            BlockPos destPos, int transitTicks) {
-        long arrival = server.overworld().getGameTime() + transitTicks;
-        PENDING.add(new CargoManifest(items, destDim, destPos, arrival));
+    /** Queue a shipment from {@code fromDim}/{@code fromPos}; it materialises after {@code transitTicks}. */
+    public static void ship(MinecraftServer server, List<ItemStack> items, ResourceKey<Level> fromDim,
+            BlockPos fromPos, ResourceKey<Level> destDim, BlockPos destPos, int transitTicks) {
+        long now = server.overworld().getGameTime();
+        ShipmentState.get(server).add(new CargoManifest(items, fromDim, fromPos.immutable(), destDim,
+                destPos.immutable(), now, now + Math.max(1, transitTicks)));
     }
 
     /** Number of shipments currently in transit (for the dashboard). */
-    public static int pendingCount() {
-        return PENDING.size();
+    public static int pendingCount(MinecraftServer server) {
+        return ShipmentState.get(server).count();
     }
 
     /** Whether the in-transit queue is at its hard cap (ports must stop launching). */
-    public static boolean atCapacity() {
-        return PENDING.size() >= NeroLogisticsConfig.maxPendingShipments();
+    public static boolean atCapacity(MinecraftServer server) {
+        return pendingCount(server) >= NeroLogisticsConfig.maxPendingShipments();
     }
 
     /** Deliver any shipments whose arrival tick has passed. Call once per server tick. */
     public static void tick(MinecraftServer server) {
         LogisticsMetrics.tick(server); // daily attribution retention prune
-        if (PENDING.isEmpty()) {
+        ShipmentState state = ShipmentState.get(server);
+        if (state.count() == 0) {
             return;
         }
         long now = server.overworld().getGameTime();
-        Iterator<CargoManifest> it = PENDING.iterator();
-        while (it.hasNext()) {
-            CargoManifest manifest = it.next();
-            if (now >= manifest.arrivalTick()) {
-                deliver(server, manifest);
-                it.remove();
-            }
+        for (CargoManifest manifest : state.drainDue(m -> now >= m.arrivalTick())) {
+            deliver(server, manifest);
         }
     }
 

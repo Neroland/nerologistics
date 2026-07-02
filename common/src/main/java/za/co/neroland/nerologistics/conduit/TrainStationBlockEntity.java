@@ -34,13 +34,13 @@ import za.co.neroland.nerologistics.ship.ShipmentManager;
  * energy). With no line name a load station ships to the nearest unload station (Auto).
  *
  * <p>The haul reuses {@link ShipmentManager}'s in-transit queue (already ticked every server tick), so the
- * payload sits in memory for the transit time and is deposited into the unload station on arrival. Sneak-
- * click toggles load/unload. Right-click opens a vanilla double-chest GUI (no custom menu/screen).
+ * payload sits in the durable shipment store for the transit time and is deposited into the unload station
+ * on arrival — an in-flight haul survives a server restart. Sneak-click toggles load/unload. Right-click
+ * opens a vanilla double-chest GUI (no custom menu/screen).
  *
  * <p><b>Visual follow-up:</b> physical rail blocks, a visible train entity riding them, and the animated
  * 3D models from MODELS.md are a separate Stage-12 art pass. <b>Create</b> trains remain supported via the
- * existing {@link TrainCargoInterfaceBlockEntity}. The {@link ShipmentManager} restart-persistence
- * limitation applies to in-flight hauls too.
+ * existing {@link TrainCargoInterfaceBlockEntity}.
  */
 public class TrainStationBlockEntity extends AbstractTerminalBlockEntity implements MenuProvider {
 
@@ -133,11 +133,11 @@ public class TrainStationBlockEntity extends AbstractTerminalBlockEntity impleme
     }
 
     private void haul(ServerLevel level, BlockPos pos) {
-        if (this.isEmpty() || ShipmentManager.atCapacity()) {
+        if (this.isEmpty()) {
             return;
         }
         MinecraftServer server = level.getServer();
-        if (server == null) {
+        if (server == null || ShipmentManager.atCapacity(server)) {
             return;
         }
         BlockPos dest = findUnloadStation(level, pos);
@@ -151,7 +151,7 @@ public class TrainStationBlockEntity extends AbstractTerminalBlockEntity impleme
         double distance = Math.sqrt(pos.distSqr(dest));
         int transit = (int) Math.max(NeroLogisticsConfig.trainMinTransitTicks(),
                 Math.min((long) (distance * NeroLogisticsConfig.trainTicksPerBlock()), 1_728_000L));
-        ShipmentManager.ship(server, payload, level.dimension(), dest, transit);
+        ShipmentManager.ship(server, payload, level.dimension(), pos, level.dimension(), dest, transit);
         setChanged();
     }
 
