@@ -1,0 +1,4 @@
+{ "type": "minecraft:crafting_shaped", "category": "misc",
+  "key": { "R": "minecraft:rail", "C": "minecraft:chest", "I": "minecraft:iron_ingot" },
+  "pattern": [ "ICI", "RRR" ],
+  "result": { "id": "nerologistics:train_station" } }

@@ -2,7 +2,7 @@
 
 > Part of the [Neroland](../neroland-mc-ecosystem) sci-fi Minecraft mod ecosystem, built on **Neroland Core**.
 
-**Status:** barebones multiloader skeleton — version `0.0.1-alpha.1`. No gameplay content yet.
+**Status:** in development — version `0.0.1-alpha.1`, build Stages 1–13 implemented. Ships the Network Controller, Universal Duct, energy cables, item storage (incl. 54-slot storage block), auto-crafting, buffers, drone ports, logistics trains, rocket cargo routes (stub provider pending the Nerospace API), and chat-report dashboards. Key follow-ups: Forge capability wiring, in-transit shipment persistence, and the full 5-tab terminal.
 
 ## Build targets
 

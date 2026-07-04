@@ -5,7 +5,11 @@ import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
+import za.co.neroland.nerologistics.client.AutoCrafterScreen;
+import za.co.neroland.nerologistics.client.BufferScreen;
 import za.co.neroland.nerologistics.client.DeliveryDroneRenderer;
+import za.co.neroland.nerologistics.client.DronePortScreen;
+import za.co.neroland.nerologistics.client.FilterScreen;
 import za.co.neroland.nerologistics.client.StorageRequestScreen;
 import za.co.neroland.nerologistics.registry.ModEntities;
 import za.co.neroland.nerologistics.registry.ModMenuTypes;
@@ -27,6 +31,10 @@ public final class ForgeClientSetup {
 
     private static void registerScreens() {
         MenuScreens.register(ModMenuTypes.STORAGE_REQUEST.get(), StorageRequestScreen::new);
+        MenuScreens.register(ModMenuTypes.FILTER.get(), FilterScreen::new);
+        MenuScreens.register(ModMenuTypes.AUTO_CRAFTER.get(), AutoCrafterScreen::new);
+        MenuScreens.register(ModMenuTypes.BUFFER.get(), BufferScreen::new);
+        MenuScreens.register(ModMenuTypes.DRONE_PORT.get(), DronePortScreen::new);
     }
 
     private static void onRegisterEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {

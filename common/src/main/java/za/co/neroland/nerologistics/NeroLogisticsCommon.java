@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import za.co.neroland.nerolandcore.data.PlayerDataErasure;
 
+import za.co.neroland.nerologistics.compat.NerospaceCompat;
 import za.co.neroland.nerologistics.config.NeroLogisticsConfig;
 import za.co.neroland.nerologistics.dashboard.LogisticsMetrics;
 import za.co.neroland.nerologistics.registry.ModRegistries;
@@ -29,6 +30,9 @@ public final class NeroLogisticsCommon {
         // Register the config schema with Core's manager, then build all content registries.
         NeroLogisticsConfig.load();
         ModRegistries.init();
+        // Nerospace soft-dep: when present, swap the stub route provider for the nerospace.api
+        // planet/station catalog (reflective binding — never a compile-time Nerospace import).
+        NerospaceCompat.init();
         // POPIA/GDPR: route opt-in per-player attribution through Core's shared erasure hook, so one
         // erase request (or the inactivity sweep) purges a player here too.
         PlayerDataErasure.register(LogisticsMetrics::erasePlayer);

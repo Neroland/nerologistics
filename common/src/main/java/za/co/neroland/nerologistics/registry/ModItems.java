@@ -10,6 +10,7 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 
 import za.co.neroland.nerologistics.NeroLogisticsCommon;
+import za.co.neroland.nerologistics.item.ConfiguratorItem;
 import za.co.neroland.nerologistics.registry.RegistrationProvider.RegistryEntry;
 
 /** NeroLogistics block-items, registered cross-loader via {@link RegistrationProvider}. */
@@ -17,6 +18,34 @@ public final class ModItems {
 
     public static final RegistrationProvider<Item> ITEMS =
             RegistrationProvider.get(Registries.ITEM, NeroLogisticsCommon.MOD_ID);
+
+    // --- Stage 7: network controller + module -------------------------------
+    public static final RegistryEntry<BlockItem> NETWORK_CONTROLLER_ITEM =
+            blockItem("network_controller", ModBlocks.NETWORK_CONTROLLER);
+    public static final RegistryEntry<BlockItem> NETWORK_MODULE_ITEM =
+            blockItem("network_module", ModBlocks.NETWORK_MODULE);
+
+    // --- Stage 8: universal duct + native storage ---------------------------
+    public static final RegistryEntry<BlockItem> UNIVERSAL_DUCT_ITEM =
+            blockItem("universal_duct", ModBlocks.UNIVERSAL_DUCT);
+    public static final RegistryEntry<BlockItem> ITEM_STORAGE_ITEM =
+            blockItem("item_storage", ModBlocks.ITEM_STORAGE);
+    public static final RegistryEntry<BlockItem> AUTO_CRAFTER_ITEM =
+            blockItem("auto_crafter", ModBlocks.AUTO_CRAFTER);
+    public static final RegistryEntry<BlockItem> BUFFER_ITEM =
+            blockItem("buffer", ModBlocks.BUFFER);
+
+    // --- Stage 11: drone port + drones + upgrade cards ----------------------
+    public static final RegistryEntry<BlockItem> DRONE_PORT_ITEM =
+            blockItem("drone_port", ModBlocks.DRONE_PORT);
+    public static final RegistryEntry<Item> DRONE =
+            ITEMS.register("drone", key -> new Item(new Item.Properties().setId(key)));
+    public static final RegistryEntry<Item> HYPERSPEED_CARD =
+            ITEMS.register("hyperspeed_card", key -> new Item(new Item.Properties().setId(key)));
+
+    // --- Stage 12: native trains --------------------------------------------
+    public static final RegistryEntry<BlockItem> TRAIN_STATION_ITEM =
+            blockItem("train_station", ModBlocks.TRAIN_STATION);
 
     public static final RegistryEntry<BlockItem> ITEM_DUCT_ITEM = blockItem("item_duct", ModBlocks.ITEM_DUCT);
     public static final RegistryEntry<BlockItem> FLUID_DUCT_ITEM = blockItem("fluid_duct", ModBlocks.FLUID_DUCT);
@@ -40,11 +69,18 @@ public final class ModItems {
     public static final RegistryEntry<BlockItem> LOGISTICS_DASHBOARD_ITEM =
             blockItem("logistics_dashboard", ModBlocks.LOGISTICS_DASHBOARD);
 
+    // --- Tools --------------------------------------------------------------
+    public static final RegistryEntry<Item> CONFIGURATOR =
+            ITEMS.register("configurator", key -> new ConfiguratorItem(new Item.Properties().setId(key)));
+
     private static List<RegistryEntry<? extends ItemLike>> creativeOrder() {
-        return List.of(ITEM_DUCT_ITEM, FLUID_DUCT_ITEM, ENERGY_CABLE_ITEM,
+        return List.of(NETWORK_CONTROLLER_ITEM, NETWORK_MODULE_ITEM,
+                UNIVERSAL_DUCT_ITEM, ITEM_STORAGE_ITEM, AUTO_CRAFTER_ITEM, BUFFER_ITEM,
+                ITEM_DUCT_ITEM, FLUID_DUCT_ITEM, ENERGY_CABLE_ITEM,
                 WIRELESS_CARGO_TERMINAL_ITEM, STORAGE_REQUEST_TERMINAL_ITEM,
-                TRAIN_CARGO_INTERFACE_ITEM, DRONE_HUB_ITEM, ROCKET_CARGO_PORT_ITEM,
-                LOGISTICS_DASHBOARD_ITEM);
+                TRAIN_CARGO_INTERFACE_ITEM, TRAIN_STATION_ITEM, DRONE_HUB_ITEM, ROCKET_CARGO_PORT_ITEM,
+                DRONE_PORT_ITEM, DRONE, HYPERSPEED_CARD,
+                LOGISTICS_DASHBOARD_ITEM, CONFIGURATOR);
     }
 
     private static RegistryEntry<BlockItem> blockItem(String name, RegistryEntry<? extends Block> block) {

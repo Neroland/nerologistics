@@ -22,6 +22,7 @@ import za.co.neroland.nerolandcore.platform.FluidLookup;
 import za.co.neroland.nerolandcore.sideconfig.SideMode;
 
 import za.co.neroland.nerologistics.conduit.AbstractConduitBlockEntity;
+import za.co.neroland.nerologistics.conduit.NetworkControllerBlockEntity;
 import za.co.neroland.nerologistics.config.NeroLogisticsConfig;
 import za.co.neroland.nerologistics.dashboard.LogisticsMetrics;
 import za.co.neroland.nerologistics.transport.InventoryTransfer;
@@ -38,6 +39,11 @@ public final class ConduitNetwork {
     private final Set<BlockPos> members = new HashSet<>();
     private List<ConduitEndpoint> endpoints;
     private long lastTickGame = -1L;
+
+    /** Single controller managing this network (lazily resolved with the endpoint cache); null = none. */
+    private BlockPos controllerPos;
+    /** True when more than one distinct controller touches this network (neither manages it). */
+    private boolean controllerConflict;
 
     public ConduitNetwork(NetworkMedium medium) {
         this.medium = medium;
@@ -84,14 +90,25 @@ public final class ConduitNetwork {
             return this.endpoints;
         }
         List<ConduitEndpoint> list = new ArrayList<>();
+        BlockPos foundController = null;
+        boolean conflict = false;
         for (BlockPos pos : this.members) {
             AbstractConduitBlockEntity be = conduitBe(level, pos);
             if (be == null) {
                 continue;
             }
             for (Direction dir : Direction.values()) {
-                if (this.members.contains(pos.relative(dir))) {
+                BlockPos neighbor = pos.relative(dir);
+                if (this.members.contains(neighbor)) {
                     continue; // conduit-to-conduit link is graph connectivity, not an endpoint
+                }
+                // A controller attached to any conduit of this network manages it (one per network).
+                if (level.getBlockEntity(neighbor) instanceof NetworkControllerBlockEntity) {
+                    if (foundController == null) {
+                        foundController = neighbor.immutable();
+                    } else if (!foundController.equals(neighbor)) {
+                        conflict = true;
+                    }
                 }
                 SideMode mode = be.faceMode(dir);
                 ConduitEndpoint ep = new ConduitEndpoint(pos, dir, mode);
@@ -100,8 +117,40 @@ public final class ConduitNetwork {
                 }
             }
         }
+        this.controllerPos = conflict ? null : foundController;
+        this.controllerConflict = conflict;
         this.endpoints = list;
         return list;
+    }
+
+    /** Position of the single controller managing this network, or {@code null} (none, or in conflict). */
+    public BlockPos controllerPos() {
+        return this.controllerPos;
+    }
+
+    /** Whether two or more controllers touch this network — neither one manages it. */
+    public boolean controllerConflict() {
+        return this.controllerConflict;
+    }
+
+    /** Force controller/endpoint resolution (cheap; reuses the endpoint cache). */
+    public void refreshControllers(Level level) {
+        endpoints(level);
+    }
+
+    /**
+     * Throughput multiplier from the managing controller ({@code >= 1.0}). Base {@code 1.0} when there
+     * is no controller, the controllers conflict, or the controller is unpowered — so a network without
+     * a controller still works at the configured base budget (zero-config standalone posture).
+     */
+    public double capacityMultiplier(Level level) {
+        endpoints(level);
+        if (this.controllerPos == null || this.controllerConflict) {
+            return 1.0;
+        }
+        return level.getBlockEntity(this.controllerPos) instanceof NetworkControllerBlockEntity controller
+                ? Math.max(1.0, controller.capacityMultiplier())
+                : 1.0;
     }
 
     /** Idempotent per game tick: only the first member to call this each tick does the work. */
@@ -116,15 +165,27 @@ public final class ConduitNetwork {
         if (eps.isEmpty()) {
             return;
         }
+        double mult = capacityMultiplier(level);
         switch (this.medium) {
-            case ITEM -> tickItems(level, eps);
-            case FLUID -> tickFluids(level, eps);
-            case ENERGY -> tickEnergy(level, eps);
+            case ITEM -> tickItems(level, eps, mult);
+            case FLUID -> tickFluids(level, eps, mult);
+            case ENERGY -> tickEnergy(level, eps, mult);
         }
     }
 
-    private void tickItems(Level level, List<ConduitEndpoint> eps) {
-        int budget = NeroLogisticsConfig.itemTransferPerTick();
+    /** Scale a base per-tick budget by the controller multiplier, clamped to a sane positive range. */
+    private static int scale(int base, double mult) {
+        long scaled = Math.round(base * mult);
+        return (int) Math.max(1L, Math.min(scaled, Integer.MAX_VALUE));
+    }
+
+    private static long scale(long base, double mult) {
+        double scaled = Math.round(base * mult);
+        return (long) Math.max(1.0, Math.min(scaled, Long.MAX_VALUE));
+    }
+
+    private void tickItems(Level level, List<ConduitEndpoint> eps, double mult) {
+        int budget = scale(NeroLogisticsConfig.itemTransferPerTick(), mult);
         final int startBudget = budget;
         List<ConduitEndpoint> sinks = sinks(eps);
         if (sinks.isEmpty()) {
@@ -176,8 +237,8 @@ public final class ConduitNetwork {
         LogisticsMetrics.recordItems(level, (long) startBudget - budget);
     }
 
-    private void tickEnergy(Level level, List<ConduitEndpoint> eps) {
-        long budget = NeroLogisticsConfig.energyTransferPerTick();
+    private void tickEnergy(Level level, List<ConduitEndpoint> eps, double mult) {
+        long budget = scale((long) NeroLogisticsConfig.energyTransferPerTick(), mult);
         final long startBudget = budget;
         List<ConduitEndpoint> sinks = sinks(eps);
         if (sinks.isEmpty()) {
@@ -221,8 +282,8 @@ public final class ConduitNetwork {
         LogisticsMetrics.recordEnergy(level, startBudget - budget);
     }
 
-    private void tickFluids(Level level, List<ConduitEndpoint> eps) {
-        long budget = NeroLogisticsConfig.fluidTransferPerTick();
+    private void tickFluids(Level level, List<ConduitEndpoint> eps, double mult) {
+        long budget = scale((long) NeroLogisticsConfig.fluidTransferPerTick(), mult);
         final long startBudget = budget;
         List<ConduitEndpoint> sinks = sinks(eps);
         if (sinks.isEmpty()) {

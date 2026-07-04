@@ -1,0 +1,4 @@
+{ "type": "minecraft:crafting_shaped", "category": "misc",
+  "key": { "P": "minecraft:paper", "E": "minecraft:ender_eye", "B": "minecraft:blaze_powder", "G": "minecraft:gold_ingot" },
+  "pattern": [ "GBG", "PEP" ],
+  "result": { "id": "nerologistics:hyperspeed_card" } }

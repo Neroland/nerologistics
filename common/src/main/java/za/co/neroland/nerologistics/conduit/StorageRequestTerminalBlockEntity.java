@@ -132,7 +132,8 @@ public class StorageRequestTerminalBlockEntity extends AbstractTerminalBlockEnti
         for (Direction dir : Direction.values()) {
             BlockPos neighbor = pos.relative(dir);
             BlockEntity be = level.getBlockEntity(neighbor);
-            if (be instanceof ItemDuctBlockEntity) {
+            // Any conduit carrying ITEM — the legacy item duct or the Stage-8 universal duct.
+            if (be instanceof AbstractConduitBlockEntity conduit && conduit.media().contains(NetworkMedium.ITEM)) {
                 ConduitNetwork net = NetworkManager.networkAt(level, NetworkMedium.ITEM, neighbor);
                 if (net != null) {
                     return net;

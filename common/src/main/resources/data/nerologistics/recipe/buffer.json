@@ -1,0 +1,4 @@
+{ "type": "minecraft:crafting_shaped", "category": "misc",
+  "key": { "I": "minecraft:iron_ingot", "B": "minecraft:barrel", "R": "minecraft:redstone" },
+  "pattern": [ "IRI", "IBI", "IRI" ],
+  "result": { "id": "nerologistics:buffer", "count": 2 } }
