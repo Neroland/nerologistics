@@ -30,9 +30,9 @@ import za.co.neroland.nerologistics.ship.ShipmentManager;
  * cross-dimension shipment of its non-fuel cargo to a same-channel port in the selected destination
  * dimension. Deliberately slow and energy-hungry; consumes rocket fuel <em>by tag</em>
  * ({@code nerologistics:rocket_fuel}) rather than any Nerospace class; gated behind
- * fuel. Destinations come from the {@link RouteProviders} seam (a stub until
- * a Nerospace-backed provider is registered). Right-click cycles destination; sneak-right-click cycles
- * channel.
+ * fuel. Destinations come from the {@link RouteProviders} seam — the stub (every loaded dimension)
+ * standalone, or Nerospace's planet/station catalog when {@code compat.NerospaceCompat} bound it.
+ * Right-click cycles destination; sneak-right-click cycles channel.
  */
 public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
 
@@ -127,11 +127,11 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
     }
 
     private void tryShip(ServerLevel level, BlockPos pos) {
-        if (!NeroLogisticsConfig.enableCrossDimension() || ShipmentManager.atCapacity()) {
+        if (!NeroLogisticsConfig.enableCrossDimension()) {
             return;
         }
         MinecraftServer server = level.getServer();
-        if (server == null) {
+        if (server == null || ShipmentManager.atCapacity(server)) {
             return;
         }
         List<RouteDestination> dests = RouteProviders.get().destinations(server);
@@ -139,6 +139,9 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
             return;
         }
         RouteDestination dest = dests.get(Math.floorMod(this.destIndex, dests.size()));
+        if (!RouteProviders.get().isAvailable(server, level.dimension(), dest)) {
+            return; // route closed (e.g. Nerospace: non-endpoint origin, or shipping to itself)
+        }
         BlockPos exclude = dest.dimension().equals(level.dimension()) ? pos : null;
         BlockPos target = ShipmentManager.findPort(dest.dimension(), this.channel, exclude);
         if (target == null) {
@@ -158,7 +161,8 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
         if (this.energy.getAmount() < energyCost) {
             return;
         }
-        int fuelNeed = NeroLogisticsConfig.shipFuelPerLaunch();
+        // Fuel is priced per route (Nerospace scales it with distance); the stub uses the flat config.
+        int fuelNeed = RouteProviders.get().fuelPerLaunch(server, level.dimension(), dest);
         int fuelSlot = fuelNeed > 0 ? findFuel(fuelNeed) : -1;
         if (fuelNeed > 0 && fuelSlot < 0) {
             return;
@@ -176,8 +180,8 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
                 this.buffer.setItem(slot, ItemStack.EMPTY);
             }
         }
-        ShipmentManager.ship(server, payload, dest.dimension(), target,
-                RouteProviders.get().transitTicks(server, dest));
+        ShipmentManager.ship(server, payload, level.dimension(), pos, dest.dimension(), target,
+                RouteProviders.get().transitTicks(server, level.dimension(), dest));
         LogisticsMetrics.recordShipmentLaunched(level);
         LogisticsMetrics.recordPlayerShipment(server, this.owner); // no-op unless attribution opted in
         setChanged();

@@ -28,6 +28,76 @@ public final class NeroLogisticsConfig {
             2_000, 1, 1_000_000, true,
             "max conduits in one network; a conduit that would exceed it stays isolated (no lag spiral)");
 
+    // --- Stage 7: network controller + modular capacity --------------------
+    private static final ConfigValue<Boolean> ENABLE_CONTROLLER = SCHEMA.bool("enableController",
+            true, true, "master toggle for the network controller's managed throughput boost");
+
+    private static final ConfigValue<Integer> CONTROLLER_UPKEEP = SCHEMA.intRange("controllerUpkeepPerTick",
+            8, 0, 1_000_000, true,
+            "NE drawn per tick to keep a controller powered; below this the controller manages at base speed");
+
+    private static final ConfigValue<Integer> CONTROLLER_MODULE_BONUS = SCHEMA.intRange("controllerModuleBonusPercent",
+            25, 0, 1_000, true, "throughput bonus (%) each connected network module adds to a powered controller");
+
+    private static final ConfigValue<Integer> CONTROLLER_MAX_MODULES = SCHEMA.intRange("controllerMaxModules",
+            16, 0, 4_096, true, "max network modules a single controller counts (bounds the flood-fill)");
+
+    private static final ConfigValue<Integer> CONTROLLER_MAX_PERCENT = SCHEMA.intRange("controllerMaxPercent",
+            500, 100, 100_000, true, "cap on a controller's managed throughput multiplier (100 = no boost)");
+
+    // --- Stage 12: native trains -------------------------------------------
+    private static final ConfigValue<Boolean> ENABLE_TRAINS = SCHEMA.bool("enableTrains",
+            true, true, "master toggle for native train stations");
+
+    private static final ConfigValue<Integer> TRAIN_INTERVAL = SCHEMA.intRange("trainStationIntervalTicks",
+            100, 1, 72_000, true, "ticks between a load station's bulk haul attempts");
+
+    private static final ConfigValue<Integer> TRAIN_TICKS_PER_BLOCK = SCHEMA.intRange("trainTicksPerBlock",
+            2, 0, 1_200, true, "transit ticks added per block of distance between stations (slower = more travel feel)");
+
+    private static final ConfigValue<Integer> TRAIN_MIN_TRANSIT = SCHEMA.intRange("trainMinTransitTicks",
+            40, 1, 1_728_000, true, "minimum transit time for a train haul");
+
+    private static final ConfigValue<Integer> TRAIN_MAX_RANGE = SCHEMA.intRange("trainMaxRange",
+            2_048, 1, 30_000_000, true, "max block distance a load station ships to an unload station");
+
+    private static final ConfigValue<Integer> TRAIN_BULK_PER_TRIP = SCHEMA.intRange("trainBulkPerTrip",
+            27, 1, 54, true, "max buffer slots a station hauls per trip (bulk)");
+
+    // --- Stage 11: drone ports ---------------------------------------------
+    private static final ConfigValue<Integer> MAX_DRONES_PER_PORT = SCHEMA.intRange("maxDronesPerPort",
+            8, 1, 256, true, "hard cap on drones (parallel lanes) a single drone port counts");
+
+    private static final ConfigValue<Integer> DRONE_PORT_RANGE = SCHEMA.intRange("dronePortRange",
+            256, 1, 4_096, true, "max block distance an export port will ship to an import port");
+
+    private static final ConfigValue<Integer> DRONE_PER_DRONE_CAPACITY = SCHEMA.intRange("dronePerDroneCapacity",
+            16, 1, 64, true, "items each drone carries per dispatch (throughput = drones × this)");
+
+    private static final ConfigValue<Integer> DRONE_PORT_ENERGY_PER_STACK = SCHEMA.intRange("dronePortEnergyPerStack",
+            256, 0, 10_000_000, true, "NE charged per drone dispatch from a port");
+
+    // --- Stage 10: buffer blocks -------------------------------------------
+    private static final ConfigValue<Boolean> ENABLE_BUFFERS = SCHEMA.bool("enableBuffers",
+            true, true, "master toggle for keep-stocked buffer leveling (passive buffers always hold)");
+
+    private static final ConfigValue<Integer> BUFFER_INTERVAL = SCHEMA.intRange("bufferIntervalTicks",
+            20, 1, 1_200, true, "ticks between a keep-stocked buffer's top-up/overflow passes");
+
+    // --- Stage 9: native auto-crafting -------------------------------------
+    private static final ConfigValue<Boolean> ENABLE_AUTO_CRAFTING = SCHEMA.bool("enableAutoCrafting",
+            true, true, "master toggle for the auto-crafter");
+
+    private static final ConfigValue<Integer> CRAFT_INTERVAL = SCHEMA.intRange("craftIntervalTicks",
+            20, 1, 1_200, true, "ticks between an auto-crafter's crafting passes");
+
+    private static final ConfigValue<Integer> AUTO_CRAFT_ENERGY = SCHEMA.intRange("autoCraftEnergyPerCraft",
+            200, 0, 10_000_000, true, "NE charged per item crafted by an auto-crafter");
+
+    private static final ConfigValue<Integer> AUTO_CRAFTS_PER_INTERVAL = SCHEMA.intRange("autoCraftsPerInterval",
+            4, 1, 4_096, true,
+            "base crafts an auto-crafter runs per interval (scaled by the managing controller's capacity)");
+
     // --- Stage 3: wireless + drones ----------------------------------------
     private static final ConfigValue<Integer> WIRELESS_RANGE = SCHEMA.intRange("wirelessRange",
             64, 1, 1_024, true, "max block distance between two wireless terminals on the same channel");
@@ -109,6 +179,90 @@ public final class NeroLogisticsConfig {
 
     public static int maxNodesPerNetwork() {
         return MAX_NODES.get();
+    }
+
+    public static boolean enableTrains() {
+        return ENABLE_TRAINS.get();
+    }
+
+    public static int trainStationIntervalTicks() {
+        return TRAIN_INTERVAL.get();
+    }
+
+    public static int trainTicksPerBlock() {
+        return TRAIN_TICKS_PER_BLOCK.get();
+    }
+
+    public static int trainMinTransitTicks() {
+        return TRAIN_MIN_TRANSIT.get();
+    }
+
+    public static int trainMaxRange() {
+        return TRAIN_MAX_RANGE.get();
+    }
+
+    public static int trainBulkPerTrip() {
+        return TRAIN_BULK_PER_TRIP.get();
+    }
+
+    public static int maxDronesPerPort() {
+        return MAX_DRONES_PER_PORT.get();
+    }
+
+    public static int dronePortRange() {
+        return DRONE_PORT_RANGE.get();
+    }
+
+    public static int dronePerDroneCapacity() {
+        return DRONE_PER_DRONE_CAPACITY.get();
+    }
+
+    public static int dronePortEnergyPerStack() {
+        return DRONE_PORT_ENERGY_PER_STACK.get();
+    }
+
+    public static boolean enableBuffers() {
+        return ENABLE_BUFFERS.get();
+    }
+
+    public static int bufferIntervalTicks() {
+        return BUFFER_INTERVAL.get();
+    }
+
+    public static boolean enableAutoCrafting() {
+        return ENABLE_AUTO_CRAFTING.get();
+    }
+
+    public static int craftIntervalTicks() {
+        return CRAFT_INTERVAL.get();
+    }
+
+    public static int autoCraftEnergyPerCraft() {
+        return AUTO_CRAFT_ENERGY.get();
+    }
+
+    public static int autoCraftsPerInterval() {
+        return AUTO_CRAFTS_PER_INTERVAL.get();
+    }
+
+    public static boolean enableController() {
+        return ENABLE_CONTROLLER.get();
+    }
+
+    public static int controllerUpkeepPerTick() {
+        return CONTROLLER_UPKEEP.get();
+    }
+
+    public static int controllerModuleBonusPercent() {
+        return CONTROLLER_MODULE_BONUS.get();
+    }
+
+    public static int controllerMaxModules() {
+        return CONTROLLER_MAX_MODULES.get();
+    }
+
+    public static int controllerMaxPercent() {
+        return CONTROLLER_MAX_PERCENT.get();
     }
 
     public static int wirelessRange() {

@@ -1,4 +1,12 @@
 { "replace": false, "values": [
+  "nerologistics:network_controller",
+  "nerologistics:network_module",
+  "nerologistics:universal_duct",
+  "nerologistics:item_storage",
+  "nerologistics:auto_crafter",
+  "nerologistics:buffer",
+  "nerologistics:drone_port",
+  "nerologistics:train_station",
   "nerologistics:item_duct",
   "nerologistics:fluid_duct",
   "nerologistics:energy_cable",

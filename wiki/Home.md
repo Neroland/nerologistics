@@ -5,13 +5,22 @@ Player- and contributor-facing documentation for **NeroLogistics**, part of the
 
 > **Status:** alpha (version `0.0.1-alpha.1`), built on Neroland Core across the six cross-loader
 > cells. NeroLogistics is the ecosystem's automation brain — it moves items, fluids, energy and
-> cargo within a base, across a base wirelessly, by drone, and between dimensions. Keep this wiki
-> updated alongside code changes (see [`../AGENTS.md`](../AGENTS.md) / [`../CLAUDE.md`](../CLAUDE.md)).
+> cargo within a base, across a base wirelessly, by drone, and between dimensions.
 
 ## Contents
 
-- [Conduits](Conduits.md) — item ducts, fluid ducts and energy cables; per-face modes, filters, and
-  how networks form.
+- [Network Controller](Controller.md) — the optional single brain that manages a network and scales
+  its throughput with network modules.
+- [Universal Duct & Native Storage](Universal-Duct-and-Storage.md) — one duct for items + fluids, and
+  the native item storage block the network indexes.
+- [Auto-Crafting](Auto-Crafting.md) — the auto-crafter that builds items from network stock using a
+  pattern.
+- [Buffers](Buffers.md) — keep-stocked and passive-cache reservoir blocks.
+- [Drone Ports](Drone-Ports.md) — standalone RF ports that move items point-to-point and between
+  networks; drones-as-lanes and the unrendered Hyperspeed upgrade.
+- [Trains](Trains.md) — native cheap bulk hauling between train stations on a named line.
+- [Conduits](Conduits.md) — legacy item ducts, fluid ducts and energy cables; per-face modes, filters,
+  and how networks form.
 - [Terminals](Terminals.md) — wireless cargo terminals, the storage request terminal, and the Create
   train cargo interface.
 - [Drones](Drones.md) — the drone hub and delivery drones (capped pool, channels, energy cost).

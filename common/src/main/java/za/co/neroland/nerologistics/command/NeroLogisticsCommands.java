@@ -5,12 +5,15 @@ import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.decoration.ItemFrame;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -32,11 +35,22 @@ import za.co.neroland.nerologistics.registry.ModBlocks;
  */
 public final class NeroLogisticsCommands {
 
-    /** The nine blocks shown, in display order, with their lang keys for labels. */
+    /** Every NeroLogistics block, in display order (redesign blocks first, then the legacy line-up). */
     private static final String[] SHOWCASE = {
+            // Stage 7–12 redesign
+            "network_controller", "network_module",
+            "universal_duct", "item_storage",
+            "auto_crafter", "buffer",
+            "drone_port", "train_station",
+            // Legacy (Stage 1–5)
             "item_duct", "fluid_duct", "energy_cable",
             "wireless_cargo_terminal", "storage_request_terminal", "train_cargo_interface",
             "drone_hub", "rocket_cargo_port", "logistics_dashboard"
+    };
+
+    /** The non-block item components, shown in floating item frames alongside the block row. */
+    private static final String[] ITEM_SHOWCASE = {
+            "drone", "hyperspeed_card", "configurator"
     };
 
     /** Blocks between adjacent displays (5 empty blocks of breathing room → a 6-block stride). */
@@ -91,6 +105,13 @@ public final class NeroLogisticsCommands {
                     Component.translatable("block.nerologistics." + SHOWCASE[i]));
         }
 
+        // --- Item components: floating item frames on plinths, a short row in front of the blocks ---
+        for (int i = 0; i < ITEM_SHOWCASE.length; i++) {
+            int x = bx + i * SPACING;
+            itemDisplay(level, new BlockPos(x, fy + 1, bz + 2), ITEM_SHOWCASE[i],
+                    Component.translatable("item.nerologistics." + ITEM_SHOWCASE[i]));
+        }
+
         // --- Live demo lines, each on its own row 5 blocks apart along +Z ---
         // ENERGY (automatic): creative_battery -> energy_cable x3 -> battery (right-click the battery).
         demoLine(level, bx, fy, bz + 4, "creative_battery", "energy_cable", "battery");
@@ -117,8 +138,9 @@ public final class NeroLogisticsCommands {
         label(level, new BlockPos(bx, fy + 3, bz + 19), Component.literal("Storage Terminal — live (right-click it)"));
 
         source.sendSuccess(() -> Component.literal(
-                "Built the NeroLogistics gallery. Energy/Items/Storage run now; flick the fluid source with a "
-                + "water bucket. See the wiki 'Demo & Testing' page for wireless, drones and cargo ports."), false);
+                "Built the NeroLogistics gallery: every block (controller, universal duct, storage, "
+                + "auto-crafter, buffer, drone port, train station and the legacy line-up) plus the item "
+                + "components. Energy/Items/Storage run now; flick the fluid source with a water bucket."), false);
         return 1;
     }
 
@@ -138,6 +160,19 @@ public final class NeroLogisticsCommands {
         if (level.getBlockEntity(pos) instanceof CreativeItemStoreBlockEntity store) {
             store.setSource(stack);
         }
+    }
+
+    /** A plinth with a floating (frameless) item frame on top showing {@code itemName}, plus a label. */
+    private static void itemDisplay(ServerLevel level, BlockPos plinth, String itemName, Component name) {
+        level.setBlockAndUpdate(plinth, Blocks.SMOOTH_STONE.defaultBlockState());
+        Item item = BuiltInRegistries.ITEM.getValue(
+                Identifier.fromNamespaceAndPath(NeroLogisticsCommon.MOD_ID, itemName));
+        ItemFrame frame = new ItemFrame(level, plinth.above(), Direction.UP);
+        frame.setInvisible(true);
+        frame.setInvulnerable(true);
+        frame.setItem(new ItemStack(item));
+        level.addFreshEntity(frame);
+        label(level, plinth.above().above(), name);
     }
 
     private static int clearGallery(CommandSourceStack source) {
@@ -160,6 +195,9 @@ public final class NeroLogisticsCommands {
 
         for (ArmorStand stand : level.getEntitiesOfClass(ArmorStand.class, box)) {
             stand.discard();
+        }
+        for (ItemFrame frame : level.getEntitiesOfClass(ItemFrame.class, box)) {
+            frame.discard();
         }
         for (DeliveryDroneEntity drone : level.getEntitiesOfClass(DeliveryDroneEntity.class, box.inflate(64))) {
             drone.discard();

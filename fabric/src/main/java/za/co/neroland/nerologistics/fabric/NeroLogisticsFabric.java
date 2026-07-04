@@ -27,13 +27,21 @@ public final class NeroLogisticsFabric implements ModInitializer {
         // Anonymous, NeroLogistics-only crash reporting (opt-out via config; off in dev unless DSN set).
         NeroLogisticsTelemetry.init();
 
-        // Energy: terminals/hub/port accept NE from cables on Core's shared energy lookup.
+        // Energy: controller/terminals/hub/port accept NE from cables on Core's shared energy lookup.
+        energy(ModBlockEntities.NETWORK_CONTROLLER.get());
+        energy(ModBlockEntities.AUTO_CRAFTER.get());
+        energy(ModBlockEntities.DRONE_PORT.get());
         energy(ModBlockEntities.WIRELESS_CARGO_TERMINAL.get());
         energy(ModBlockEntities.DRONE_HUB.get());
         energy(ModBlockEntities.ROCKET_CARGO_PORT.get());
 
-        // Items: expose terminal/interface buffers on the Fabric Transfer API so hoppers, Create and
-        // other mods move items in/out (NeroLogistics' own ducts use the vanilla Container directly).
+        // Items: expose terminal/interface/storage buffers on the Fabric Transfer API so hoppers, Create
+        // and other mods move items in/out (NeroLogistics' own ducts use the vanilla Container directly).
+        item(ModBlockEntities.ITEM_STORAGE.get());
+        item(ModBlockEntities.AUTO_CRAFTER.get());
+        item(ModBlockEntities.BUFFER.get());
+        item(ModBlockEntities.DRONE_PORT.get());
+        item(ModBlockEntities.TRAIN_STATION.get());
         item(ModBlockEntities.WIRELESS_CARGO_TERMINAL.get());
         item(ModBlockEntities.STORAGE_REQUEST_TERMINAL.get());
         item(ModBlockEntities.TRAIN_CARGO_INTERFACE.get());

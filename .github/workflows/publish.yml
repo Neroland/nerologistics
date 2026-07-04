@@ -223,6 +223,7 @@ jobs:
       # game-version (so no jar is mislabelled). Each version carries its own copy of the
       # changelog (self-contained per the chosen layout).
       - name: Publish to CurseForge and Modrinth
+        id: upload
         uses: Kir-Antipov/mc-publish@995edadc13559a8b28d0b7e6571229f067ec7659 # v3.3
         with:
           curseforge-id: ${{ secrets.CURSEFORGE_PROJECT_ID }}
@@ -237,6 +238,39 @@ jobs:
           loaders: ${{ matrix.loader }}
           game-versions: ${{ matrix.mc }}
           java: 25
+
+      # Tag the freshly-created Modrinth version with the per-version environment
+      # metadata from Modrinth's environments overhaul (Content Rules §5.1). mc-publish
+      # has no input for this, and the field is only writable via API v3, where
+      # `environment` is a flattened version field (see labrinth v3 versions.rs /
+      # v2_reroute.rs). NeroLogistics must be installed on BOTH sides (fabric.mod.json
+      # "environment": "*"), hence client_and_server — keep in sync with the v2
+      # client_side/server_side pins in modrinth-description.yml.
+      # Privacy (POPIA/GDPR): only the opaque version id is handled or logged —
+      # no personal data.
+      - name: Set Modrinth environment metadata
+        env:
+          MODRINTH_API_TOKEN: ${{ secrets.MODRINTH_API_TOKEN }}
+          VERSION_ID: ${{ steps.upload.outputs.modrinth-version }}
+        run: |
+          if [ -z "$VERSION_ID" ]; then
+            echo "::error::No Modrinth version id from the publish step; cannot set environment."
+            exit 1
+          fi
+
+          HTTP_CODE=$(curl -sS -o response.txt -w "%{http_code}" \
+            -X PATCH "https://api.modrinth.com/v3/version/${VERSION_ID}" \
+            -H "Authorization: ${MODRINTH_API_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -H "User-Agent: Neroland/nerologistics-ci (dario@neroland.co.za)" \
+            --data '{"environment": "client_and_server"}')
+
+          if [ "$HTTP_CODE" != "204" ]; then
+            echo "::error::Modrinth v3 version API returned HTTP $HTTP_CODE"
+            cat response.txt
+            exit 1
+          fi
+          echo "Modrinth version ${VERSION_ID}: environment set to client_and_server (HTTP 204)."
 
   release:
     name: GitHub Release + Sentry

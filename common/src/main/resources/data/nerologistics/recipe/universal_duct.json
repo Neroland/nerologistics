@@ -1,0 +1,4 @@
+{ "type": "minecraft:crafting_shaped", "category": "misc",
+  "key": { "I": "minecraft:iron_ingot", "G": "minecraft:glass", "R": "minecraft:redstone" },
+  "pattern": [ "IGI", "GRG", "IGI" ],
+  "result": { "id": "nerologistics:universal_duct", "count": 8 } }
