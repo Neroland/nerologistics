@@ -54,3 +54,13 @@ type = "optional"
 versionRange = "[0,)"
 ordering = "AFTER"
 side = "BOTH"
+
+# Energized Power — optional interop. When present it must load BEFORE NeroLogistics so its Forge-Energy
+# cables/machines and c: material tags are available as ordinary network endpoints; discovery is via
+# Core tags/capabilities, never a hard import.
+[[dependencies.${mod_id}]]
+modId = "energizedpower"
+type = "optional"
+versionRange = "[0,)"
+ordering = "AFTER"
+side = "BOTH"
