@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 import za.co.neroland.nerologistics.config.NeroLogisticsConfig;
 import za.co.neroland.nerologistics.menu.BufferMenu;
+import za.co.neroland.nerologistics.network.ConduitEndpoint;
 import za.co.neroland.nerologistics.network.ConduitNetwork;
 import za.co.neroland.nerologistics.network.NetworkManager;
 import za.co.neroland.nerologistics.network.NetworkMedium;
@@ -113,7 +114,10 @@ public class BufferBlockEntity extends AbstractTerminalBlockEntity implements Me
         if (!NeroLogisticsConfig.enableBuffers() || be.mode != Mode.KEEP_STOCKED) {
             return;
         }
-        if (level.getGameTime() % NeroLogisticsConfig.bufferIntervalTicks() != 0L) {
+        // Position-hash phase stagger: spreads many buffers across the interval instead of a
+        // thundering herd all levelling on the same tick.
+        int interval = NeroLogisticsConfig.bufferIntervalTicks();
+        if (level.getGameTime() % interval != Math.floorMod(pos.hashCode(), interval)) {
             return;
         }
         be.level(level, pos);
@@ -205,20 +209,19 @@ public class BufferBlockEntity extends AbstractTerminalBlockEntity implements Me
         return room;
     }
 
+    /** External inventories on the network, resolved from the cached endpoint list (no member walk). */
     private List<Ext> externals(Level level, ConduitNetwork network) {
         Map<BlockPos, Ext> map = new HashMap<>();
-        for (BlockPos member : network.members()) {
-            for (Direction dir : Direction.values()) {
-                BlockPos neighbor = member.relative(dir);
-                if (network.contains(neighbor) || map.containsKey(neighbor)) {
-                    continue;
-                }
-                Container container = InventoryTransfer.containerAt(level, neighbor);
-                if (container == null || container == this) {
-                    continue;
-                }
-                map.put(neighbor.immutable(), new Ext(container, dir.getOpposite()));
+        for (ConduitEndpoint ep : network.endpoints(level)) {
+            BlockPos neighbor = ep.neighborPos();
+            if (map.containsKey(neighbor)) {
+                continue;
             }
+            Container container = InventoryTransfer.containerAt(level, neighbor);
+            if (container == null || container == this) {
+                continue;
+            }
+            map.put(neighbor.immutable(), new Ext(container, ep.neighborSide()));
         }
         return new ArrayList<>(map.values());
     }

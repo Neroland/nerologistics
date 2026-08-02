@@ -1,0 +1,4 @@
+{ "type": "minecraft:crafting_shaped", "category": "misc",
+  "key": { "I": "minecraft:iron_ingot", "C": "minecraft:comparator", "O": "minecraft:observer", "D": "nerologistics:item_duct" },
+  "pattern": [ "ICI", "DOD", "ICI" ],
+  "result": { "id": "nerologistics:logistics_processor" } }

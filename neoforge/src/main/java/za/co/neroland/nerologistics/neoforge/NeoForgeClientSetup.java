@@ -6,10 +6,14 @@ import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 
 import za.co.neroland.nerologistics.client.AutoCrafterScreen;
 import za.co.neroland.nerologistics.client.BufferScreen;
+import za.co.neroland.nerologistics.client.CellConfigScreen;
 import za.co.neroland.nerologistics.client.DeliveryDroneRenderer;
+import za.co.neroland.nerologistics.client.DriveBayScreen;
 import za.co.neroland.nerologistics.client.DronePortScreen;
 import za.co.neroland.nerologistics.client.FilterScreen;
+import za.co.neroland.nerologistics.client.LogisticsProcessorScreen;
 import za.co.neroland.nerologistics.client.StorageRequestScreen;
+import za.co.neroland.nerologistics.client.StorageTerminalScreen;
 import za.co.neroland.nerologistics.registry.ModEntities;
 import za.co.neroland.nerologistics.registry.ModMenuTypes;
 
@@ -30,6 +34,10 @@ public final class NeoForgeClientSetup {
         event.register(ModMenuTypes.AUTO_CRAFTER.get(), AutoCrafterScreen::new);
         event.register(ModMenuTypes.BUFFER.get(), BufferScreen::new);
         event.register(ModMenuTypes.DRONE_PORT.get(), DronePortScreen::new);
+        event.register(ModMenuTypes.DRIVE_BAY.get(), DriveBayScreen::new);
+        event.register(ModMenuTypes.CELL_CONFIG.get(), CellConfigScreen::new);
+        event.register(ModMenuTypes.STORAGE_TERMINAL.get(), StorageTerminalScreen::new);
+        event.register(ModMenuTypes.LOGISTICS_PROCESSOR.get(), LogisticsProcessorScreen::new);
     }
 
     private static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {

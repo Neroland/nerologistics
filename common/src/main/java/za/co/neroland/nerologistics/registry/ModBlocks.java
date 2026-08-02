@@ -17,6 +17,7 @@ import za.co.neroland.nerologistics.conduit.BufferBlock;
 import za.co.neroland.nerologistics.conduit.DronePortBlock;
 import za.co.neroland.nerologistics.conduit.ItemDuctBlock;
 import za.co.neroland.nerologistics.conduit.ItemStorageBlock;
+import za.co.neroland.nerologistics.conduit.LogisticsProcessorBlock;
 import za.co.neroland.nerologistics.conduit.NetworkControllerBlock;
 import za.co.neroland.nerologistics.conduit.NetworkModuleBlock;
 import za.co.neroland.nerologistics.conduit.RocketCargoPortBlock;
@@ -27,6 +28,8 @@ import za.co.neroland.nerologistics.conduit.TrainStationBlock;
 import za.co.neroland.nerologistics.conduit.WirelessCargoTerminalBlock;
 import za.co.neroland.nerologistics.dashboard.LogisticsDashboardBlock;
 import za.co.neroland.nerologistics.registry.RegistrationProvider.RegistryEntry;
+import za.co.neroland.nerologistics.storage.DriveBayBlock;
+import za.co.neroland.nerologistics.storage.StorageTerminalBlock;
 
 /** NeroLogistics conduit blocks, registered cross-loader via {@link RegistrationProvider}. */
 public final class ModBlocks {
@@ -46,6 +49,14 @@ public final class ModBlocks {
     public static final RegistryEntry<ItemStorageBlock> ITEM_STORAGE =
             register("item_storage", ItemStorageBlock::new);
 
+    // --- Stage 14: digital storage network ---------------------------------
+    public static final RegistryEntry<DriveBayBlock> DRIVE_BAY =
+            register("drive_bay", DriveBayBlock::new);
+
+    // --- Stage 15: storage terminal ----------------------------------------
+    public static final RegistryEntry<StorageTerminalBlock> STORAGE_TERMINAL =
+            register("storage_terminal", StorageTerminalBlock::new);
+
     // --- Stage 9: native auto-crafting -------------------------------------
     public static final RegistryEntry<AutoCrafterBlock> AUTO_CRAFTER =
             register("auto_crafter", AutoCrafterBlock::new);
@@ -53,6 +64,10 @@ public final class ModBlocks {
     // --- Stage 10: buffer block --------------------------------------------
     public static final RegistryEntry<BufferBlock> BUFFER =
             register("buffer", BufferBlock::new);
+
+    // --- Stage 16: logistics processor (rule-based supply policies) --------
+    public static final RegistryEntry<LogisticsProcessorBlock> LOGISTICS_PROCESSOR =
+            register("logistics_processor", LogisticsProcessorBlock::new);
 
     // --- Stage 11: drone port ----------------------------------------------
     public static final RegistryEntry<DronePortBlock> DRONE_PORT =

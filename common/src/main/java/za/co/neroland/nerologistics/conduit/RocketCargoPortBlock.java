@@ -21,9 +21,16 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 import za.co.neroland.nerologistics.config.NeroLogisticsConfig;
+import za.co.neroland.nerologistics.item.ConfiguratorItem;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
+import za.co.neroland.nerologistics.ship.ShippingClass;
 
-/** Rocket cargo port block — right-click cycles destination, sneak-right-click cycles channel. */
+/**
+ * Rocket cargo port block — right-click cycles destination, sneak-right-click cycles channel, and
+ * right-click <em>with the Configurator</em> cycles the shipping class (STANDARD → EXPRESS → BULK).
+ * Both plain-hand affordances predate QoS lanes and stay unchanged; the Configurator is the mod's
+ * mode tool, so the third toggle rides it.
+ */
 public class RocketCargoPortBlock extends BaseEntityBlock {
 
     public static final MapCodec<RocketCargoPortBlock> CODEC = simpleCodec(RocketCargoPortBlock::new);
@@ -71,6 +78,16 @@ public class RocketCargoPortBlock extends BaseEntityBlock {
                 int channel = port.cycleChannel();
                 serverPlayer.sendSystemMessage(
                         Component.translatable("block.nerologistics.rocket_cargo_port.channel", channel));
+            } else if (player.getMainHandItem().getItem() instanceof ConfiguratorItem) {
+                if (!NeroLogisticsConfig.enableShippingQos()) {
+                    serverPlayer.sendSystemMessage(Component.translatable(
+                            "block.nerologistics.rocket_cargo_port.shipping_class.disabled"));
+                } else {
+                    ShippingClass shippingClass = port.cycleShippingClass();
+                    serverPlayer.sendSystemMessage(Component.translatable(
+                            "block.nerologistics.rocket_cargo_port.shipping_class",
+                            Component.translatable(shippingClass.translationKey())));
+                }
             } else {
                 String dest = port.cycleDestination(level.getServer());
                 serverPlayer.sendSystemMessage(

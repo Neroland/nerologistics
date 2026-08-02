@@ -66,6 +66,15 @@ public final class ShipmentManager {
         registerPort(level, pos, newChannel);
     }
 
+    /**
+     * Drop the in-memory port directory. Called from the server-stopped reset hook; ports lazily
+     * re-register as their block entities tick after the next world load. In-transit shipments are
+     * unaffected — they live in {@link ShipmentState} (durable SavedData), not here.
+     */
+    public static void clearAll() {
+        PORTS.clear();
+    }
+
     /** A destination port in {@code destDim} on {@code channel}, other than {@code exclude}, or null. */
     @Nullable
     public static BlockPos findPort(ResourceKey<Level> destDim, int channel, BlockPos exclude) {
@@ -124,10 +133,12 @@ public final class ShipmentManager {
         BlockPos pos = manifest.destPos();
         int cx = pos.getX() >> 4;
         int cz = pos.getZ() >> 4;
-        boolean forced = false;
+        boolean forcedHere = false;
         try {
-            level.setChunkForced(cx, cz, true); // momentary — only for this delivery
-            forced = true;
+            // setChunkForced returns whether the forced set actually changed. If the chunk was
+            // already force-loaded by something else (/forceload, a quarry, another mod), we must
+            // not un-force it afterwards — only release what this delivery itself forced.
+            forcedHere = level.setChunkForced(cx, cz, true); // momentary — only for this delivery
             Container dest = InventoryTransfer.containerAt(level, pos);
             for (ItemStack stack : manifest.items()) {
                 if (stack.isEmpty()) {
@@ -141,7 +152,7 @@ public final class ShipmentManager {
             }
             LogisticsMetrics.recordShipmentDelivered(level);
         } finally {
-            if (forced) {
+            if (forcedHere) {
                 level.setChunkForced(cx, cz, false);
             }
         }

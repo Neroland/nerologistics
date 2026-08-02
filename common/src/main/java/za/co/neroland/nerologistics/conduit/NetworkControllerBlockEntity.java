@@ -58,6 +58,8 @@ public class NetworkControllerBlockEntity extends AbstractTerminalBlockEntity {
     private int moduleCount;
     private double capacityMultiplier = 1.0;
     private Status status = Status.IDLE;
+    /** False until this controller has announced itself to the adjacent networks (first server tick). */
+    private boolean joined;
 
     public NetworkControllerBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.NETWORK_CONTROLLER.get(), pos, state, 0, ENERGY_CAPACITY, ENERGY_MAX_IO);
@@ -92,6 +94,12 @@ public class NetworkControllerBlockEntity extends AbstractTerminalBlockEntity {
         if (level.isClientSide() || !(level instanceof ServerLevel serverLevel)) {
             return;
         }
+        if (!be.joined) {
+            // Placement/load: adjacent networks cached their controller state before this controller
+            // existed (endpoints() only resolves controllers while cold) — force them to recompute.
+            invalidateNeighborNetworks(level, pos);
+            be.joined = true;
+        }
         if (!NeroLogisticsConfig.enableController()) {
             be.capacityMultiplier = 1.0;
             be.status = Status.IDLE;
@@ -109,12 +117,38 @@ public class NetworkControllerBlockEntity extends AbstractTerminalBlockEntity {
 
     /** Recompute module count, capacity multiplier and managed status. Cheap, runs on an interval. */
     private void refresh(ServerLevel level, BlockPos pos, boolean powered) {
+        int oldModules = this.moduleCount;
+        Status oldStatus = this.status;
         this.moduleCount = countModules(level, pos);
         int bonus = NeroLogisticsConfig.controllerModuleBonusPercent();
         int percent = Math.min(100 + this.moduleCount * bonus, NeroLogisticsConfig.controllerMaxPercent());
         this.capacityMultiplier = powered ? percent / 100.0 : 1.0;
         this.status = resolveStatus(level, pos);
-        setChanged();
+        // Only persist when the saved state actually changed; the multiplier is derived live and the
+        // status is transient, so an unconditional setChanged() would dirty the chunk every second.
+        if (this.moduleCount != oldModules || this.status != oldStatus) {
+            setChanged();
+        }
+    }
+
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        if (this.level != null && !this.level.isClientSide()) {
+            // Breaking the controller: adjacent networks still cache this position as their
+            // controller — force them to recompute so they fall back to base throughput.
+            invalidateNeighborNetworks(this.level, this.worldPosition);
+        }
+    }
+
+    /** Drop the cached endpoint/controller state of every network touching {@code pos}, all media. */
+    private static void invalidateNeighborNetworks(Level level, BlockPos pos) {
+        for (Direction dir : Direction.values()) {
+            BlockPos neighbor = pos.relative(dir);
+            for (NetworkMedium medium : NetworkMedium.values()) {
+                NetworkManager.invalidateAt(level, medium, neighbor);
+            }
+        }
     }
 
     /** Bounded flood-fill of {@link ModBlocks#NETWORK_MODULE} blocks connected to the controller. */

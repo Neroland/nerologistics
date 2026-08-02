@@ -18,6 +18,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import org.jetbrains.annotations.Nullable;
 
+import za.co.neroland.nerologistics.menu.MenuOpener;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 
 /**
@@ -59,7 +60,7 @@ public class BufferBlock extends BaseEntityBlock {
                         "block.nerologistics.buffer.mode",
                         Component.translatable("block.nerologistics.buffer.mode." + mode.name().toLowerCase())));
             } else {
-                serverPlayer.openMenu(buffer);
+                MenuOpener.open(serverPlayer, buffer);
             }
         }
         return InteractionResult.SUCCESS;

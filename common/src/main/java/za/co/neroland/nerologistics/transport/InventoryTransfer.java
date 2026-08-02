@@ -143,6 +143,82 @@ public final class InventoryTransfer {
         return got;
     }
 
+    /**
+     * How many of {@code prototype} could be inserted into {@code dest} without mutating it —
+     * the simulation twin of {@link #insert}. Used by the network storage index so read-through
+     * containers honour the simulate contract.
+     */
+    public static int simulateInsert(Container dest, Direction side, ItemStack prototype, int amount) {
+        int remaining = Math.min(amount, prototype.getMaxStackSize());
+        int insertable = 0;
+        for (int slot : slotsForFace(dest, side)) {
+            if (remaining <= 0) {
+                break;
+            }
+            ItemStack inSlot = dest.getItem(slot);
+            if (inSlot.isEmpty()) {
+                if (!canPlace(dest, slot, prototype, side)) {
+                    continue;
+                }
+                int room = Math.min(remaining, Math.min(prototype.getMaxStackSize(), dest.getMaxStackSize()));
+                remaining -= room;
+                insertable += room;
+            } else if (ItemStack.isSameItemSameComponents(inSlot, prototype)
+                    && canPlace(dest, slot, prototype, side)) {
+                int cap = Math.min(inSlot.getMaxStackSize(), dest.getMaxStackSize());
+                int room = Math.min(remaining, cap - inSlot.getCount());
+                if (room > 0) {
+                    remaining -= room;
+                    insertable += room;
+                }
+            }
+        }
+        return insertable;
+    }
+
+    /**
+     * Total count of items exactly matching {@code match} (item <b>and</b> data components)
+     * extractable from {@code source}'s {@code side} — the component-sensitive twin of
+     * {@link #count}, used by the network storage index.
+     */
+    public static int countExact(Container source, Direction side, ItemStack match) {
+        int total = 0;
+        for (int slot : slotsForFace(source, side)) {
+            ItemStack stack = source.getItem(slot);
+            if (!stack.isEmpty() && ItemStack.isSameItemSameComponents(stack, match)
+                    && canTake(source, slot, stack, side)) {
+                total += stack.getCount();
+            }
+        }
+        return total;
+    }
+
+    /**
+     * Extract up to {@code amount} of items exactly matching {@code match} (item <b>and</b> data
+     * components) from {@code source}'s {@code side} — the component-sensitive twin of
+     * {@link #extract}. Mutates the container. @return the number of items actually extracted.
+     */
+    public static int extractExact(Container source, Direction side, ItemStack match, int amount) {
+        int got = 0;
+        for (int slot : slotsForFace(source, side)) {
+            if (got >= amount) {
+                break;
+            }
+            ItemStack stack = source.getItem(slot);
+            if (stack.isEmpty() || !ItemStack.isSameItemSameComponents(stack, match)
+                    || !canTake(source, slot, stack, side)) {
+                continue;
+            }
+            int take = Math.min(amount - got, stack.getCount());
+            stack.shrink(take);
+            got += take;
+        }
+        if (got > 0) {
+            source.setChanged();
+        }
+        return got;
+    }
+
     /** A slot the given face may extract from, holding a non-empty stack — or -1 if none. */
     public static int firstExtractableSlot(Container source, Direction side, int afterSlot) {
         int[] slots = slotsForFace(source, side);

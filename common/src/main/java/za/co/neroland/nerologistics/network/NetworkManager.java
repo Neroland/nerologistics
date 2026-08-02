@@ -134,4 +134,13 @@ public final class NetworkManager {
             net.tick(level);
         }
     }
+
+    /**
+     * Drop every tracked network. Called from the server-stopped reset hook so JVM-lifetime statics
+     * never leak one world's networks into the next (single-player) world; conduits lazily re-join on
+     * first tick after the next load.
+     */
+    public static void clearAll() {
+        LEVELS.clear();
+    }
 }

@@ -23,9 +23,9 @@ A lightweight non-living entity. It flies in a straight line from its hub to the
 cargo into the destination inventory (dropping any overflow), then despawns. A failsafe age bounds its
 lifetime so a stranded drone never lingers.
 
-> **Note:** the delivery drone's detailed animated model is part of the deferred visual/art pass (see
-> [MODELS.md](../../neroland-mc-ecosystem/nerologistics/MODELS.md) in the umbrella docs). Drone-port
-> **Hyperspeed** transfers deliberately spawn **no** drone entity at all, for performance.
+> **Note:** the delivery drone's detailed animated model is part of a deferred visual/art pass and
+> will land in a later release. Drone-port **Hyperspeed** transfers deliberately spawn **no** drone
+> entity at all, for performance.
 
 ## See also
 

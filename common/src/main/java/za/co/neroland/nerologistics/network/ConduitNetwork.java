@@ -25,6 +25,7 @@ import za.co.neroland.nerologistics.conduit.AbstractConduitBlockEntity;
 import za.co.neroland.nerologistics.conduit.NetworkControllerBlockEntity;
 import za.co.neroland.nerologistics.config.NeroLogisticsConfig;
 import za.co.neroland.nerologistics.dashboard.LogisticsMetrics;
+import za.co.neroland.nerologistics.storage.NetworkStorageIndex;
 import za.co.neroland.nerologistics.transport.InventoryTransfer;
 
 /**
@@ -39,6 +40,9 @@ public final class ConduitNetwork {
     private final Set<BlockPos> members = new HashSet<>();
     private List<ConduitEndpoint> endpoints;
     private long lastTickGame = -1L;
+
+    /** Lazily-created digital storage index for this network (see {@link #storageIndex()}). */
+    private NetworkStorageIndex storageIndex;
 
     /** Single controller managing this network (lazily resolved with the endpoint cache); null = none. */
     private BlockPos controllerPos;
@@ -78,6 +82,21 @@ public final class ConduitNetwork {
     /** Drop the cached endpoint list; recomputed on next access. */
     public void invalidate() {
         this.endpoints = null;
+        if (this.storageIndex != null) {
+            this.storageIndex.invalidateStructure();
+        }
+    }
+
+    /**
+     * The digital storage index aggregating this network's drive bays and read-through
+     * inventories/tanks (lazily created; dies with this network object on merge/split and is
+     * rebuilt on first query of the successor network). Server-side only.
+     */
+    public NetworkStorageIndex storageIndex() {
+        if (this.storageIndex == null) {
+            this.storageIndex = new NetworkStorageIndex(this);
+        }
+        return this.storageIndex;
     }
 
     /** Number of external interaction points (faces touching non-conduit blocks). For the dashboard. */
@@ -85,7 +104,13 @@ public final class ConduitNetwork {
         return endpoints(level).size();
     }
 
-    private List<ConduitEndpoint> endpoints(Level level) {
+    /**
+     * The cached endpoint list (faces touching external blocks), recomputed lazily after
+     * {@link #invalidate()}. Public so network machines (buffer, auto-crafter, request terminal) reuse
+     * this cache instead of re-walking {@code members()}×6 with {@code getBlockEntity} per neighbor.
+     * Callers must not mutate the returned list.
+     */
+    public List<ConduitEndpoint> endpoints(Level level) {
         if (this.endpoints != null) {
             return this.endpoints;
         }
@@ -191,11 +216,15 @@ public final class ConduitNetwork {
         if (sinks.isEmpty()) {
             return;
         }
+        // Ping-pong guard: with every face defaulting to IO, inventory A could feed B and B feed A
+        // back in the same pass. Any inventory that received an item this tick is excluded as a
+        // source for the remainder of the pass; round-robin source order is otherwise unchanged.
+        Set<BlockPos> receivedThisTick = new HashSet<>();
         for (ConduitEndpoint src : eps) {
             if (budget <= 0) {
                 break;
             }
-            if (!src.isSource()) {
+            if (!src.isSource() || receivedThisTick.contains(src.neighborPos())) {
                 continue;
             }
             Container from = InventoryTransfer.containerAt(level, src.neighborPos());
@@ -225,6 +254,9 @@ public final class ConduitNetwork {
                         continue;
                     }
                     int inserted = InventoryTransfer.insert(to, sink.neighborSide(), stack, want - movedTotal);
+                    if (inserted > 0) {
+                        receivedThisTick.add(sink.neighborPos());
+                    }
                     movedTotal += inserted;
                     budget -= inserted;
                 }
@@ -244,11 +276,14 @@ public final class ConduitNetwork {
         if (sinks.isEmpty()) {
             return;
         }
+        // Same ping-pong guard as the item pass: storages that received energy this tick are not
+        // drained again as sources within the same pass.
+        Set<BlockPos> receivedThisTick = new HashSet<>();
         for (ConduitEndpoint src : eps) {
             if (budget <= 0) {
                 break;
             }
-            if (!src.isSource()) {
+            if (!src.isSource() || receivedThisTick.contains(src.neighborPos())) {
                 continue;
             }
             NeroEnergyStorage from = EnergyLookup.INSTANCE.find(level, src.neighborPos(), src.neighborSide());
@@ -276,6 +311,9 @@ public final class ConduitNetwork {
                 }
                 long moved = to.insert(accepted, false);
                 from.extract(moved, false);
+                if (moved > 0) {
+                    receivedThisTick.add(sink.neighborPos());
+                }
                 budget -= moved;
             }
         }
@@ -289,11 +327,14 @@ public final class ConduitNetwork {
         if (sinks.isEmpty()) {
             return;
         }
+        // Same ping-pong guard as the item pass: tanks that received fluid this tick are not drained
+        // again as sources within the same pass.
+        Set<BlockPos> receivedThisTick = new HashSet<>();
         for (ConduitEndpoint src : eps) {
             if (budget <= 0) {
                 break;
             }
-            if (!src.isSource()) {
+            if (!src.isSource() || receivedThisTick.contains(src.neighborPos())) {
                 continue;
             }
             NeroFluidStorage from = FluidLookup.INSTANCE.find(level, src.neighborPos(), src.neighborSide());
@@ -327,6 +368,9 @@ public final class ConduitNetwork {
                 }
                 long filled = to.fill(fluid, fillSim, false);
                 long drained = from.drain(filled, false);
+                if (filled > 0) {
+                    receivedThisTick.add(sink.neighborPos());
+                }
                 budget -= drained;
             }
         }

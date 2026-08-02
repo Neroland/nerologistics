@@ -15,6 +15,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import org.jetbrains.annotations.Nullable;
 
+import za.co.neroland.nerologistics.menu.MenuOpener;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 
 /**
@@ -46,7 +47,7 @@ public class UniversalDuctBlock extends AbstractConduitBlock {
             BlockHitResult hit) {
         if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer
                 && level.getBlockEntity(pos) instanceof MenuProvider provider) {
-            serverPlayer.openMenu(provider);
+            MenuOpener.open(serverPlayer, provider);
         }
         return InteractionResult.SUCCESS;
     }

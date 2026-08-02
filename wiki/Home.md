@@ -1,9 +1,9 @@
 # NeroLogistics Wiki
 
-Player- and contributor-facing documentation for **NeroLogistics**, part of the
-[Neroland ecosystem](../../neroland-mc-ecosystem/README.md). Built on **Neroland Core**.
+Player- and contributor-facing documentation for **NeroLogistics**, part of the **Neroland**
+sci-fi Minecraft mod ecosystem. Built on **Neroland Core**.
 
-> **Status:** alpha (version `0.0.1-alpha.1`), built on Neroland Core across the six cross-loader
+> **Status:** alpha (version `0.0.1-alpha.2`), built on Neroland Core across the six cross-loader
 > cells. NeroLogistics is the ecosystem's automation brain — it moves items, fluids, energy and
 > cargo within a base, across a base wirelessly, by drone, and between dimensions.
 
@@ -13,6 +13,8 @@ Player- and contributor-facing documentation for **NeroLogistics**, part of the
   its throughput with network modules.
 - [Universal Duct & Native Storage](Universal-Duct-and-Storage.md) — one duct for items + fluids, and
   the native item storage block the network indexes.
+- [Storage Network](Storage-Network.md) — portable storage cells, the six-bay Drive Bay, and the
+  per-network storage index that aggregates cells, chests and tanks.
 - [Auto-Crafting](Auto-Crafting.md) — the auto-crafter that builds items from network stock using a
   pattern.
 - [Buffers](Buffers.md) — keep-stocked and passive-cache reservoir blocks.
@@ -25,7 +27,9 @@ Player- and contributor-facing documentation for **NeroLogistics**, part of the
   train cargo interface.
 - [Drones](Drones.md) — the drone hub and delivery drones (capped pool, channels, energy cost).
 - [Cross-Dimension Shipping](Cross-Dimension-Shipping.md) — the rocket cargo port, routes, rocket fuel,
-  and the orbit gate.
+  and the express/bulk shipping classes.
+- [Logistics Programming](Logistics-Programming.md) — the logistics processor's rule-based supply
+  policies (keep stocked, export excess, auto-ship).
 - [Dashboard & Privacy](Dashboard-and-Privacy.md) — the logistics dashboard and the POPIA/GDPR data
   posture.
 - [Configuration](Configuration.md) — every config key, with defaults.
@@ -43,6 +47,6 @@ is optional.
 
 ## See also
 
-- [Build & contributor context](../AGENTS.md)
-- [Ecosystem overview](../../neroland-mc-ecosystem/README.md)
-- [This mod's planning docs](../../neroland-mc-ecosystem/nerologistics/)
+- [Build & contributor context](https://github.com/Neroland/nerologistics/blob/main/AGENTS.md)
+- [Source repository](https://github.com/Neroland/nerologistics) ·
+  [Issues](https://github.com/Neroland/nerologistics/issues)

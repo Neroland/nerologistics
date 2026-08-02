@@ -7,9 +7,13 @@ import net.minecraft.world.inventory.MenuType;
 import za.co.neroland.nerologistics.NeroLogisticsCommon;
 import za.co.neroland.nerologistics.menu.AutoCrafterMenu;
 import za.co.neroland.nerologistics.menu.BufferMenu;
+import za.co.neroland.nerologistics.menu.CellConfigMenu;
+import za.co.neroland.nerologistics.menu.DriveBayMenu;
 import za.co.neroland.nerologistics.menu.DronePortMenu;
 import za.co.neroland.nerologistics.menu.FilterMenu;
+import za.co.neroland.nerologistics.menu.LogisticsProcessorMenu;
 import za.co.neroland.nerologistics.menu.StorageRequestMenu;
+import za.co.neroland.nerologistics.menu.StorageTerminalMenu;
 import za.co.neroland.nerologistics.registry.RegistrationProvider.RegistryEntry;
 
 /** Container menu types for NeroLogistics terminals, registered cross-loader via {@link RegistrationProvider}. */
@@ -33,6 +37,20 @@ public final class ModMenuTypes {
 
     public static final RegistryEntry<MenuType<DronePortMenu>> DRONE_PORT =
             MENUS.register("drone_port", key -> new MenuType<>(DronePortMenu::new, FeatureFlags.VANILLA_SET));
+
+    public static final RegistryEntry<MenuType<DriveBayMenu>> DRIVE_BAY =
+            MENUS.register("drive_bay", key -> new MenuType<>(DriveBayMenu::new, FeatureFlags.VANILLA_SET));
+
+    public static final RegistryEntry<MenuType<CellConfigMenu>> CELL_CONFIG =
+            MENUS.register("cell_config", key -> new MenuType<>(CellConfigMenu::new, FeatureFlags.VANILLA_SET));
+
+    public static final RegistryEntry<MenuType<StorageTerminalMenu>> STORAGE_TERMINAL =
+            MENUS.register("storage_terminal",
+                    key -> new MenuType<>(StorageTerminalMenu::new, FeatureFlags.VANILLA_SET));
+
+    public static final RegistryEntry<MenuType<LogisticsProcessorMenu>> LOGISTICS_PROCESSOR =
+            MENUS.register("logistics_processor",
+                    key -> new MenuType<>(LogisticsProcessorMenu::new, FeatureFlags.VANILLA_SET));
 
     private ModMenuTypes() {
     }

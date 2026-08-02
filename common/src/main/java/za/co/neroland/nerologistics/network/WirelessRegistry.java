@@ -134,6 +134,15 @@ public final class WirelessRegistry {
         return new ArrayList<>(members(level, channel));
     }
 
+    /**
+     * Drop all channel membership and tick bookkeeping. Called from the server-stopped reset hook;
+     * terminals lazily re-register as their block entities tick after the next world load.
+     */
+    public static void clearAll() {
+        LEVELS.clear();
+        LAST_TICK.clear();
+    }
+
     private static WirelessCargoTerminalBlockEntity terminal(Level level, BlockPos pos) {
         BlockEntity be = level.getBlockEntity(pos);
         return be instanceof WirelessCargoTerminalBlockEntity terminal ? terminal : null;

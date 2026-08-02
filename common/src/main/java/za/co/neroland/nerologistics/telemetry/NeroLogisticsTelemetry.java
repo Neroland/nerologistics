@@ -52,8 +52,12 @@ public final class NeroLogisticsTelemetry {
     private static final String DSN =
             "https://a3b4fb45c17c96d5b2787d8eb9bf9430@o4511183823241216.ingest.de.sentry.io/4511650772353104";
 
-    /** Mirrors {@code mod_version} in gradle.properties (a public version string for the release tag). */
-    private static final String MOD_VERSION = "0.0.1-alpha.1";
+    /**
+     * Mirrors {@code mod_version} in gradle.properties (a public version string for the release tag).
+     * <b>Release checklist: every mod_version bump MUST update this constant too</b> — it is not
+     * build-injected, and a stale value mislabels Sentry releases/environments.
+     */
+    private static final String MOD_VERSION = "0.0.1-alpha.2";
     private static final String PACKAGE_MARKER = "za.co.neroland.nerologistics";
     private static final int MAX_EVENTS_PER_SESSION = 10;
     private static final Pattern USER_PATH =

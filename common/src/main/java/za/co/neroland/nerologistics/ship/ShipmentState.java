@@ -14,6 +14,7 @@ import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
 
 import za.co.neroland.nerologistics.NeroLogisticsCommon;
+import za.co.neroland.nerologistics.world.SavedDataRecovery;
 
 /**
  * Durable {@link SavedData} store for every pending/in-flight shipment (rocket cargo + train hauls).
@@ -39,7 +40,9 @@ public final class ShipmentState extends SavedData {
     }
 
     public static ShipmentState get(MinecraftServer server) {
-        return server.overworld().getDataStorage().computeIfAbsent(TYPE);
+        // Guarded load: a corrupt/truncated data file recovers via backup-then-fresh instead of
+        // crashing the per-tick shipment driver (mirrors Nerospace's SavedDataRecovery pattern).
+        return SavedDataRecovery.get(server.overworld(), TYPE, ShipmentState::new, ID.toString());
     }
 
     /** Number of shipments currently pending/in flight. */

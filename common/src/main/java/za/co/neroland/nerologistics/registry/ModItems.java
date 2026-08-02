@@ -11,7 +11,9 @@ import net.minecraft.world.level.block.Block;
 
 import za.co.neroland.nerologistics.NeroLogisticsCommon;
 import za.co.neroland.nerologistics.item.ConfiguratorItem;
+import za.co.neroland.nerologistics.item.WirelessTerminalItem;
 import za.co.neroland.nerologistics.registry.RegistrationProvider.RegistryEntry;
+import za.co.neroland.nerologistics.storage.StorageCellItem;
 
 /** NeroLogistics block-items, registered cross-loader via {@link RegistrationProvider}. */
 public final class ModItems {
@@ -34,6 +36,37 @@ public final class ModItems {
             blockItem("auto_crafter", ModBlocks.AUTO_CRAFTER);
     public static final RegistryEntry<BlockItem> BUFFER_ITEM =
             blockItem("buffer", ModBlocks.BUFFER);
+
+    // --- Stage 14: digital storage network ----------------------------------
+    public static final RegistryEntry<BlockItem> DRIVE_BAY_ITEM =
+            blockItem("drive_bay", ModBlocks.DRIVE_BAY);
+    public static final RegistryEntry<StorageCellItem> ITEM_CELL_1K =
+            cell("item_cell_1k", StorageCellItem.Kind.ITEM, 0);
+    public static final RegistryEntry<StorageCellItem> ITEM_CELL_8K =
+            cell("item_cell_8k", StorageCellItem.Kind.ITEM, 1);
+    public static final RegistryEntry<StorageCellItem> ITEM_CELL_64K =
+            cell("item_cell_64k", StorageCellItem.Kind.ITEM, 2);
+    public static final RegistryEntry<StorageCellItem> ITEM_CELL_512K =
+            cell("item_cell_512k", StorageCellItem.Kind.ITEM, 3);
+    public static final RegistryEntry<StorageCellItem> FLUID_CELL_16B =
+            cell("fluid_cell_16b", StorageCellItem.Kind.FLUID, 0);
+    public static final RegistryEntry<StorageCellItem> FLUID_CELL_128B =
+            cell("fluid_cell_128b", StorageCellItem.Kind.FLUID, 1);
+    public static final RegistryEntry<StorageCellItem> FLUID_CELL_1024B =
+            cell("fluid_cell_1024b", StorageCellItem.Kind.FLUID, 2);
+    public static final RegistryEntry<StorageCellItem> FLUID_CELL_8192B =
+            cell("fluid_cell_8192b", StorageCellItem.Kind.FLUID, 3);
+
+    // --- Stage 16: logistics processor ---------------------------------------
+    public static final RegistryEntry<BlockItem> LOGISTICS_PROCESSOR_ITEM =
+            blockItem("logistics_processor", ModBlocks.LOGISTICS_PROCESSOR);
+
+    // --- Stage 15: storage terminal + wireless terminal ---------------------
+    public static final RegistryEntry<BlockItem> STORAGE_TERMINAL_ITEM =
+            blockItem("storage_terminal", ModBlocks.STORAGE_TERMINAL);
+    public static final RegistryEntry<WirelessTerminalItem> WIRELESS_TERMINAL =
+            ITEMS.register("wireless_terminal",
+                    key -> new WirelessTerminalItem(new Item.Properties().setId(key).stacksTo(1)));
 
     // --- Stage 11: drone port + drones + upgrade cards ----------------------
     public static final RegistryEntry<BlockItem> DRONE_PORT_ITEM =
@@ -76,6 +109,10 @@ public final class ModItems {
     private static List<RegistryEntry<? extends ItemLike>> creativeOrder() {
         return List.of(NETWORK_CONTROLLER_ITEM, NETWORK_MODULE_ITEM,
                 UNIVERSAL_DUCT_ITEM, ITEM_STORAGE_ITEM, AUTO_CRAFTER_ITEM, BUFFER_ITEM,
+                LOGISTICS_PROCESSOR_ITEM,
+                DRIVE_BAY_ITEM, ITEM_CELL_1K, ITEM_CELL_8K, ITEM_CELL_64K, ITEM_CELL_512K,
+                FLUID_CELL_16B, FLUID_CELL_128B, FLUID_CELL_1024B, FLUID_CELL_8192B,
+                STORAGE_TERMINAL_ITEM, WIRELESS_TERMINAL,
                 ITEM_DUCT_ITEM, FLUID_DUCT_ITEM, ENERGY_CABLE_ITEM,
                 WIRELESS_CARGO_TERMINAL_ITEM, STORAGE_REQUEST_TERMINAL_ITEM,
                 TRAIN_CARGO_INTERFACE_ITEM, TRAIN_STATION_ITEM, DRONE_HUB_ITEM, ROCKET_CARGO_PORT_ITEM,
@@ -85,6 +122,12 @@ public final class ModItems {
 
     private static RegistryEntry<BlockItem> blockItem(String name, RegistryEntry<? extends Block> block) {
         return ITEMS.register(name, key -> new BlockItem(block.get(), new Item.Properties().setId(key)));
+    }
+
+    /** A storage cell: never stacks (its contents live on the individual stack's components). */
+    private static RegistryEntry<StorageCellItem> cell(String name, StorageCellItem.Kind kind, int tier) {
+        return ITEMS.register(name,
+                key -> new StorageCellItem(new Item.Properties().setId(key).stacksTo(1), kind, tier));
     }
 
     /** Every NeroLogistics item as {@link ItemLike}, in display order — drained into the creative tab. */

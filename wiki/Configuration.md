@@ -85,6 +85,52 @@ See [Trains](Trains.md).
 - **`maxPendingShipments`** (default `1024`) — hard cap on in-transit shipments; ports stop launching at
   the cap.
 
+### Shipping classes (QoS)
+
+- **`enableShippingQos`** (default `true`) — master toggle for per-port shipping classes; off = every
+  port ships STANDARD regardless of its configured class.
+- **`expressTransitFactor`** (default `25`) — EXPRESS transit time as % of the route's base (min 20
+  ticks).
+- **`expressFuelFactor`** (default `300`) — EXPRESS fuel cost as % of the route's base.
+- **`bulkTransitFactor`** (default `200`) — BULK transit time as % of the route's base.
+- **`bulkFuelFactor`** (default `50`) — BULK fuel cost as % of the route's base (rounded up, min 1).
+
+See [Cross-Dimension Shipping](Cross-Dimension-Shipping.md).
+
+## Logistics processor
+
+- **`enableLogisticsProcessor`** (default `true`) — master toggle; off = the block stays placeable but
+  idles and refuses to open its GUI.
+- **`logisticsRuleIntervalTicks`** (default `40`) — ticks between a processor's rule-evaluation passes.
+- **`logisticsActionCapPerCycle`** (default `64`) — max items a single rule moves per pass.
+- **`logisticsEnergyPerAction`** (default `100`) — NE charged per executed rule action (`0` = free).
+
+See [Logistics Programming](Logistics-Programming.md).
+
+## Storage network
+
+- **`enableStorageNetwork`** (default `true`) — master toggle for the digital storage network
+  (storage cells, drive bays, network index). Off = drive bays inert, index empty.
+- **`itemCellCapacity1k`** / **`itemCellCapacity8k`** / **`itemCellCapacity64k`** /
+  **`itemCellCapacity512k`** (defaults `1000` / `8000` / `64000` / `512000`) — total items each
+  item-cell tier holds.
+- **`fluidCellCapacity16b`** / **`fluidCellCapacity128b`** / **`fluidCellCapacity1024b`** /
+  **`fluidCellCapacity8192b`** (defaults `16` / `128` / `1024` / `8192`) — total buckets each
+  fluid-cell tier holds.
+- **`storageIndexRefreshTicks`** (default `20`) — minimum ticks between the storage index's
+  read-through container rescans. Drive bays have a fixed six slots (not configurable).
+
+### Storage terminal
+
+- **`enableStorageTerminal`** (default `true`) — master toggle for the Storage Terminal and
+  Wireless Terminal GUIs; off leaves the block/item in place but they refuse to open.
+- **`terminalResyncTicks`** (default `10`) — minimum ticks between content re-syncs to an open
+  terminal (only sent when contents actually changed).
+- **`wirelessTerminalRange`** (default `64`) — wireless terminal working radius (blocks) from its
+  bound network controller, same dimension only; `-1` = unlimited.
+
+See [Storage Network](Storage-Network.md).
+
 ## Dashboards and privacy (POPIA/GDPR)
 
 - **`perPlayerThroughputAttribution`** (default `false`) — opt-in: attribute cargo-port shipments to the

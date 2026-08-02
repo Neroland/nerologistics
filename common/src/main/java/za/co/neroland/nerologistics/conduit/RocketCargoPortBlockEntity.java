@@ -1,7 +1,10 @@
 package za.co.neroland.nerologistics.conduit;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import net.minecraft.core.BlockPos;
@@ -24,6 +27,9 @@ import za.co.neroland.nerologistics.registry.ModBlockEntities;
 import za.co.neroland.nerologistics.ship.RouteDestination;
 import za.co.neroland.nerologistics.ship.RouteProviders;
 import za.co.neroland.nerologistics.ship.ShipmentManager;
+import za.co.neroland.nerologistics.ship.ShippingClass;
+import za.co.neroland.nerologistics.world.ErasedOwnersState;
+import za.co.neroland.nerologistics.world.SavedDataRecovery;
 
 /**
  * Rocket cargo port: buffers cargo, draws energy from cables, and on an interval launches a
@@ -44,8 +50,19 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
     public static final TagKey<Item> ROCKET_FUEL = TagKey.create(Registries.ITEM,
             Identifier.fromNamespaceAndPath(NeroLogisticsCommon.MOD_ID, "rocket_fuel"));
 
+    /**
+     * Lightweight in-memory index of the currently-loaded ports (server side only), so a
+     * POPIA/GDPR erasure request can scrub the owner UUID from every loaded port immediately.
+     * Registered on the port's first server tick, unregistered in {@link #setRemoved()}; unloaded
+     * ports are covered by the {@link ErasedOwnersState} tombstone consulted on their next load.
+     */
+    private static final Set<RocketCargoPortBlockEntity> LOADED =
+            Collections.newSetFromMap(new IdentityHashMap<>());
+
     private int channel;
     private int destIndex;
+    /** QoS lane (Stage 17); persisted by name, missing/unknown loads as STANDARD (backward compat). */
+    private ShippingClass shippingClass = ShippingClass.STANDARD;
     private boolean joined;
     /** Placing player's UUID — stored ONLY when per-player attribution is opted in (POPIA/GDPR). */
     @org.jetbrains.annotations.Nullable
@@ -75,6 +92,28 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
         return this.channel;
     }
 
+    /** The configured QoS class as set by the player (may be masked by {@code enableShippingQos=false}). */
+    public ShippingClass shippingClass() {
+        return this.shippingClass;
+    }
+
+    /** The class actually applied to launches: STANDARD whenever the QoS toggle is off (clean degrade). */
+    public ShippingClass effectiveShippingClass() {
+        return NeroLogisticsConfig.enableShippingQos() ? this.shippingClass : ShippingClass.STANDARD;
+    }
+
+    /** Cycle STANDARD → EXPRESS → BULK; returns the new class. */
+    public ShippingClass cycleShippingClass() {
+        this.shippingClass = this.shippingClass.next();
+        setChanged();
+        return this.shippingClass;
+    }
+
+    /** Whether at least {@code min} rocket-fuel-tagged items sit in the buffer (processor status dots). */
+    public boolean hasFuelBuffered(int min) {
+        return findFuel(min) >= 0;
+    }
+
     /** Cycle the destination; returns the new destination's name (or "none"). */
     public String cycleDestination(MinecraftServer server) {
         List<RouteDestination> dests = RouteProviders.get().destinations(server);
@@ -91,8 +130,12 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
         super.saveAdditional(output);
         output.putInt("Channel", this.channel);
         output.putInt("DestIndex", this.destIndex);
-        output.putLong("OwnerMost", this.owner == null ? 0L : this.owner.getMostSignificantBits());
-        output.putLong("OwnerLeast", this.owner == null ? 0L : this.owner.getLeastSignificantBits());
+        output.putString("ShipClass", this.shippingClass.name());
+        // POPIA/GDPR data minimisation: the owner UUID is only ever written while per-player
+        // attribution is opted in; with attribution OFF (the default) no personal data is persisted.
+        boolean writeOwner = this.owner != null && NeroLogisticsConfig.perPlayerThroughputAttribution();
+        output.putLong("OwnerMost", writeOwner ? this.owner.getMostSignificantBits() : 0L);
+        output.putLong("OwnerLeast", writeOwner ? this.owner.getLeastSignificantBits() : 0L);
     }
 
     @Override
@@ -100,14 +143,22 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
         super.loadAdditional(input);
         this.channel = input.getIntOr("Channel", 0);
         this.destIndex = input.getIntOr("DestIndex", 0);
+        // Ports saved before QoS lanes existed have no ShipClass entry: they load as STANDARD.
+        this.shippingClass = ShippingClass.byName(input.getStringOr("ShipClass", ShippingClass.STANDARD.name()));
         long most = input.getLongOr("OwnerMost", 0L);
         long least = input.getLongOr("OwnerLeast", 0L);
         this.owner = (most == 0L && least == 0L) ? null : new UUID(most, least);
+        if (this.owner != null && !NeroLogisticsConfig.perPlayerThroughputAttribution()) {
+            // Attribution was switched off since this port was saved: drop the stale UUID now and,
+            // per saveAdditional, never write it again.
+            this.owner = null;
+        }
     }
 
     @Override
     public void setRemoved() {
         super.setRemoved();
+        LOADED.remove(this);
         if (this.level != null && !this.level.isClientSide()) {
             ShipmentManager.unregisterPort(this.level, this.worldPosition, this.channel);
         }
@@ -119,11 +170,53 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
         }
         if (!be.joined) {
             ShipmentManager.registerPort(level, pos, be.channel);
+            LOADED.add(be);
+            // Deferred erasure: this port may have been unloaded when its owner asked to be erased —
+            // consult the tombstone list on first tick after load and scrub if so (POPIA/GDPR).
+            if (be.owner != null && ErasedOwnersState.get(serverLevel.getServer()).contains(be.owner)) {
+                be.owner = null;
+                be.setChanged();
+            }
             be.joined = true;
         }
         if (level.getGameTime() % NeroLogisticsConfig.shipIntervalTicks() == 0L) {
             be.tryShip(serverLevel, pos);
         }
+    }
+
+    /**
+     * POPIA/GDPR erasure for rocket cargo ports, registered with Core's {@code PlayerDataErasure} in
+     * {@code NeroLogisticsCommon.init()}. Two-step, so one request reaches every port:
+     *
+     * <ol>
+     *   <li><b>Loaded ports</b> (the in-memory {@link #LOADED} index) are scrubbed immediately.</li>
+     *   <li>The UUID is recorded in the {@link ErasedOwnersState} tombstone list (durable SavedData,
+     *       loaded through the guarded {@code SavedDataRecovery} accessor); any port that was
+     *       <b>unloaded</b> right now scrubs itself against that list on its next load
+     *       (see {@code serverTick}).</li>
+     * </ol>
+     *
+     * <p>Note the belt-and-braces posture: with {@code perPlayerThroughputAttribution} OFF (the
+     * default) no owner UUID is ever persisted in the first place, so this path only matters for
+     * worlds that opted in.
+     */
+    public static void erasePlayer(MinecraftServer server, UUID player) {
+        for (RocketCargoPortBlockEntity port : LOADED) {
+            if (player.equals(port.owner)) {
+                port.owner = null;
+                port.setChanged();
+            }
+        }
+        ErasedOwnersState tombstones = ErasedOwnersState.get(server);
+        tombstones.add(player);
+        // Push the change into the recovery backup right away so an erasure never lags there.
+        SavedDataRecovery.backupNow(server.overworld(), ErasedOwnersState.TYPE, tombstones,
+                ErasedOwnersState.ID.toString());
+    }
+
+    /** Drop the loaded-port index (called from the server-stopped reset hook). */
+    public static void clearAll() {
+        LOADED.clear();
     }
 
     private void tryShip(ServerLevel level, BlockPos pos) {
@@ -161,8 +254,10 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
         if (this.energy.getAmount() < energyCost) {
             return;
         }
+        // QoS lane (STANDARD unless enableShippingQos): scales the route's fuel bill and transit time.
+        ShippingClass qos = effectiveShippingClass();
         // Fuel is priced per route (Nerospace scales it with distance); the stub uses the flat config.
-        int fuelNeed = RouteProviders.get().fuelPerLaunch(server, level.dimension(), dest);
+        int fuelNeed = qos.applyFuel(RouteProviders.get().fuelPerLaunch(server, level.dimension(), dest));
         int fuelSlot = fuelNeed > 0 ? findFuel(fuelNeed) : -1;
         if (fuelNeed > 0 && fuelSlot < 0) {
             return;
@@ -181,7 +276,7 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
             }
         }
         ShipmentManager.ship(server, payload, level.dimension(), pos, dest.dimension(), target,
-                RouteProviders.get().transitTicks(server, level.dimension(), dest));
+                qos.applyTransit(RouteProviders.get().transitTicks(server, level.dimension(), dest)));
         LogisticsMetrics.recordShipmentLaunched(level);
         LogisticsMetrics.recordPlayerShipment(server, this.owner); // no-op unless attribution opted in
         setChanged();

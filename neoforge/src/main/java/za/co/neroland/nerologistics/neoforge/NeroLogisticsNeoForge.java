@@ -9,6 +9,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.transfer.item.VanillaContainerWrapper;
 import net.neoforged.neoforge.transfer.item.WorldlyContainerWrapper;
@@ -20,6 +21,7 @@ import za.co.neroland.nerolandcore.platform.NeoForgeEnergyLookup;
 import za.co.neroland.nerologistics.NeroLogisticsCommon;
 import za.co.neroland.nerologistics.command.NeroLogisticsCommands;
 import za.co.neroland.nerologistics.conduit.AbstractTerminalBlockEntity;
+import za.co.neroland.nerologistics.lifecycle.ServerStateReset;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 import za.co.neroland.nerologistics.registry.NeoForgeRegistrationFactory;
 import za.co.neroland.nerologistics.ship.ShipmentManager;
@@ -35,11 +37,15 @@ public final class NeroLogisticsNeoForge {
         // attach them to NeroLogistics' mod event bus.
         NeroLogisticsCommon.init();
         NeoForgeRegistrationFactory.registerAll(modEventBus);
+        // NeroLogistics' own payloads (storage-terminal sync); see network.NeroLogisticsNetwork.
+        NeoForgeNetwork.register(modEventBus);
         // Anonymous, NeroLogistics-only crash reporting (opt-out via config; off in dev unless DSN set).
         NeroLogisticsTelemetry.init();
         modEventBus.addListener(NeroLogisticsNeoForge::onRegisterCapabilities);
         // Drive cross-dimension shipment arrivals once per server tick.
         NeoForge.EVENT_BUS.addListener((ServerTickEvent.Post event) -> ShipmentManager.tick(event.getServer()));
+        // Clear the common server-scoped static caches so nothing leaks into the next (single-player) world.
+        NeoForge.EVENT_BUS.addListener((ServerStoppedEvent event) -> ServerStateReset.serverStopped());
         // /nerologistics gallery
         NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent event) ->
                 NeroLogisticsCommands.register(event.getDispatcher()));
@@ -61,6 +67,8 @@ public final class NeroLogisticsNeoForge {
         event.registerBlockEntity(NeoForgeEnergyLookup.ENERGY, ModBlockEntities.DRONE_HUB.get(),
                 (be, side) -> be.getEnergy());
         event.registerBlockEntity(NeoForgeEnergyLookup.ENERGY, ModBlockEntities.ROCKET_CARGO_PORT.get(),
+                (be, side) -> be.getEnergy());
+        event.registerBlockEntity(NeoForgeEnergyLookup.ENERGY, ModBlockEntities.LOGISTICS_PROCESSOR.get(),
                 (be, side) -> be.getEnergy());
 
         // Items: terminal/interface/storage buffers on the standard item capability for hoppers, Create, AE2, etc.

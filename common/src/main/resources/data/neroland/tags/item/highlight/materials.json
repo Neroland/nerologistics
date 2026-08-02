@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "nerologistics:drone",
+    "nerologistics:item_cell_1k",
+    "nerologistics:item_cell_8k",
+    "nerologistics:item_cell_64k",
+    "nerologistics:item_cell_512k",
+    "nerologistics:fluid_cell_16b",
+    "nerologistics:fluid_cell_128b",
+    "nerologistics:fluid_cell_1024b",
+    "nerologistics:fluid_cell_8192b"
+  ]
+}

@@ -2,6 +2,7 @@ package za.co.neroland.nerologistics.fabric;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.transfer.v1.item.ContainerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
@@ -13,6 +14,7 @@ import za.co.neroland.nerolandcore.platform.FabricEnergyLookup;
 import za.co.neroland.nerologistics.NeroLogisticsCommon;
 import za.co.neroland.nerologistics.command.NeroLogisticsCommands;
 import za.co.neroland.nerologistics.conduit.AbstractTerminalBlockEntity;
+import za.co.neroland.nerologistics.lifecycle.ServerStateReset;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 import za.co.neroland.nerologistics.ship.ShipmentManager;
 import za.co.neroland.nerologistics.telemetry.NeroLogisticsTelemetry;
@@ -24,6 +26,8 @@ public final class NeroLogisticsFabric implements ModInitializer {
     public void onInitialize() {
         NeroLogisticsCommon.LOGGER.info("[NeroLogistics] Fabric bootstrap");
         NeroLogisticsCommon.init();
+        // NeroLogistics' own payloads (storage-terminal sync); see network.NeroLogisticsNetwork.
+        FabricNetwork.registerCommon();
         // Anonymous, NeroLogistics-only crash reporting (opt-out via config; off in dev unless DSN set).
         NeroLogisticsTelemetry.init();
 
@@ -34,6 +38,7 @@ public final class NeroLogisticsFabric implements ModInitializer {
         energy(ModBlockEntities.WIRELESS_CARGO_TERMINAL.get());
         energy(ModBlockEntities.DRONE_HUB.get());
         energy(ModBlockEntities.ROCKET_CARGO_PORT.get());
+        energy(ModBlockEntities.LOGISTICS_PROCESSOR.get());
 
         // Items: expose terminal/interface/storage buffers on the Fabric Transfer API so hoppers, Create
         // and other mods move items in/out (NeroLogistics' own ducts use the vanilla Container directly).
@@ -50,6 +55,8 @@ public final class NeroLogisticsFabric implements ModInitializer {
 
         // Drive cross-dimension shipment arrivals once per server tick.
         ServerTickEvents.END_SERVER_TICK.register(ShipmentManager::tick);
+        // Clear the common server-scoped static caches so nothing leaks into the next (single-player) world.
+        ServerLifecycleEvents.SERVER_STOPPED.register(server -> ServerStateReset.serverStopped());
 
         // /nerologistics gallery
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->

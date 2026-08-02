@@ -1,0 +1,4 @@
+{ "type": "minecraft:crafting_shaped", "category": "misc",
+  "key": { "C": "nerologistics:fluid_cell_128b", "D": "minecraft:diamond" },
+  "pattern": [ "CCC", " D " ],
+  "result": { "id": "nerologistics:fluid_cell_1024b", "count": 1 } }

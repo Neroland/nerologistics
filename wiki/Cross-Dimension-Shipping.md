@@ -43,9 +43,29 @@ imports Nerospace, so this stays inert, not broken, without it) and swaps it in 
   item, rounded up, never below `shipFuelPerLaunch`); setting `shipFuelPerLaunch` to `0` keeps
   launches fuel-free either way. Fuel is still matched **by tag** (`nerologistics:rocket_fuel`).
 
+## Shipping classes (QoS lanes)
+
+Each port has a **shipping class**, cycled by right-clicking the port **with the Configurator**
+(the plain-hand clicks keep their existing meanings above). The class trades transit time against
+fuel:
+
+| Class | Transit time | Fuel per launch |
+| ----- | ------------ | --------------- |
+| **Standard** | route base | route base |
+| **Express** | ×0.25 (`expressTransitFactor`, min 20 ticks) | ×3 (`expressFuelFactor`) |
+| **Bulk** | ×2 (`bulkTransitFactor`) | ×0.5 (`bulkFuelFactor`, rounded up, min 1) |
+
+The factors apply to whatever the route already priced — so with Nerospace's per-route fuel and
+transit, express is triple *that route's* fuel, not the flat config. A fuel-free route (config
+`shipFuelPerLaunch = 0`) stays free in every class. The class is saved on the port; shipments
+already in flight are unaffected, and worlds saved before this feature load every port as
+**Standard**. With **`enableShippingQos = false`** every port ships Standard regardless of its
+configured class (clean degrade — the setting is kept for when the toggle returns).
+
 ## Known limitations
 
-- Per-lane throughput/priority and recurring schedules beyond the interval are planned.
+- Recurring schedules beyond the interval, and per-shipment payload caps for bulk lanes, are
+  planned.
 
 ## See also
 

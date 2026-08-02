@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:block",
+  "pools": [ { "rolls": 1.0, "bonus_rolls": 0.0,
+    "conditions": [ { "condition": "minecraft:survives_explosion" } ],
+    "entries": [ { "type": "minecraft:item", "name": "nerologistics:storage_terminal" } ] } ],
+  "random_sequence": "nerologistics:blocks/storage_terminal"
+}

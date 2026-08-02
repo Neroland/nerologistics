@@ -3,9 +3,11 @@
 > **Redesign note:** the Storage Request Terminal now also recognises the
 > **[Universal Duct](Universal-Duct-and-Storage.md)** (not just the legacy item duct), so it aggregates
 > native **[Item Storage](Universal-Duct-and-Storage.md)** alongside any other inventories on the
-> network. **[Auto-Crafting](Auto-Crafting.md)** adds request-and-build on top of storage. A single
-> tabbed terminal (Items / Fluids / Gas / Crafting / Drone Ports) is the planned successor — see the
-> redesign docs.
+> network. **[Auto-Crafting](Auto-Crafting.md)** adds request-and-build on top of storage. For live
+> network-wide browsing of items and fluids (search, sort, click-to-extract, plus a portable
+> wireless version), see the new **[Storage Terminal](Storage-Network.md#storage-terminal)** on the
+> storage network. A single tabbed terminal (Items / Fluids / Gas / Crafting / Drone Ports) is the
+> planned successor — see the redesign docs.
 
 Three blocks extend logistics beyond a single conduit line. All three hold an internal buffer that
 hoppers, ducts, Create and other mods can fill and drain (they expose the standard item capability on

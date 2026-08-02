@@ -68,7 +68,7 @@ public class ItemDuctBlockEntity extends AbstractConduitBlockEntity implements M
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player player) {
-        return new FilterMenu(id, playerInventory, this.filter);
+        return new FilterMenu(id, playerInventory, this.filter, this);
     }
 
     @Override

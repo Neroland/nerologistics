@@ -47,4 +47,12 @@ public final class DronePortRegistry {
     public static List<BlockPos> membersOf(Level level) {
         return new ArrayList<>(members(level));
     }
+
+    /**
+     * Drop all per-dimension membership. Called from the server-stopped reset hook; ports lazily
+     * re-register as their block entities tick after the next world load.
+     */
+    public static void clearAll() {
+        LEVELS.clear();
+    }
 }

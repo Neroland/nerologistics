@@ -15,7 +15,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import net.minecraft.world.phys.AABB;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -65,11 +64,28 @@ public class DronePortBlockEntity extends AbstractTerminalBlockEntity implements
     public static final int ENERGY_CAPACITY = 200_000;
     public static final int ENERGY_MAX_IO = 4_000;
 
+    /**
+     * Self-heal window for {@link #inFlight} drift: a delivery drone despawns at most 6,000 ticks
+     * (its failsafe age) after spawning, so if this port has not spawned a drone for longer than that
+     * (plus slack) any remaining count is stale — e.g. a drone killed without the decrement callback
+     * reaching us — and is re-zeroed.
+     */
+    private static final long IN_FLIGHT_STALE_TICKS = 6_000L + 1_200L;
+
     private final SimpleContainer droneSlots = new SimpleContainer(DRONE_SLOTS);
     private final SimpleContainer upgradeSlots = new SimpleContainer(UPGRADE_SLOTS);
     private Mode mode = Mode.EXPORT;
     private String portName = "";
     private boolean joined;
+    /**
+     * Drones this port currently has in flight. Incremented on spawn, decremented by
+     * {@link #onDroneGone()} when a drone arrives/despawns — replacing the old per-dispatch
+     * {@code getEntitiesOfClass} over a {@code dronePortRange}-inflated AABB (default 256 → a 512³
+     * entity scan every window). Clamped at zero and self-healed via {@link #IN_FLIGHT_STALE_TICKS}.
+     */
+    private int inFlight;
+    /** Overworld-independent game time of the last drone spawn (for the self-heal window). */
+    private long lastDroneSpawnTick = Long.MIN_VALUE;
 
     public DronePortBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.DRONE_PORT.get(), pos, state, BUFFER_SIZE, ENERGY_CAPACITY, ENERGY_MAX_IO);
@@ -136,11 +152,25 @@ public class DronePortBlockEntity extends AbstractTerminalBlockEntity implements
         return new DronePortMenu(id, playerInventory, this);
     }
 
+    /**
+     * A drone spawned by this port is gone (delivered, despawned by its failsafe, or discarded).
+     * Called by {@link DeliveryDroneEntity}; if this port's chunk is unloaded at that moment the
+     * callback is skipped and the self-heal window absorbs the drift.
+     */
+    public void onDroneGone() {
+        if (this.inFlight > 0) {
+            this.inFlight--;
+        }
+    }
+
     @Override
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
         output.putInt("Mode", this.mode.ordinal());
         output.putString("PortName", this.portName);
+        // In-flight drones are saved entities, so the counter must survive a restart with them.
+        output.putInt("InFlight", this.inFlight);
+        output.putLong("LastDroneSpawn", this.lastDroneSpawnTick);
         for (int i = 0; i < DRONE_SLOTS; i++) {
             output.store("Drone" + i, ItemStack.OPTIONAL_CODEC, this.droneSlots.getItem(i));
         }
@@ -156,6 +186,8 @@ public class DronePortBlockEntity extends AbstractTerminalBlockEntity implements
         Mode[] modes = Mode.values();
         this.mode = ordinal >= 0 && ordinal < modes.length ? modes[ordinal] : Mode.EXPORT;
         this.portName = input.getStringOr("PortName", "");
+        this.inFlight = Math.max(0, input.getIntOr("InFlight", 0));
+        this.lastDroneSpawnTick = input.getLongOr("LastDroneSpawn", Long.MIN_VALUE);
         for (int i = 0; i < DRONE_SLOTS; i++) {
             this.droneSlots.setItem(i, input.read("Drone" + i, ItemStack.OPTIONAL_CODEC).orElse(ItemStack.EMPTY));
         }
@@ -211,9 +243,13 @@ public class DronePortBlockEntity extends AbstractTerminalBlockEntity implements
         if (hyper) {
             lanes = drones;
         } else {
-            AABB box = new AABB(pos).inflate(range);
-            int inFlight = level.getEntitiesOfClass(DeliveryDroneEntity.class, box, d -> pos.equals(d.homePos())).size();
-            lanes = Math.max(0, drones - inFlight);
+            // Counter drift self-heal: every drone despawns within its failsafe age of spawning, so a
+            // stale positive count with no spawn inside the window means the callbacks never landed.
+            if (this.inFlight > 0 && this.lastDroneSpawnTick != Long.MIN_VALUE
+                    && level.getGameTime() - this.lastDroneSpawnTick > IN_FLIGHT_STALE_TICKS) {
+                this.inFlight = 0;
+            }
+            lanes = Math.max(0, drones - this.inFlight);
         }
         int cap = NeroLogisticsConfig.dronePerDroneCapacity();
         for (int n = 0; n < lanes; n++) {
@@ -237,6 +273,8 @@ public class DronePortBlockEntity extends AbstractTerminalBlockEntity implements
                 DeliveryDroneEntity drone = new DeliveryDroneEntity(ModEntities.DELIVERY_DRONE.get(), level);
                 drone.dispatch(pos, dest.getBlockPos(), cargo);
                 level.addFreshEntity(drone);
+                this.inFlight++;
+                this.lastDroneSpawnTick = level.getGameTime();
                 inBuf.shrink(amount);
             }
             this.buffer.setChanged();

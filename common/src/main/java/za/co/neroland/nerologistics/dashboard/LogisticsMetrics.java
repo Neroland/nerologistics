@@ -119,4 +119,15 @@ public final class LogisticsMetrics {
     private static long today() {
         return System.currentTimeMillis() / 86_400_000L;
     }
+
+    /**
+     * Drop every counter and all opt-in attribution. Called from the server-stopped reset hook so one
+     * world's telemetry (including player-keyed attribution — POPIA/GDPR data minimisation) never
+     * bleeds into the next world hosted by the same JVM.
+     */
+    public static void clearAll() {
+        COUNTERS.clear();
+        ATTRIBUTION.clear();
+        lastPruneDay = -1L;
+    }
 }

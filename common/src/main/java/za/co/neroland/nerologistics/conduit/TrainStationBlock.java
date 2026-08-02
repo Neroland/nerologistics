@@ -21,6 +21,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import org.jetbrains.annotations.Nullable;
 
+import za.co.neroland.nerologistics.menu.MenuOpener;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 
 /**
@@ -73,7 +74,7 @@ public class TrainStationBlock extends BaseEntityBlock {
                         "block.nerologistics.train_station.mode",
                         Component.translatable("block.nerologistics.train_station.mode." + mode.name().toLowerCase())));
             } else {
-                serverPlayer.openMenu(station);
+                MenuOpener.open(serverPlayer, station);
             }
         }
         return InteractionResult.SUCCESS;

@@ -21,6 +21,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import org.jetbrains.annotations.Nullable;
 
+import za.co.neroland.nerologistics.menu.MenuOpener;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 
 /**
@@ -73,7 +74,7 @@ public class DronePortBlock extends BaseEntityBlock {
                         "block.nerologistics.drone_port.mode",
                         Component.translatable("block.nerologistics.drone_port.mode." + mode.name().toLowerCase())));
             } else {
-                serverPlayer.openMenu(port);
+                MenuOpener.open(serverPlayer, port);
             }
         }
         return InteractionResult.SUCCESS;

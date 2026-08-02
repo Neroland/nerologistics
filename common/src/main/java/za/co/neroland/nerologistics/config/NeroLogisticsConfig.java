@@ -156,6 +156,86 @@ public final class NeroLogisticsConfig {
             1_024, 1, 1_000_000, true,
             "hard cap on in-transit shipments; ports stop launching at the cap (no unbounded queue)");
 
+    // --- Stage 14: digital storage network ---------------------------------
+    // Drive bays hold a fixed 6 cells each (deliberately not configurable — GUI + comparator
+    // assume it); cell capacities are pure counts (no AE2 byte/type math).
+    private static final ConfigValue<Boolean> ENABLE_STORAGE_NETWORK = SCHEMA.bool("enableStorageNetwork",
+            true, true, "master toggle for the digital storage network (storage cells, drive bays, "
+            + "network index); off = drive bays inert, index empty");
+
+    private static final ConfigValue<Integer> ITEM_CELL_CAP_1K = SCHEMA.intRange("itemCellCapacity1k",
+            1_000, 1, 100_000_000, true, "total items a tier-1 (1k) item cell holds");
+
+    private static final ConfigValue<Integer> ITEM_CELL_CAP_8K = SCHEMA.intRange("itemCellCapacity8k",
+            8_000, 1, 100_000_000, true, "total items a tier-2 (8k) item cell holds");
+
+    private static final ConfigValue<Integer> ITEM_CELL_CAP_64K = SCHEMA.intRange("itemCellCapacity64k",
+            64_000, 1, 100_000_000, true, "total items a tier-3 (64k) item cell holds");
+
+    private static final ConfigValue<Integer> ITEM_CELL_CAP_512K = SCHEMA.intRange("itemCellCapacity512k",
+            512_000, 1, 100_000_000, true, "total items a tier-4 (512k) item cell holds");
+
+    private static final ConfigValue<Integer> FLUID_CELL_CAP_16B = SCHEMA.intRange("fluidCellCapacity16b",
+            16, 1, 1_000_000, true, "total buckets a tier-1 (16B) fluid cell holds");
+
+    private static final ConfigValue<Integer> FLUID_CELL_CAP_128B = SCHEMA.intRange("fluidCellCapacity128b",
+            128, 1, 1_000_000, true, "total buckets a tier-2 (128B) fluid cell holds");
+
+    private static final ConfigValue<Integer> FLUID_CELL_CAP_1024B = SCHEMA.intRange("fluidCellCapacity1024b",
+            1_024, 1, 1_000_000, true, "total buckets a tier-3 (1024B) fluid cell holds");
+
+    private static final ConfigValue<Integer> FLUID_CELL_CAP_8192B = SCHEMA.intRange("fluidCellCapacity8192b",
+            8_192, 1, 1_000_000, true, "total buckets a tier-4 (8192B) fluid cell holds");
+
+    private static final ConfigValue<Integer> INDEX_REFRESH = SCHEMA.intRange("storageIndexRefreshTicks",
+            20, 1, 1_200, true,
+            "min ticks between the network storage index's read-through container rescans");
+
+    // --- Stage 15: storage terminal + wireless portable terminal -----------
+    private static final ConfigValue<Boolean> ENABLE_STORAGE_TERMINAL = SCHEMA.bool("enableStorageTerminal",
+            true, true, "master toggle for the storage terminal + wireless terminal GUIs; "
+            + "off = the blocks/items stay but refuse to open (clean degrade)");
+
+    private static final ConfigValue<Integer> TERMINAL_RESYNC = SCHEMA.intRange("terminalResyncTicks",
+            10, 1, 1_200, true,
+            "min ticks between storage-terminal content re-syncs to an open viewer (only sent on change)");
+
+    private static final ConfigValue<Integer> WIRELESS_TERMINAL_RANGE = SCHEMA.intRange("wirelessTerminalRange",
+            64, -1, 30_000_000, true,
+            "max block distance from the bound network controller a wireless terminal works at "
+            + "(same dimension only; -1 = unlimited)");
+
+    // --- Stage 16: logistics processor (rule-based supply policies) ---------
+    private static final ConfigValue<Boolean> ENABLE_LOGISTICS_PROCESSOR = SCHEMA.bool("enableLogisticsProcessor",
+            true, true, "master toggle for the logistics processor; off = rules stop evaluating "
+            + "(the block stays placeable but idles)");
+
+    private static final ConfigValue<Integer> LOGISTICS_RULE_INTERVAL = SCHEMA.intRange("logisticsRuleIntervalTicks",
+            40, 1, 72_000, true, "ticks between a logistics processor's rule-evaluation passes (never per-tick)");
+
+    private static final ConfigValue<Integer> LOGISTICS_ACTION_CAP = SCHEMA.intRange("logisticsActionCapPerCycle",
+            64, 1, 65_536, true, "max items a single rule moves per evaluation cycle");
+
+    private static final ConfigValue<Integer> LOGISTICS_ENERGY_PER_ACTION = SCHEMA.intRange("logisticsEnergyPerAction",
+            100, 0, 10_000_000, true, "NE charged per executed rule action (0 = free)");
+
+    // --- Stage 17: shipping QoS lanes (express vs bulk) ---------------------
+    private static final ConfigValue<Boolean> ENABLE_SHIPPING_QOS = SCHEMA.bool("enableShippingQos",
+            true, true, "master toggle for rocket-cargo-port shipping classes; "
+            + "off = every port ships STANDARD regardless of its configured class");
+
+    private static final ConfigValue<Integer> EXPRESS_TRANSIT_FACTOR = SCHEMA.intRange("expressTransitFactor",
+            25, 1, 100, true, "EXPRESS transit time as % of the route's base (25 = four times faster; min 20 ticks)");
+
+    private static final ConfigValue<Integer> EXPRESS_FUEL_FACTOR = SCHEMA.intRange("expressFuelFactor",
+            300, 100, 10_000, true, "EXPRESS fuel cost as % of the route's base (300 = triple fuel)");
+
+    private static final ConfigValue<Integer> BULK_TRANSIT_FACTOR = SCHEMA.intRange("bulkTransitFactor",
+            200, 100, 10_000, true, "BULK transit time as % of the route's base (200 = twice as slow)");
+
+    private static final ConfigValue<Integer> BULK_FUEL_FACTOR = SCHEMA.intRange("bulkFuelFactor",
+            50, 1, 100, true, "BULK fuel cost as % of the route's base (50 = half fuel, rounded up, min 1)");
+
     // --- Telemetry (anonymous crash reporting; CLIENT-LOCAL opt-out, not server-synced) ----
     private static final ConfigValue<Boolean> TELEMETRY_ENABLED = SCHEMA.bool("telemetryEnabled",
             true, false, "anonymous error reporting to the developers (stack trace + mod/MC/loader/OS/Java "
@@ -327,6 +407,83 @@ public final class NeroLogisticsConfig {
 
     public static int maxPendingShipments() {
         return MAX_PENDING_SHIPMENTS.get();
+    }
+
+    public static boolean enableStorageNetwork() {
+        return ENABLE_STORAGE_NETWORK.get();
+    }
+
+    /** Item-cell capacity (total items) for tier {@code 0..3}; out-of-range tiers clamp. */
+    public static int itemCellCapacity(int tier) {
+        return switch (Math.max(0, Math.min(3, tier))) {
+            case 0 -> ITEM_CELL_CAP_1K.get();
+            case 1 -> ITEM_CELL_CAP_8K.get();
+            case 2 -> ITEM_CELL_CAP_64K.get();
+            default -> ITEM_CELL_CAP_512K.get();
+        };
+    }
+
+    /** Fluid-cell capacity (total buckets) for tier {@code 0..3}; out-of-range tiers clamp. */
+    public static int fluidCellCapacityBuckets(int tier) {
+        return switch (Math.max(0, Math.min(3, tier))) {
+            case 0 -> FLUID_CELL_CAP_16B.get();
+            case 1 -> FLUID_CELL_CAP_128B.get();
+            case 2 -> FLUID_CELL_CAP_1024B.get();
+            default -> FLUID_CELL_CAP_8192B.get();
+        };
+    }
+
+    public static int storageIndexRefreshTicks() {
+        return INDEX_REFRESH.get();
+    }
+
+    public static boolean enableStorageTerminal() {
+        return ENABLE_STORAGE_TERMINAL.get();
+    }
+
+    public static int terminalResyncTicks() {
+        return TERMINAL_RESYNC.get();
+    }
+
+    /** Wireless-terminal working radius from its bound controller; {@code -1} = unlimited. */
+    public static int wirelessTerminalRange() {
+        return WIRELESS_TERMINAL_RANGE.get();
+    }
+
+    public static boolean enableLogisticsProcessor() {
+        return ENABLE_LOGISTICS_PROCESSOR.get();
+    }
+
+    public static int logisticsRuleIntervalTicks() {
+        return LOGISTICS_RULE_INTERVAL.get();
+    }
+
+    public static int logisticsActionCapPerCycle() {
+        return LOGISTICS_ACTION_CAP.get();
+    }
+
+    public static int logisticsEnergyPerAction() {
+        return LOGISTICS_ENERGY_PER_ACTION.get();
+    }
+
+    public static boolean enableShippingQos() {
+        return ENABLE_SHIPPING_QOS.get();
+    }
+
+    public static int expressTransitFactor() {
+        return EXPRESS_TRANSIT_FACTOR.get();
+    }
+
+    public static int expressFuelFactor() {
+        return EXPRESS_FUEL_FACTOR.get();
+    }
+
+    public static int bulkTransitFactor() {
+        return BULK_TRANSIT_FACTOR.get();
+    }
+
+    public static int bulkFuelFactor() {
+        return BULK_FUEL_FACTOR.get();
     }
 
     public static boolean telemetryEnabled() {

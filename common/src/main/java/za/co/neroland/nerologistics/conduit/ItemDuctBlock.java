@@ -15,6 +15,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import org.jetbrains.annotations.Nullable;
 
+import za.co.neroland.nerologistics.menu.MenuOpener;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 
 /** Item duct — routes items across its network. */
@@ -43,7 +44,7 @@ public class ItemDuctBlock extends AbstractConduitBlock {
         // Bare-hand right-click opens the whitelist filter GUI (the Configurator sets face modes instead).
         if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer
                 && level.getBlockEntity(pos) instanceof MenuProvider provider) {
-            serverPlayer.openMenu(provider);
+            MenuOpener.open(serverPlayer, provider);
         }
         return InteractionResult.SUCCESS;
     }

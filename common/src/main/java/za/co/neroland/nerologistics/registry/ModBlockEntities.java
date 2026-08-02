@@ -15,6 +15,7 @@ import za.co.neroland.nerologistics.conduit.DronePortBlockEntity;
 import za.co.neroland.nerologistics.conduit.TrainStationBlockEntity;
 import za.co.neroland.nerologistics.conduit.ItemDuctBlockEntity;
 import za.co.neroland.nerologistics.conduit.ItemStorageBlockEntity;
+import za.co.neroland.nerologistics.conduit.LogisticsProcessorBlockEntity;
 import za.co.neroland.nerologistics.conduit.NetworkControllerBlockEntity;
 import za.co.neroland.nerologistics.conduit.RocketCargoPortBlockEntity;
 import za.co.neroland.nerologistics.conduit.UniversalDuctBlockEntity;
@@ -22,6 +23,8 @@ import za.co.neroland.nerologistics.conduit.StorageRequestTerminalBlockEntity;
 import za.co.neroland.nerologistics.conduit.TrainCargoInterfaceBlockEntity;
 import za.co.neroland.nerologistics.conduit.WirelessCargoTerminalBlockEntity;
 import za.co.neroland.nerologistics.registry.RegistrationProvider.RegistryEntry;
+import za.co.neroland.nerologistics.storage.DriveBayBlockEntity;
+import za.co.neroland.nerologistics.storage.StorageTerminalBlockEntity;
 
 /** Block-entity types for NeroLogistics conduits, registered cross-loader via {@link RegistrationProvider}. */
 public final class ModBlockEntities {
@@ -96,6 +99,20 @@ public final class ModBlockEntities {
             BLOCK_ENTITIES.register("rocket_cargo_port",
                     key -> new BlockEntityType<>(RocketCargoPortBlockEntity::new,
                             Set.of(ModBlocks.ROCKET_CARGO_PORT.get())));
+
+    public static final RegistryEntry<BlockEntityType<LogisticsProcessorBlockEntity>> LOGISTICS_PROCESSOR =
+            BLOCK_ENTITIES.register("logistics_processor",
+                    key -> new BlockEntityType<>(LogisticsProcessorBlockEntity::new,
+                            Set.of(ModBlocks.LOGISTICS_PROCESSOR.get())));
+
+    public static final RegistryEntry<BlockEntityType<DriveBayBlockEntity>> DRIVE_BAY =
+            BLOCK_ENTITIES.register("drive_bay",
+                    key -> new BlockEntityType<>(DriveBayBlockEntity::new, Set.of(ModBlocks.DRIVE_BAY.get())));
+
+    public static final RegistryEntry<BlockEntityType<StorageTerminalBlockEntity>> STORAGE_TERMINAL =
+            BLOCK_ENTITIES.register("storage_terminal",
+                    key -> new BlockEntityType<>(StorageTerminalBlockEntity::new,
+                            Set.of(ModBlocks.STORAGE_TERMINAL.get())));
 
     private ModBlockEntities() {
     }

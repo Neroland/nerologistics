@@ -1,5 +1,8 @@
 package za.co.neroland.nerologistics.conduit;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -20,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import za.co.neroland.nerologistics.config.NeroLogisticsConfig;
 import za.co.neroland.nerologistics.filter.ItemFilter;
 import za.co.neroland.nerologistics.menu.StorageRequestMenu;
+import za.co.neroland.nerologistics.network.ConduitEndpoint;
 import za.co.neroland.nerologistics.network.ConduitNetwork;
 import za.co.neroland.nerologistics.network.NetworkManager;
 import za.co.neroland.nerologistics.network.NetworkMedium;
@@ -80,48 +84,50 @@ public class StorageRequestTerminalBlockEntity extends AbstractTerminalBlockEnti
         if (level.isClientSide()) {
             return;
         }
-        if (level.getGameTime() % NeroLogisticsConfig.wirelessIntervalTicks() != 0L) {
+        // Position-hash phase stagger: spreads many terminals across the interval instead of a
+        // thundering herd all restocking on the same tick.
+        int interval = NeroLogisticsConfig.wirelessIntervalTicks();
+        if (level.getGameTime() % interval != Math.floorMod(pos.hashCode(), interval)) {
             return;
         }
         be.restock(level, pos);
     }
 
-    /** Pull filter-matching items from the attached item network's inventories into the buffer. */
+    /**
+     * Pull filter-matching items from the attached item network's inventories into the buffer,
+     * resolved from the network's cached endpoint list (no member walk).
+     */
     private void restock(Level level, BlockPos pos) {
         ConduitNetwork network = adjacentItemNetwork(level, pos);
         if (network == null) {
             return;
         }
         int budget = NeroLogisticsConfig.itemTransferPerTick();
-        for (BlockPos member : network.members()) {
+        Set<BlockPos> seen = new HashSet<>();
+        for (ConduitEndpoint ep : network.endpoints(level)) {
             if (budget <= 0) {
                 break;
             }
-            for (Direction dir : Direction.values()) {
-                if (budget <= 0) {
-                    break;
-                }
-                BlockPos neighbor = member.relative(dir);
-                if (network.contains(neighbor)) {
+            BlockPos neighbor = ep.neighborPos();
+            if (!seen.add(neighbor)) {
+                continue;
+            }
+            Container source = InventoryTransfer.containerAt(level, neighbor);
+            if (source == null || source == this) {
+                continue;
+            }
+            Direction side = ep.neighborSide();
+            int slot = -1;
+            while (budget > 0 && (slot = InventoryTransfer.firstExtractableSlot(source, side, slot)) >= 0) {
+                ItemStack stack = source.getItem(slot);
+                if (stack.isEmpty() || !this.requestFilter.test(stack)) {
                     continue;
                 }
-                Container source = InventoryTransfer.containerAt(level, neighbor);
-                if (source == null || source == this) {
-                    continue;
-                }
-                Direction side = dir.getOpposite();
-                int slot = -1;
-                while (budget > 0 && (slot = InventoryTransfer.firstExtractableSlot(source, side, slot)) >= 0) {
-                    ItemStack stack = source.getItem(slot);
-                    if (stack.isEmpty() || !this.requestFilter.test(stack)) {
-                        continue;
-                    }
-                    int moved = InventoryTransfer.insert(this, Direction.UP, stack, Math.min(stack.getCount(), budget));
-                    if (moved > 0) {
-                        stack.shrink(moved);
-                        source.setChanged();
-                        budget -= moved;
-                    }
+                int moved = InventoryTransfer.insert(this, Direction.UP, stack, Math.min(stack.getCount(), budget));
+                if (moved > 0) {
+                    stack.shrink(moved);
+                    source.setChanged();
+                    budget -= moved;
                 }
             }
         }

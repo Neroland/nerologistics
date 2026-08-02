@@ -22,8 +22,7 @@ import za.co.neroland.nerolandcore.platform.Services;
  *
  * <p>Following the Core contract: Core froze the <em>energy</em> capability seam
  * ({@code EnergyLookup}); item and fluid endpoint discovery follow the same
- * ServiceLoader seam design but live inside NeroLogistics (see
- * {@code ../neroland-mc-ecosystem/nerologistics/PHASE-3-PLAN.md}).
+ * ServiceLoader seam design but live inside NeroLogistics.
  */
 public interface IFluidLookup {
 

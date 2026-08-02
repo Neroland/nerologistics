@@ -15,6 +15,7 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 
+import za.co.neroland.nerologistics.conduit.DronePortBlockEntity;
 import za.co.neroland.nerologistics.transport.InventoryTransfer;
 
 /**
@@ -76,6 +77,7 @@ public class DeliveryDroneEntity extends Entity {
         }
         if (++this.age > MAX_AGE_TICKS) {
             dropCargo();
+            notifyHomePort();
             discard();
             return;
         }
@@ -88,6 +90,7 @@ public class DeliveryDroneEntity extends Entity {
         double dist = diff.length();
         if (dist < ARRIVE_DISTANCE) {
             deliver();
+            notifyHomePort();
             discard();
             return;
         }
@@ -105,6 +108,24 @@ public class DeliveryDroneEntity extends Entity {
             this.cargo.shrink(moved);
         }
         dropCargo();
+    }
+
+    /**
+     * Tell the origin drone port its lane is free again (in-flight counter decrement). Skipped
+     * gracefully when the port's chunk is unloaded or the block is gone — the port's counter
+     * self-heals from such drift after a stale window. Drone-hub drones pass through unaffected
+     * (their home is a {@code DroneHubBlockEntity}, which still counts live entities).
+     */
+    private void notifyHomePort() {
+        if (!this.dispatched || !(level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        if (!serverLevel.isLoaded(this.homePos)) {
+            return; // port not loaded — skip; the port re-zeroes stale counts on its own
+        }
+        if (serverLevel.getBlockEntity(this.homePos) instanceof DronePortBlockEntity port) {
+            port.onDroneGone();
+        }
     }
 
     private void dropCargo() {

@@ -15,6 +15,7 @@ public final class ModRegistries {
     }
 
     public static void init() {
+        ModDataComponents.init();
         ModBlocks.init();
         ModItems.init();
         ModBlockEntities.init();

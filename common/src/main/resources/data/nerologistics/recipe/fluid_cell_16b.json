@@ -1,0 +1,4 @@
+{ "type": "minecraft:crafting_shaped", "category": "misc",
+  "key": { "I": "minecraft:iron_ingot", "G": "minecraft:glass", "B": "minecraft:bucket" },
+  "pattern": [ "IGI", "GBG", "IGI" ],
+  "result": { "id": "nerologistics:fluid_cell_16b", "count": 1 } }
