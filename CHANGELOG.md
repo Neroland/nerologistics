@@ -46,6 +46,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   load unchanged (missing class = STANDARD). Config: `enableShippingQos` (off = all ports ship
   STANDARD), `expressTransitFactor`, `expressFuelFactor`, `bulkTransitFactor`, `bulkFuelFactor`.
 
+### Changed
+
+- `/nerologistics gallery` now teaches usage: every showcased block and item carries a one-line
+  usage hint under its name, the new storage blocks (Drive Bay, Storage Terminal, Logistics
+  Processor) and items (Wireless Terminal, storage cells) are included, and two new live demo
+  lines show the digital storage network (Drive Bay with a preloaded cell + Storage Terminal)
+  and the Logistics Processor with its adjacent target chest.
+- Gallery labels are now `text_display` holograms (one two-line display per exhibit) instead of
+  armor-stand name tags. The name-tag approach rendered every label as a full LivingEntity with a
+  two-pass text draw each frame regardless of distance; with the usage hints doubling the count to
+  ~60 it dropped clients to ~12 FPS (render-thread CPU-bound, GPU idle). `gallery clear` removes
+  both the new displays and legacy armor-stand labels.
+
 ### Fixed
 
 - Audit remediation across the network core:
