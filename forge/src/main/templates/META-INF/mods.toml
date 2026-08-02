@@ -33,7 +33,7 @@ side = "BOTH"
 [[dependencies.${mod_id}]]
 modId = "nerolandcore"
 mandatory = true
-versionRange = "[1.0,2.0)"
+versionRange = "${nerolandcore_version_range}"
 ordering = "AFTER"
 side = "BOTH"
 

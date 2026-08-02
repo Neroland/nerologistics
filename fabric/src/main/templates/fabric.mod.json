@@ -22,7 +22,7 @@
     "minecraft": ">=${minecraft_version}",
     "java": ">=21",
     "fabric-api": "*",
-    "nerolandcore": ">=1.0.0"
+    "nerolandcore": ">=${nerolandcore_version}"
   },
   "suggests": {
     "nerospace": "*",
