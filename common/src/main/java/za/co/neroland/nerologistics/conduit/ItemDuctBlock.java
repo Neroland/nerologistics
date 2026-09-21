@@ -15,19 +15,19 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import org.jetbrains.annotations.Nullable;
 
+import za.co.neroland.nerolandcore.registry.BlockCodecs;
 import za.co.neroland.nerologistics.menu.MenuOpener;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 
 /** Item duct — routes items across its network. */
 public class ItemDuctBlock extends AbstractConduitBlock {
 
-    public static final MapCodec<ItemDuctBlock> CODEC = simpleCodec(ItemDuctBlock::new);
+    public static final MapCodec<ItemDuctBlock> CODEC = BlockCodecs.simple(ItemDuctBlock::new);
 
     public ItemDuctBlock(Properties properties) {
         super(properties);
     }
 
-    @Override
     protected MapCodec<ItemDuctBlock> codec() {
         return CODEC;
     }

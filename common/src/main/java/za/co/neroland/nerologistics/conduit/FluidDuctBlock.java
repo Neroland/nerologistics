@@ -9,18 +9,18 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import org.jetbrains.annotations.Nullable;
 
+import za.co.neroland.nerolandcore.registry.BlockCodecs;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 
 /** Fluid duct — routes fluids across its network. */
 public class FluidDuctBlock extends AbstractConduitBlock {
 
-    public static final MapCodec<FluidDuctBlock> CODEC = simpleCodec(FluidDuctBlock::new);
+    public static final MapCodec<FluidDuctBlock> CODEC = BlockCodecs.simple(FluidDuctBlock::new);
 
     public FluidDuctBlock(Properties properties) {
         super(properties);
     }
 
-    @Override
     protected MapCodec<FluidDuctBlock> codec() {
         return CODEC;
     }

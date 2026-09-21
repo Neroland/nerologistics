@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
+import za.co.neroland.nerolandcore.registry.BlockCodecs;
 import za.co.neroland.nerologistics.conduit.AbstractConduitBlockEntity;
 import za.co.neroland.nerologistics.network.ConduitNetwork;
 import za.co.neroland.nerologistics.network.NetworkManager;
@@ -29,13 +30,12 @@ import za.co.neroland.nerologistics.ship.ShipmentManager;
  */
 public class LogisticsDashboardBlock extends Block {
 
-    public static final MapCodec<LogisticsDashboardBlock> CODEC = simpleCodec(LogisticsDashboardBlock::new);
+    public static final MapCodec<LogisticsDashboardBlock> CODEC = BlockCodecs.simple(LogisticsDashboardBlock::new);
 
     public LogisticsDashboardBlock(Properties properties) {
         super(properties);
     }
 
-    @Override
     protected MapCodec<? extends Block> codec() {
         return CODEC;
     }

@@ -21,6 +21,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import org.jetbrains.annotations.Nullable;
 
+import za.co.neroland.nerolandcore.registry.BlockCodecs;
 import za.co.neroland.nerologistics.menu.MenuOpener;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 
@@ -31,13 +32,12 @@ import za.co.neroland.nerologistics.registry.ModBlockEntities;
  */
 public class DronePortBlock extends BaseEntityBlock {
 
-    public static final MapCodec<DronePortBlock> CODEC = simpleCodec(DronePortBlock::new);
+    public static final MapCodec<DronePortBlock> CODEC = BlockCodecs.simple(DronePortBlock::new);
 
     public DronePortBlock(Properties properties) {
         super(properties);
     }
 
-    @Override
     protected MapCodec<DronePortBlock> codec() {
         return CODEC;
     }

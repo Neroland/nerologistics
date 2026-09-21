@@ -15,6 +15,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import org.jetbrains.annotations.Nullable;
 
+import za.co.neroland.nerolandcore.registry.BlockCodecs;
 import za.co.neroland.nerologistics.menu.MenuOpener;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 
@@ -25,13 +26,12 @@ import za.co.neroland.nerologistics.registry.ModBlockEntities;
  */
 public class UniversalDuctBlock extends AbstractConduitBlock {
 
-    public static final MapCodec<UniversalDuctBlock> CODEC = simpleCodec(UniversalDuctBlock::new);
+    public static final MapCodec<UniversalDuctBlock> CODEC = BlockCodecs.simple(UniversalDuctBlock::new);
 
     public UniversalDuctBlock(Properties properties) {
         super(properties);
     }
 
-    @Override
     protected MapCodec<UniversalDuctBlock> codec() {
         return CODEC;
     }

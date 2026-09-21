@@ -341,7 +341,11 @@ public class StorageTerminalMenu extends AbstractContainerMenu {
             long returned = index.insertItem(level, stack, stack.getCount(), false);
             stack.shrink((int) returned);
             if (!stack.isEmpty()) {
+                //? if >=26.3 {
+                /*player.drop(stack, false, net.minecraft.util.Prediction.SERVER_ONLY);
+                *///?} else {
                 player.drop(stack, false);
+                //?}
             }
         }
     }
@@ -393,7 +397,11 @@ public class StorageTerminalMenu extends AbstractContainerMenu {
             carried.shrink(1);
             player.getInventory().add(filled);
             if (!filled.isEmpty()) {
+                //? if >=26.3 {
+                /*player.drop(filled, false, net.minecraft.util.Prediction.SERVER_ONLY);
+                *///?} else {
                 player.drop(filled, false);
+                //?}
             }
         }
     }

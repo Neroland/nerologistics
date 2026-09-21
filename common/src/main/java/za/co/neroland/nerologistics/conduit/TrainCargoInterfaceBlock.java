@@ -10,16 +10,17 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import org.jetbrains.annotations.Nullable;
 
+import za.co.neroland.nerolandcore.registry.BlockCodecs;
+
 /** Create train cargo interface block — a passive inventory bridge (no ticker, no GUI). */
 public class TrainCargoInterfaceBlock extends BaseEntityBlock {
 
-    public static final MapCodec<TrainCargoInterfaceBlock> CODEC = simpleCodec(TrainCargoInterfaceBlock::new);
+    public static final MapCodec<TrainCargoInterfaceBlock> CODEC = BlockCodecs.simple(TrainCargoInterfaceBlock::new);
 
     public TrainCargoInterfaceBlock(Properties properties) {
         super(properties);
     }
 
-    @Override
     protected MapCodec<TrainCargoInterfaceBlock> codec() {
         return CODEC;
     }

@@ -17,6 +17,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import org.jetbrains.annotations.Nullable;
 
+import za.co.neroland.nerolandcore.registry.BlockCodecs;
 import za.co.neroland.nerologistics.menu.MenuOpener;
 
 /**
@@ -26,13 +27,12 @@ import za.co.neroland.nerologistics.menu.MenuOpener;
  */
 public class DriveBayBlock extends BaseEntityBlock {
 
-    public static final MapCodec<DriveBayBlock> CODEC = simpleCodec(DriveBayBlock::new);
+    public static final MapCodec<DriveBayBlock> CODEC = BlockCodecs.simple(DriveBayBlock::new);
 
     public DriveBayBlock(Properties properties) {
         super(properties);
     }
 
-    @Override
     protected MapCodec<DriveBayBlock> codec() {
         return CODEC;
     }

@@ -18,6 +18,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import org.jetbrains.annotations.Nullable;
 
+import za.co.neroland.nerolandcore.registry.BlockCodecs;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 
 /**
@@ -27,13 +28,12 @@ import za.co.neroland.nerologistics.registry.ModBlockEntities;
  */
 public class NetworkControllerBlock extends BaseEntityBlock {
 
-    public static final MapCodec<NetworkControllerBlock> CODEC = simpleCodec(NetworkControllerBlock::new);
+    public static final MapCodec<NetworkControllerBlock> CODEC = BlockCodecs.simple(NetworkControllerBlock::new);
 
     public NetworkControllerBlock(Properties properties) {
         super(properties);
     }
 
-    @Override
     protected MapCodec<NetworkControllerBlock> codec() {
         return CODEC;
     }

@@ -18,19 +18,19 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import org.jetbrains.annotations.Nullable;
 
+import za.co.neroland.nerolandcore.registry.BlockCodecs;
 import za.co.neroland.nerologistics.menu.MenuOpener;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 
 /** Auto-Crafter block — right-click opens the pattern GUI; a server ticker drives crafting. */
 public class AutoCrafterBlock extends BaseEntityBlock {
 
-    public static final MapCodec<AutoCrafterBlock> CODEC = simpleCodec(AutoCrafterBlock::new);
+    public static final MapCodec<AutoCrafterBlock> CODEC = BlockCodecs.simple(AutoCrafterBlock::new);
 
     public AutoCrafterBlock(Properties properties) {
         super(properties);
     }
 
-    @Override
     protected MapCodec<AutoCrafterBlock> codec() {
         return CODEC;
     }

@@ -18,19 +18,19 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import org.jetbrains.annotations.Nullable;
 
+import za.co.neroland.nerolandcore.registry.BlockCodecs;
 import za.co.neroland.nerologistics.menu.MenuOpener;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 
 /** Storage request terminal block — right-click opens the request GUI. */
 public class StorageRequestTerminalBlock extends BaseEntityBlock {
 
-    public static final MapCodec<StorageRequestTerminalBlock> CODEC = simpleCodec(StorageRequestTerminalBlock::new);
+    public static final MapCodec<StorageRequestTerminalBlock> CODEC = BlockCodecs.simple(StorageRequestTerminalBlock::new);
 
     public StorageRequestTerminalBlock(Properties properties) {
         super(properties);
     }
 
-    @Override
     protected MapCodec<StorageRequestTerminalBlock> codec() {
         return CODEC;
     }

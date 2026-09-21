@@ -18,6 +18,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import org.jetbrains.annotations.Nullable;
 
+import za.co.neroland.nerolandcore.registry.BlockCodecs;
 import za.co.neroland.nerologistics.menu.MenuOpener;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 
@@ -27,13 +28,12 @@ import za.co.neroland.nerologistics.registry.ModBlockEntities;
  */
 public class BufferBlock extends BaseEntityBlock {
 
-    public static final MapCodec<BufferBlock> CODEC = simpleCodec(BufferBlock::new);
+    public static final MapCodec<BufferBlock> CODEC = BlockCodecs.simple(BufferBlock::new);
 
     public BufferBlock(Properties properties) {
         super(properties);
     }
 
-    @Override
     protected MapCodec<BufferBlock> codec() {
         return CODEC;
     }

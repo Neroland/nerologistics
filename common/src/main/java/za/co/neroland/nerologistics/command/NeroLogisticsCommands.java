@@ -251,7 +251,11 @@ public final class NeroLogisticsCommands {
                 Identifier.fromNamespaceAndPath(NeroLogisticsCommon.MOD_ID, itemName));
         ItemFrame frame = new ItemFrame(level, plinth.above(), Direction.UP);
         frame.setInvisible(true);
+        //? if >=26.3 {
+        /*frame.setPermanentlyInvulnerable(true);
+        *///?} else {
         frame.setInvulnerable(true);
+        //?}
         frame.setItem(new ItemStack(item));
         level.addFreshEntity(frame);
         hologram(level, plinth.getX() + 0.5, plinth.getY() + 2.2, plinth.getZ() + 0.5, name, usage);

@@ -49,11 +49,19 @@ public class DeliveryDroneRenderer extends EntityRenderer<DeliveryDroneEntity, D
         // Into model space, drop to ground level, and spin the rotor cross on age.
         poseStack.scale(-1.0F, -1.0F, 1.0F);
         poseStack.translate(0.0F, -1.5F, 0.0F);
+        //? if >=26.3 {
+        /*poseStack.rotate(Axis.YP.rotationDegrees(state.ticks * 12.0F));
+        *///?} else {
         poseStack.mulPose(Axis.YP.rotationDegrees(state.ticks * 12.0F));
+        //?}
 
         RenderType renderType = this.model.renderType(TEXTURE);
+        //? if >=26.3 {
+        /*collector.order(0).submitModel(this.model, state, poseStack, renderType, FULL_BRIGHT, OverlayTexture.NO_OVERLAY, -1);
+        *///?} else {
         collector.order(0).submitModel(this.model, state, poseStack, renderType,
                 FULL_BRIGHT, OverlayTexture.NO_OVERLAY, -1, null, 0, null);
+        //?}
 
         poseStack.popPose();
         super.submit(state, poseStack, collector, cameraState);

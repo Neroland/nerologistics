@@ -18,6 +18,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import org.jetbrains.annotations.Nullable;
 
+import za.co.neroland.nerolandcore.registry.BlockCodecs;
 import za.co.neroland.nerologistics.config.NeroLogisticsConfig;
 import za.co.neroland.nerologistics.menu.MenuOpener;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
@@ -30,13 +31,12 @@ import za.co.neroland.nerologistics.registry.ModBlockEntities;
  */
 public class LogisticsProcessorBlock extends BaseEntityBlock {
 
-    public static final MapCodec<LogisticsProcessorBlock> CODEC = simpleCodec(LogisticsProcessorBlock::new);
+    public static final MapCodec<LogisticsProcessorBlock> CODEC = BlockCodecs.simple(LogisticsProcessorBlock::new);
 
     public LogisticsProcessorBlock(Properties properties) {
         super(properties);
     }
 
-    @Override
     protected MapCodec<LogisticsProcessorBlock> codec() {
         return CODEC;
     }

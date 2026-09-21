@@ -20,6 +20,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import org.jetbrains.annotations.Nullable;
 
+import za.co.neroland.nerolandcore.registry.BlockCodecs;
 import za.co.neroland.nerologistics.config.NeroLogisticsConfig;
 import za.co.neroland.nerologistics.item.ConfiguratorItem;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
@@ -33,13 +34,12 @@ import za.co.neroland.nerologistics.ship.ShippingClass;
  */
 public class RocketCargoPortBlock extends BaseEntityBlock {
 
-    public static final MapCodec<RocketCargoPortBlock> CODEC = simpleCodec(RocketCargoPortBlock::new);
+    public static final MapCodec<RocketCargoPortBlock> CODEC = BlockCodecs.simple(RocketCargoPortBlock::new);
 
     public RocketCargoPortBlock(Properties properties) {
         super(properties);
     }
 
-    @Override
     protected MapCodec<RocketCargoPortBlock> codec() {
         return CODEC;
     }

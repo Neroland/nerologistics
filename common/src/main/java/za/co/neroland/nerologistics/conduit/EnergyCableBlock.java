@@ -9,18 +9,18 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import org.jetbrains.annotations.Nullable;
 
+import za.co.neroland.nerolandcore.registry.BlockCodecs;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 
 /** Energy cable — routes Core NE across its network. */
 public class EnergyCableBlock extends AbstractConduitBlock {
 
-    public static final MapCodec<EnergyCableBlock> CODEC = simpleCodec(EnergyCableBlock::new);
+    public static final MapCodec<EnergyCableBlock> CODEC = BlockCodecs.simple(EnergyCableBlock::new);
 
     public EnergyCableBlock(Properties properties) {
         super(properties);
     }
 
-    @Override
     protected MapCodec<EnergyCableBlock> codec() {
         return CODEC;
     }

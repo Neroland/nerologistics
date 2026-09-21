@@ -18,18 +18,18 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import org.jetbrains.annotations.Nullable;
 
+import za.co.neroland.nerolandcore.registry.BlockCodecs;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 
 /** Wireless cargo terminal block — right-click to cycle its channel. */
 public class WirelessCargoTerminalBlock extends BaseEntityBlock {
 
-    public static final MapCodec<WirelessCargoTerminalBlock> CODEC = simpleCodec(WirelessCargoTerminalBlock::new);
+    public static final MapCodec<WirelessCargoTerminalBlock> CODEC = BlockCodecs.simple(WirelessCargoTerminalBlock::new);
 
     public WirelessCargoTerminalBlock(Properties properties) {
         super(properties);
     }
 
-    @Override
     protected MapCodec<WirelessCargoTerminalBlock> codec() {
         return CODEC;
     }

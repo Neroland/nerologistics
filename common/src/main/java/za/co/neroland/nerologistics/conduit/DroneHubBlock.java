@@ -18,18 +18,18 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import org.jetbrains.annotations.Nullable;
 
+import za.co.neroland.nerolandcore.registry.BlockCodecs;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 
 /** Drone hub block — right-click to cycle the delivery channel. */
 public class DroneHubBlock extends BaseEntityBlock {
 
-    public static final MapCodec<DroneHubBlock> CODEC = simpleCodec(DroneHubBlock::new);
+    public static final MapCodec<DroneHubBlock> CODEC = BlockCodecs.simple(DroneHubBlock::new);
 
     public DroneHubBlock(Properties properties) {
         super(properties);
     }
 
-    @Override
     protected MapCodec<DroneHubBlock> codec() {
         return CODEC;
     }

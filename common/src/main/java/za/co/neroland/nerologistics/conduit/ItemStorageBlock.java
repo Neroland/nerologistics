@@ -16,6 +16,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import org.jetbrains.annotations.Nullable;
 
+import za.co.neroland.nerolandcore.registry.BlockCodecs;
 import za.co.neroland.nerologistics.menu.MenuOpener;
 
 /**
@@ -24,13 +25,12 @@ import za.co.neroland.nerologistics.menu.MenuOpener;
  */
 public class ItemStorageBlock extends BaseEntityBlock {
 
-    public static final MapCodec<ItemStorageBlock> CODEC = simpleCodec(ItemStorageBlock::new);
+    public static final MapCodec<ItemStorageBlock> CODEC = BlockCodecs.simple(ItemStorageBlock::new);
 
     public ItemStorageBlock(Properties properties) {
         super(properties);
     }
 
-    @Override
     protected MapCodec<ItemStorageBlock> codec() {
         return CODEC;
     }
