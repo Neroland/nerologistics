@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0-alpha.1] - 2026-09-24
+
+EMI compatibility. No gameplay, id, tag or config change.
+
+### Added
+
+- **EMI support.** Every NeroLogistics recipe uses a vanilla recipe type, which EMI shows on its own, so
+  nothing needed a plugin. The build now compiles against the community EMI Unofficial Port (Unstable),
+  the only EMI build for Minecraft 26.x, and dev clients load it with `-PwithEmi` (default runs stay
+  JEI-only). EMI stays optional.
+
 ## [0.2.0-alpha.1] - 2026-09-20
 
 Minecraft **26.3** support, plus the changes previously listed under *Unreleased*.
@@ -180,7 +191,8 @@ Initial release — **Stages 1–6** of the original flat, ownership-scoped logi
 - Command palette, mod logo and store descriptions.
 - In-repo wiki scaffold.
 
-[Unreleased]: https://github.com/Neroland/nerologistics/compare/v0.1.0-alpha.1...HEAD
+[Unreleased]: https://github.com/Neroland/nerologistics/compare/v0.3.0-alpha.1...HEAD
+[0.3.0-alpha.1]: https://github.com/Neroland/nerologistics/compare/v0.2.0-alpha.1...v0.3.0-alpha.1
 [0.2.0-alpha.1]: https://github.com/Neroland/nerologistics/releases/tag/v0.2.0-alpha.1
 [0.1.0-alpha.1]: https://github.com/Neroland/nerologistics/compare/v0.0.1-alpha.2...v0.1.0-alpha.1
 [0.0.1-alpha.2]: https://github.com/Neroland/nerologistics/compare/v0.0.1-alpha.1...v0.0.1-alpha.2
