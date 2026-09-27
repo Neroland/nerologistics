@@ -78,12 +78,26 @@ See [Trains](Trains.md).
 ## Cross-dimension shipping
 
 - **`enableCrossDimension`** (default `true`) — master toggle for rocket cargo ports.
-- **`shipTransitTicks`** (default `1200`) — transit time for a shipment.
+- **`shipTransitTicks`** (default `1200`) — transit time for a standalone (stub) shipment. Nerospace
+  flights use Nerospace's own travel time.
 - **`shipEnergyPerStack`** (default `10000`) — NE charged per stack shipped.
-- **`shipFuelPerLaunch`** (default `1`) — rocket-fuel-tagged items consumed per launch.
+- **`shipFuelPerLaunch`** (default `1`) — rocket-fuel-tagged items consumed per standalone launch. Not
+  used with Nerospace routing: the docked rocket carries the fuel.
 - **`shipIntervalTicks`** (default `100`) — ticks between a port's auto-ship attempts.
 - **`maxPendingShipments`** (default `1024`) — hard cap on in-transit shipments; ports stop launching at
   the cap.
+- **`shipDenialBackoffMaxTicks`** (default `2400`) — cap on the retry wait after a refused launch (no
+  rocket, not enough fuel, …). Each consecutive refusal doubles the wait from `shipIntervalTicks`;
+  right-clicking the port resets it.
+
+### Nerospace routing
+
+- **`nerospaceRouting`** (default `true`) — with Nerospace 1.3.0+ installed, rocket cargo flies as real
+  Nerospace cargo flights (the port must touch a Cargo Pad with a docked, fuelled Cargo Rocket). `false`
+  keeps the standalone stub routes even with Nerospace installed. Has no effect without Nerospace.
+- **`shipReturnEmpty`** (default `false`) — the return-empty setting a port starts with: `true` flies
+  the rocket home empty after unloading (return fuel charged at launch), `false` leaves it at the
+  destination. Each port can override it (sneak-right-click).
 
 ### Shipping classes (QoS)
 
@@ -91,9 +105,13 @@ See [Trains](Trains.md).
   port ships STANDARD regardless of its configured class.
 - **`expressTransitFactor`** (default `25`) — EXPRESS transit time as % of the route's base (min 20
   ticks).
-- **`expressFuelFactor`** (default `300`) — EXPRESS fuel cost as % of the route's base.
+- **`expressFuelFactor`** (default `300`) — EXPRESS fuel cost as % of the route's base. With Nerospace
+  routing it scales the port's **energy** charge instead (Nerospace owns the fuel).
 - **`bulkTransitFactor`** (default `200`) — BULK transit time as % of the route's base.
 - **`bulkFuelFactor`** (default `50`) — BULK fuel cost as % of the route's base (rounded up, min 1).
+  With Nerospace routing it scales the port's **energy** charge instead.
+
+The transit factors do not apply to Nerospace flights.
 
 See [Cross-Dimension Shipping](Cross-Dimension-Shipping.md).
 

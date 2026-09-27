@@ -1,0 +1,42 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "edge": "nerologistics:block/conduit_edge",
+    "particle": "nerologistics:block/conduit_edge"
+  },
+  "elements": [
+    {
+      "from": [
+        3.75,
+        3.75,
+        11.75
+      ],
+      "to": [
+        4.25,
+        12.25,
+        12.25
+      ],
+      "faces": {
+        "north": {
+          "texture": "#edge"
+        },
+        "south": {
+          "texture": "#edge"
+        },
+        "east": {
+          "texture": "#edge"
+        },
+        "west": {
+          "texture": "#edge"
+        },
+        "up": {
+          "texture": "#edge"
+        },
+        "down": {
+          "texture": "#edge"
+        }
+      }
+    }
+  ]
+}

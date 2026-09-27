@@ -1,0 +1,7 @@
+{
+  "parent": "nerologistics:block/template_conduit_wall",
+  "textures": {
+    "tube": "nerologistics:block/energy_cable",
+    "glow": "nerologistics:block/energy_cable_glow"
+  }
+}

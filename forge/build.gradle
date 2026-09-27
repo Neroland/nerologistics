@@ -13,6 +13,7 @@ def forgeVersion = project.findProperty("forge_version_${mc}")
 def jeiVersion = project.findProperty("jei_version_${mc}")
 def emiFile = project.findProperty("emi_file_neoforge_${mc}")
 def nerolandcoreVersion = project.findProperty('nerolandcore_version')
+def nerospaceVersion = project.findProperty('nerospace_version')
 
 if (!forgeVersion) {
     throw new GradleException("Missing forge_version_${mc} in gradle.properties")
@@ -90,6 +91,18 @@ dependencies {
     if (emiFile) {
         compileOnly "curse.maven:emi-unofficial-port-unstable-1544558:${emiFile}"
     }
+
+    // Nerospace — OPTIONAL rocket-cargo routing (za.co.neroland.nerospace.api.route, 1.3.0+). Compile-time
+    // only: the shipped jar never requires it, and the only classes that touch it live in
+    // compat/nerospace, reached behind NerospaceCompat's isModLoaded guard. Resolved like Core (mavenLocal
+    // first, then Nerospace's GitHub Packages feed). Dev clients load Nerospace only with -PwithNerospace,
+    // so default runs keep exercising the stub route provider.
+    if (nerospaceVersion) {
+        compileOnly "za.co.neroland.nerospace:nerospace-forge-${mc}:${nerospaceVersion}"
+        if (project.hasProperty('withNerospace')) {
+            runtimeOnly "za.co.neroland.nerospace:nerospace-forge-${mc}:${nerospaceVersion}"
+        }
+    }
 }
 
 // Expand mods.toml from src/main/templates into generated resources.
@@ -106,6 +119,8 @@ def generateModMetadata = tasks.register('generateModMetadata', ProcessResources
         // load against a Core too old to have the APIs it references, instead of crashing
         // at registration.
         nerolandcore_version_range: "[${nerolandcoreVersion},2.0)",
+        // Optional, but a Nerospace older than the route API must not load alongside this build.
+        nerospace_version_range: "[${nerospaceVersion},2.0)",
     ]
     inputs.properties(props)
     expand(props)

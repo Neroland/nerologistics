@@ -3,7 +3,7 @@
 Player- and contributor-facing documentation for **NeroLogistics**, part of the **Neroland**
 sci-fi Minecraft mod ecosystem. Built on **Neroland Core**.
 
-> **Status:** alpha (version `0.0.1-alpha.2`), built on Neroland Core across the six cross-loader
+> **Status:** alpha (version `0.4.0-alpha.1`), built on Neroland Core across the nine cross-loader
 > cells. NeroLogistics is the ecosystem's automation brain — it moves items, fluids, energy and
 > cargo within a base, across a base wirelessly, by drone, and between dimensions.
 
@@ -26,12 +26,12 @@ sci-fi Minecraft mod ecosystem. Built on **Neroland Core**.
 - [Terminals](Terminals.md) — wireless cargo terminals, the storage request terminal, and the Create
   train cargo interface.
 - [Drones](Drones.md) — the drone hub and delivery drones (capped pool, channels, energy cost).
-- [Cross-Dimension Shipping](Cross-Dimension-Shipping.md) — the rocket cargo port, routes, rocket fuel,
-  and the express/bulk shipping classes.
+- [Cross-Dimension Shipping](Cross-Dimension-Shipping.md) — the rocket cargo port: standalone routes or
+  real Nerospace cargo flights, launch schedules, and the express/bulk shipping classes.
 - [Logistics Programming](Logistics-Programming.md) — the logistics processor's rule-based supply
-  policies (keep stocked, export excess, auto-ship).
-- [Dashboard & Privacy](Dashboard-and-Privacy.md) — the logistics dashboard and the POPIA/GDPR data
-  posture.
+  policies (keep stocked, export excess, auto-ship), rocket-port conditions and redstone alarms.
+- [Dashboard & Privacy](Dashboard-and-Privacy.md) — the logistics dashboard, the shipping report and
+  the POPIA/GDPR data posture (attribution opt-out, the port dispatcher).
 - [Configuration](Configuration.md) — every config key, with defaults.
 
 Add one page per block, item, or system as it is built, and link it here. Keep this page as the index.

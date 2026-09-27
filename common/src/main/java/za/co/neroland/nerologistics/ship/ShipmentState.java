@@ -39,15 +39,56 @@ public final class ShipmentState extends SavedData {
     public ShipmentState() {
     }
 
+    /** The instance last fetched for {@link #cachedFor} (the storage never swaps it after load). */
+    @org.jetbrains.annotations.Nullable
+    private static ShipmentState cached;
+    @org.jetbrains.annotations.Nullable
+    private static MinecraftServer cachedFor;
+
     public static ShipmentState get(MinecraftServer server) {
         // Guarded load: a corrupt/truncated data file recovers via backup-then-fresh instead of
         // crashing the per-tick shipment driver (mirrors Nerospace's SavedDataRecovery pattern).
-        return SavedDataRecovery.get(server.overworld(), TYPE, ShipmentState::new, ID.toString());
+        ShipmentState state = SavedDataRecovery.get(server.overworld(), TYPE, ShipmentState::new, ID.toString());
+        cached = state;
+        cachedFor = server;
+        return state;
+    }
+
+    /**
+     * The per-tick accessor: the instance cached for this server, or a full {@link #get} on first use /
+     * after a server change. Skips the recovery helper's backup bookkeeping, so callers still run
+     * {@link #get} periodically (the shipment driver does, once a second).
+     */
+    public static ShipmentState cached(MinecraftServer server) {
+        ShipmentState state = cached;
+        return state != null && cachedFor == server ? state : get(server);
+    }
+
+    /** Forget the cached instance (server-stopped reset). */
+    public static void clearCache() {
+        cached = null;
+        cachedFor = null;
     }
 
     /** Number of shipments currently pending/in flight. */
     public int count() {
         return this.shipments.size();
+    }
+
+    /** Read-only copy of the in-transit shipments, oldest first (dashboard / command listing). */
+    public List<CargoManifest> snapshot() {
+        return List.copyOf(this.shipments);
+    }
+
+    /** Whether a shipment launched from {@code dim}/{@code pos} is still in transit (processor gate). */
+    public boolean hasShipmentFrom(net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level> dim,
+            net.minecraft.core.BlockPos pos) {
+        for (CargoManifest manifest : this.shipments) {
+            if (manifest.fromPos().equals(pos) && manifest.fromDim().equals(dim)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** Queue a shipment. Caller enforces the {@code maxPendingShipments} cap before launching. */

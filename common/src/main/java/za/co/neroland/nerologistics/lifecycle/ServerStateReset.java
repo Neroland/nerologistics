@@ -6,6 +6,7 @@ import za.co.neroland.nerologistics.network.DronePortRegistry;
 import za.co.neroland.nerologistics.network.NetworkManager;
 import za.co.neroland.nerologistics.network.TrainStationRegistry;
 import za.co.neroland.nerologistics.network.WirelessRegistry;
+import za.co.neroland.nerologistics.ship.RouteProviders;
 import za.co.neroland.nerologistics.ship.ShipmentManager;
 import za.co.neroland.nerologistics.world.SavedDataRecovery;
 
@@ -33,6 +34,7 @@ public final class ServerStateReset {
         DronePortRegistry.clearAll();
         TrainStationRegistry.clearAll();
         ShipmentManager.clearAll();
+        RouteProviders.resetAll(); // origin-pad id cache + queued Nerospace flight events
         LogisticsMetrics.clearAll();
         RocketCargoPortBlockEntity.clearAll();
         SavedDataRecovery.clearAll();

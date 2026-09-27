@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -20,13 +21,17 @@ import za.co.neroland.nerologistics.conduit.AbstractConduitBlockEntity;
 import za.co.neroland.nerologistics.network.ConduitNetwork;
 import za.co.neroland.nerologistics.network.NetworkManager;
 import za.co.neroland.nerologistics.network.NetworkMedium;
+import za.co.neroland.nerologistics.ship.RocketFlightsState;
+import za.co.neroland.nerologistics.ship.RouteProviders;
 import za.co.neroland.nerologistics.ship.ShipmentManager;
 
 /**
  * Logistics dashboard: right-click to read a summary of the logistics state — the adjacent network's
  * node/endpoint counts, this dimension's aggregate throughput (items/fluid/energy), shipment queue +
- * delivered counts, and drones dispatched. All figures are <b>aggregate world data</b> (no player
- * identity); per-player figures are never shown here. Reported to chat (no GUI).
+ * delivered counts (plus held / crated counts for Nerospace flights), drones dispatched, and the
+ * {@link ShippingReport} for everything within 128 blocks: in-transit shipments with state and ETA,
+ * ports with their last refusal, and recently crated cargo. All figures are <b>aggregate world data</b>
+ * (no player identity); per-player figures are never shown here. Reported to chat (no GUI).
  */
 public class LogisticsDashboardBlock extends Block {
 
@@ -71,9 +76,19 @@ public class LogisticsDashboardBlock extends Block {
         player.sendSystemMessage(Component.translatable("block.nerologistics.logistics_dashboard.throughput",
                 c.itemsMoved, c.fluidMoved, c.energyMoved));
         MinecraftServer server = level.getServer();
+        // Stub manifests + tracked Nerospace flights (the latter only ever non-zero with Nerospace).
+        int inTransit = server == null ? 0
+                : ShipmentManager.pendingCount(server)
+                        + (RouteProviders.nerospaceBound() ? RocketFlightsState.get(server).count() : 0);
         player.sendSystemMessage(Component.translatable("block.nerologistics.logistics_dashboard.shipping",
-                c.shipmentsLaunched, c.shipmentsDelivered,
-                server == null ? 0 : ShipmentManager.pendingCount(server)));
+                c.shipmentsLaunched, c.shipmentsDelivered, inTransit));
+        if (c.shipmentsHeld > 0 || c.shipmentsDropped > 0) {
+            player.sendSystemMessage(Component.translatable("block.nerologistics.logistics_dashboard.shipping_warnings",
+                    c.shipmentsHeld, c.shipmentsDropped));
+        }
+        if (level instanceof ServerLevel serverLevel) {
+            ShippingReport.send(serverLevel, pos, player);
+        }
         player.sendSystemMessage(Component.translatable("block.nerologistics.logistics_dashboard.drones",
                 c.dronesDispatched));
     }

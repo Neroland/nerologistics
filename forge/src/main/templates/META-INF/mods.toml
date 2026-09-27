@@ -37,12 +37,13 @@ versionRange = "${nerolandcore_version_range}"
 ordering = "AFTER"
 side = "BOTH"
 
-# Nerospace — optional. When present it must load BEFORE NeroLogistics so its planet/station API and
-# rocket cargo routes are available; discovery is via Core tags/capabilities, never a hard import.
+# Nerospace — optional. When present it must load BEFORE NeroLogistics so its route API
+# (za.co.neroland.nerospace.api.route, 1.3.0+) is available; rocket cargo then flies as real Nerospace
+# flights. Absent, the stub route provider keeps shipping working. Floored at the version compiled against.
 [[dependencies.${mod_id}]]
 modId = "nerospace"
 mandatory = false
-versionRange = "[0,)"
+versionRange = "${nerospace_version_range}"
 ordering = "AFTER"
 side = "BOTH"
 

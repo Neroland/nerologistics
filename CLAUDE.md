@@ -9,7 +9,11 @@
   logistics network); add shared content under `common/` and wire it through each loader entry point.
 - Mod id: **`nerologistics`** (matches the registry namespace + every loader manifest). Package root:
   `za.co.neroland.nerologistics`. Author: **Neroland**.
-- Version: **0.0.1-alpha.2**.
+- Version: **0.4.0-alpha.1**.
+- Optional **Nerospace** (1.3.0+, `compileOnly`): rocket cargo flies through Nerospace's route API. Only
+  `compat/nerospace/` may import `za.co.neroland.nerospace.*`, and only behind `NerospaceCompat`'s
+  `isModLoaded` guard. Until the Nerospace tag publishes, run `./gradlew publishToMavenLocal` in
+  `../nerospace` first. See `docs/NEROSPACE-ROUTE-INTEGRATION.md`.
 - Targets **MC 26.1.2, 26.2 AND 26.3** on **NeoForge, MinecraftForge/Forge, and Fabric** → the **"9 cells"**.
   **Java 25.** Mappings = official Mojang names (26.x ships de-obfuscated; no Parchment).
 

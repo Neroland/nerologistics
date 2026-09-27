@@ -9,6 +9,7 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
+import za.co.neroland.nerologistics.conduit.LogisticsProcessorBlockEntity.RuleGate;
 import za.co.neroland.nerologistics.conduit.LogisticsProcessorBlockEntity.RuleStatus;
 import za.co.neroland.nerologistics.menu.LogisticsProcessorMenu;
 
@@ -16,7 +17,8 @@ import za.co.neroland.nerologistics.menu.LogisticsProcessorMenu;
  * Logistics-processor screen — the shared procedural dark-hull panel. Eight rule rows, each: the
  * ghost item well, a status dot (hover for the reason), a BELOW/ABOVE comparator toggle, −/+
  * threshold buttons (shift ×10, ctrl ×100, shift+ctrl ×1000 — the multiplier is resolved here and
- * sent as a distinct button op), the threshold value, an action cycle button and an on/off toggle.
+ * sent as a distinct button op), the threshold value, an action cycle button (right-click it for the
+ * rule's rocket-port condition, marked amber when set) and an on/off toggle.
  * All clicks ride {@code handleInventoryButtonClick} like every other NeroLogistics menu.
  */
 public class LogisticsProcessorScreen extends AbstractContainerScreen<LogisticsProcessorMenu> {
@@ -104,10 +106,13 @@ public class LogisticsProcessorScreen extends AbstractContainerScreen<LogisticsP
         extractor.text(this.font, Component.literal(value),
                 x + VALUE_X + Math.max(0, (VALUE_W - vw) / 2), rowY + 5, textColor, false);
         button(extractor, x + PLUS_X, rowY + BTN_Y, STEP_W, Component.literal("+"), textColor);
-        // Action cycle button (short label).
+        // Action cycle button (short label); a port condition shows as an amber corner mark.
         button(extractor, x + ACT_X, rowY + BTN_Y, ACT_W, Component.translatable(
                 "gui.nerologistics.logistics_processor.action_short."
                         + this.menu.ruleAction(rule).name().toLowerCase(Locale.ROOT)), textColor);
+        if (this.menu.ruleGate(rule) != RuleGate.ALWAYS) {
+            extractor.fill(x + ACT_X + ACT_W - 3, rowY + BTN_Y, x + ACT_X + ACT_W, rowY + BTN_Y + 3, DOT_WARN);
+        }
         // Enabled toggle.
         button(extractor, x + ON_X, rowY + BTN_Y, ON_W, Component.literal(on ? "I" : "O"),
                 on ? BUTTON_TEXT : BUTTON_TEXT_DIM);
@@ -122,7 +127,8 @@ public class LogisticsProcessorScreen extends AbstractContainerScreen<LogisticsP
 
     private static int dotColor(RuleStatus status) {
         return switch (status) {
-            case ACTED -> DOT_OK;
+            case ACTED, ALARM -> DOT_OK;
+            case GATED -> DOT_IDLE;
             case IDLE -> DOT_IDLE;
             case DISABLED -> DOT_OFF;
             default -> DOT_WARN;
@@ -141,7 +147,12 @@ public class LogisticsProcessorScreen extends AbstractContainerScreen<LogisticsP
                                 + status.name().toLowerCase(Locale.ROOT)),
                         Component.translatable("gui.nerologistics.logistics_processor.action."
                                 + this.menu.ruleAction(rule).name().toLowerCase(Locale.ROOT))
-                                .withStyle(ChatFormatting.GRAY)),
+                                .withStyle(ChatFormatting.GRAY),
+                        Component.translatable("gui.nerologistics.logistics_processor.gate."
+                                + this.menu.ruleGate(rule).name().toLowerCase(Locale.ROOT))
+                                .withStyle(ChatFormatting.GRAY),
+                        Component.translatable("gui.nerologistics.logistics_processor.gate_hint")
+                                .withStyle(ChatFormatting.DARK_GRAY)),
                 mouseX, mouseY);
     }
 
@@ -184,7 +195,9 @@ public class LogisticsProcessorScreen extends AbstractContainerScreen<LogisticsP
             } else if (hit(mx, PLUS_X, STEP_W)) {
                 op = LogisticsProcessorMenu.OP_THRESHOLD_UP + stepExponent(mouseButtonEvent);
             } else if (hit(mx, ACT_X, ACT_W)) {
-                op = LogisticsProcessorMenu.OP_CYCLE_ACTION;
+                // Right-click the action to cycle the rule's port condition; left-click cycles the action.
+                op = mouseButtonEvent.button() == 1 ? LogisticsProcessorMenu.OP_CYCLE_GATE
+                        : LogisticsProcessorMenu.OP_CYCLE_ACTION;
             } else if (hit(mx, ON_X, ON_W)) {
                 op = LogisticsProcessorMenu.OP_TOGGLE_ENABLED;
             }

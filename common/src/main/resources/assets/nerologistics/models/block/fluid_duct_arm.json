@@ -1,0 +1,7 @@
+{
+  "parent": "nerologistics:block/template_conduit_arm",
+  "textures": {
+    "tube": "nerologistics:block/fluid_duct",
+    "glow": "nerologistics:block/fluid_duct_glow"
+  }
+}

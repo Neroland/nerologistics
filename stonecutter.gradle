@@ -52,6 +52,18 @@ subprojects {
                 password = providers.gradleProperty('gpr.key').orElse(providers.environmentVariable('GITHUB_TOKEN')).getOrNull()
             }
         }
+        // Nerospace (optional, compileOnly — the api.route surface) from its own GitHub Packages feed, same
+        // auth and same mavenLocal()-first rule as Core above. Restricted to Nerospace's group so nothing
+        // else is ever looked up there. Local devs: `./gradlew publishToMavenLocal` in ../nerospace.
+        maven {
+            name = 'NerospaceGitHubPackages'
+            url = 'https://maven.pkg.github.com/Neroland/nerospace'
+            credentials {
+                username = providers.gradleProperty('gpr.user').orElse(providers.environmentVariable('GITHUB_ACTOR')).getOrNull()
+                password = providers.gradleProperty('gpr.key').orElse(providers.environmentVariable('GITHUB_TOKEN')).getOrNull()
+            }
+            content { includeGroup 'za.co.neroland.nerospace' }
+        }
         mavenCentral()
         maven { url 'https://maven.fabricmc.net/' }
         maven { url 'https://maven.neoforged.net/releases/' }

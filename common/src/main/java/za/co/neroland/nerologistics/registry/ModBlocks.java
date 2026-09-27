@@ -45,7 +45,7 @@ public final class ModBlocks {
 
     // --- Stage 8: universal duct + native storage --------------------------
     public static final RegistryEntry<UniversalDuctBlock> UNIVERSAL_DUCT =
-            register("universal_duct", UniversalDuctBlock::new);
+            registerTube("universal_duct", UniversalDuctBlock::new);
     public static final RegistryEntry<ItemStorageBlock> ITEM_STORAGE =
             register("item_storage", ItemStorageBlock::new);
 
@@ -78,11 +78,11 @@ public final class ModBlocks {
             register("train_station", TrainStationBlock::new);
 
     public static final RegistryEntry<ItemDuctBlock> ITEM_DUCT =
-            register("item_duct", ItemDuctBlock::new);
+            registerTube("item_duct", ItemDuctBlock::new);
     public static final RegistryEntry<FluidDuctBlock> FLUID_DUCT =
-            register("fluid_duct", FluidDuctBlock::new);
+            registerTube("fluid_duct", FluidDuctBlock::new);
     public static final RegistryEntry<EnergyCableBlock> ENERGY_CABLE =
-            register("energy_cable", EnergyCableBlock::new);
+            registerTube("energy_cable", EnergyCableBlock::new);
 
     // --- Stage 3: terminals + drone hub ------------------------------------
     public static final RegistryEntry<WirelessCargoTerminalBlock> WIRELESS_CARGO_TERMINAL =
@@ -105,6 +105,16 @@ public final class ModBlocks {
     private static <B extends Block> RegistryEntry<B> register(String name,
             Function<BlockBehaviour.Properties, B> factory) {
         return BLOCKS.register(name, key -> factory.apply(conduitProperties().setId(key)));
+    }
+
+    /**
+     * The four conduits: same properties, but they render as a see-through tube (not a full cube), so
+     * they must not occlude neighbouring faces. (Vision-blocking and suffocation already follow the
+     * tube-shaped collision box, which is never a full block.)
+     */
+    private static <B extends Block> RegistryEntry<B> registerTube(String name,
+            Function<BlockBehaviour.Properties, B> factory) {
+        return BLOCKS.register(name, key -> factory.apply(conduitProperties().noOcclusion().setId(key)));
     }
 
     private static BlockBehaviour.Properties conduitProperties() {

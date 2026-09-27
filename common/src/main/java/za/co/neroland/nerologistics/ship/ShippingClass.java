@@ -46,12 +46,46 @@ public enum ShippingClass {
         if (baseFuel <= 0) {
             return 0;
         }
-        long percent = switch (this) {
+        return scaleUp(baseFuel, switch (this) {
             case STANDARD -> 100L;
             case EXPRESS -> NeroLogisticsConfig.expressFuelFactor();
             case BULK -> NeroLogisticsConfig.bulkFuelFactor();
-        };
-        return (int) Math.min(Integer.MAX_VALUE, Math.max(1L, (baseFuel * percent + 99L) / 100L));
+        });
+    }
+
+    /**
+     * Energy for a launch under Nerospace routing, where travel time and fuel belong to Nerospace and the
+     * lane only trades <em>energy</em>: EXPRESS pays {@code expressFuelFactor}% of the base charge, BULK
+     * {@code bulkFuelFactor}% (the same knobs, re-purposed — the rocket's fuel is never scaled). Rounded up;
+     * a free launch ({@code base <= 0}) stays free.
+     */
+    public int applyEnergy(int baseEnergy) {
+        return scaleUp(baseEnergy, switch (this) {
+            case STANDARD -> 100L;
+            case EXPRESS -> NeroLogisticsConfig.expressFuelFactor();
+            case BULK -> NeroLogisticsConfig.bulkFuelFactor();
+        });
+    }
+
+    /** {@code base × percent / 100}, rounded up, never below 1 while {@code base > 0}; 0 stays 0. */
+    static int scaleUp(int base, long percent) {
+        if (base <= 0) {
+            return 0;
+        }
+        return (int) Math.min(Integer.MAX_VALUE, Math.max(1L, (base * percent + 99L) / 100L));
+    }
+
+    /**
+     * Launch phase within {@code shipIntervalTicks} under Nerospace routing: EXPRESS tries first, then
+     * STANDARD, then BULK, so when several ports share one pad (one rocket) the faster lane gets it.
+     */
+    public int launchPhase(int intervalTicks) {
+        int max = Math.max(0, intervalTicks - 1);
+        return Math.min(max, switch (this) {
+            case EXPRESS -> 0;
+            case STANDARD -> 1;
+            case BULK -> 2;
+        });
     }
 
     /** The next class in the STANDARD → EXPRESS → BULK cycle. */

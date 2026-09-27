@@ -130,6 +130,19 @@ public final class NeroLogisticsConfig {
     private static final ConfigValue<Integer> SHIP_INTERVAL_TICKS = SCHEMA.intRange("shipIntervalTicks",
             100, 1, 72_000, true, "ticks between a cargo port's auto-ship attempts");
 
+    // --- 0.4: Nerospace route API ------------------------------------------
+    private static final ConfigValue<Boolean> NEROSPACE_ROUTING = SCHEMA.bool("nerospaceRouting",
+            true, true, "when Nerospace 1.3.0+ is installed, rocket cargo flies as real Nerospace cargo flights "
+            + "(port beside a Cargo Pad with a docked, fuelled Cargo Rocket); false = keep the stub provider");
+
+    private static final ConfigValue<Integer> SHIP_DENIAL_BACKOFF_MAX = SCHEMA.intRange("shipDenialBackoffMaxTicks",
+            2_400, 1, 1_728_000, true, "cap on the exponential retry backoff after a refused launch (e.g. no "
+            + "rocket / not enough fuel); a player interacting with the port resets it");
+
+    private static final ConfigValue<Boolean> SHIP_RETURN_EMPTY = SCHEMA.bool("shipReturnEmpty",
+            false, true, "default for new ports' return-empty toggle (Nerospace routing): true = the rocket flies "
+            + "back empty and the return leg's fuel is charged at launch; false = it stays at the destination");
+
     // --- Stage 5: dashboards + POPIA/GDPR ----------------------------------
     // Default OFF: with attribution off, NeroLogistics stores NO personal data at all (everything is
     // block/network-keyed). Turning it on records cargo-port shipments against the placing player's
@@ -484,6 +497,18 @@ public final class NeroLogisticsConfig {
 
     public static int bulkFuelFactor() {
         return BULK_FUEL_FACTOR.get();
+    }
+
+    public static boolean nerospaceRouting() {
+        return NEROSPACE_ROUTING.get();
+    }
+
+    public static int shipDenialBackoffMaxTicks() {
+        return SHIP_DENIAL_BACKOFF_MAX.get();
+    }
+
+    public static boolean shipReturnEmpty() {
+        return SHIP_RETURN_EMPTY.get();
     }
 
     public static boolean telemetryEnabled() {

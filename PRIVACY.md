@@ -43,4 +43,24 @@ of the player who placed a cargo port (never a name), is **retention-pruned**
 data-erasure hook** — both on an explicit erase request and by Core's inactivity sweep. The opt-in
 flag is also the server toggle to disable personal-data logging entirely.
 
+**Rocket cargo port dispatcher (Nerospace routing only).** With Nerospace 1.3.0+ installed, a rocket
+cargo port launches real Nerospace cargo flights, and Nerospace only launches *on behalf of a player*.
+So a port stores one more UUID, the **dispatcher**: the player who last picked a Nerospace destination
+on it.
+
+- **Purpose and lawful basis:** needed to perform the shipping that player configured (performance of
+  the requested function). It is separate from the analytics attribution above and is stored whatever
+  `perPlayerThroughputAttribution` says.
+- **Data minimisation:** the UUID only, never a name. It is never logged, never sent to telemetry, and
+  shown to players only as "you", "someone else" or "nobody".
+- **Retention:** the life of the port block. Breaking the port deletes it, and so does the next player
+  who configures the port (they become the dispatcher).
+- **Erasure:** Core's shared data-erasure hook clears it from every loaded port at once, and from
+  unloaded ports via the same tombstone list the attribution owner uses, the next time those ports load.
+  An erased dispatcher leaves the port listing public pads only and unable to launch until someone
+  configures it again.
+
+NeroLogistics also remembers which Nerospace flights it requested (flight, pad and port ids, dimensions,
+positions and ticks — no player data) so its dashboard stays right across restarts.
+
 See the [wiki Dashboard & Privacy page](wiki/Dashboard-and-Privacy.md) for the in-game side.

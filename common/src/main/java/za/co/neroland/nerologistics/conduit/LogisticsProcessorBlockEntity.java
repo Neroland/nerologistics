@@ -25,6 +25,8 @@ import za.co.neroland.nerologistics.network.ConduitNetwork;
 import za.co.neroland.nerologistics.network.NetworkManager;
 import za.co.neroland.nerologistics.network.NetworkMedium;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
+import za.co.neroland.nerologistics.ship.RouteProviders;
+import za.co.neroland.nerologistics.ship.ShipDenial;
 import za.co.neroland.nerologistics.storage.ItemKey;
 import za.co.neroland.nerologistics.storage.NetworkStorageIndex;
 import za.co.neroland.nerologistics.transport.InventoryTransfer;
@@ -48,6 +50,11 @@ import za.co.neroland.nerologistics.transport.InventoryTransfer;
  *       port or no buffered fuel the rule idles with a status (never errors).</li>
  * </ul>
  *
+ * <p>Each rule can also carry a {@link RuleGate} — a condition on the nearest rocket cargo port (needs
+ * fuel / has a shipment in transit / is stalled). A gated rule only acts while its condition holds, and a
+ * gated rule with no ghost item is an <b>alarm</b>: while any alarm holds the processor emits a full
+ * redstone signal (e.g. a lamp for a stalled lane, or a fuel pump for a rocket that ran dry).</p>
+ *
  * <p>Rules are evaluated server-side on a position-staggered interval
  * ({@code logisticsRuleIntervalTicks}, default 40 — never per tick), each moving at most
  * {@code logisticsActionCapPerCycle} items and charging {@code logisticsEnergyPerAction} NE per
@@ -70,6 +77,33 @@ public class LogisticsProcessorBlockEntity extends AbstractTerminalBlockEntity i
         SHIP_ABOVE
     }
 
+    /**
+     * Optional per-rule condition on the nearest rocket cargo port of the processor's network. A rule
+     * with a gate other than {@link #ALWAYS} only acts while the gate holds; with no ghost item it is an
+     * <b>alarm-only</b> rule that just drives the processor's redstone output. Appended values only —
+     * persisted by ordinal.
+     */
+    public enum RuleGate {
+        /** No port condition (the pre-0.4 behaviour). */
+        ALWAYS,
+        /** The port's last launch was refused for fuel (rocket low on fuel, or no fuel items). */
+        PORT_NEEDS_FUEL,
+        /** A shipment the port launched is still in transit. */
+        PORT_IN_TRANSIT,
+        /** The port's last launch was refused for any reason. */
+        PORT_STALLED;
+
+        public boolean holds(RocketCargoPortBlockEntity port, net.minecraft.server.MinecraftServer server) {
+            ShipDenial denial = port.lastDenial();
+            return switch (this) {
+                case ALWAYS -> true;
+                case PORT_NEEDS_FUEL -> denial == ShipDenial.NOT_ENOUGH_FUEL || denial == ShipDenial.NO_FUEL_ITEMS;
+                case PORT_IN_TRANSIT -> port.hasFlightInTransit(server);
+                case PORT_STALLED -> denial != null;
+            };
+        }
+    }
+
     /** Transient per-rule outcome of the last evaluation pass, surfaced as the GUI status dot. */
     public enum RuleStatus {
         /** Rule disabled or no ghost item configured. */
@@ -89,7 +123,11 @@ public class LogisticsProcessorBlockEntity extends AbstractTerminalBlockEntity i
         /** Not enough energy for the per-action charge. */
         NO_ENERGY,
         /** Condition met but nothing could move (network empty of the item, or the target full). */
-        BLOCKED
+        BLOCKED,
+        /** The rule's port condition does not hold right now. */
+        GATED,
+        /** Alarm-only rule (no item) whose port condition holds — the processor emits redstone. */
+        ALARM
     }
 
     /** Ghost rule items: slot i = rule i's exact item+components match (count ignored, stamped 1). */
@@ -98,6 +136,9 @@ public class LogisticsProcessorBlockEntity extends AbstractTerminalBlockEntity i
     private final int[] thresholds = new int[RULE_COUNT];
     private final RuleAction[] actions = new RuleAction[RULE_COUNT];
     private final boolean[] enabled = new boolean[RULE_COUNT];
+    private final RuleGate[] gates = new RuleGate[RULE_COUNT];
+    /** Redstone output: 15 while any alarm-only rule's gate holds. Transient, recomputed each pass. */
+    private int signal;
     /** Transient (not persisted): last evaluation outcome per rule. */
     private final RuleStatus[] statuses = new RuleStatus[RULE_COUNT];
 
@@ -108,6 +149,7 @@ public class LogisticsProcessorBlockEntity extends AbstractTerminalBlockEntity i
             this.thresholds[i] = 64;
             this.actions[i] = RuleAction.KEEP_STOCKED_ADJACENT;
             this.enabled[i] = true;
+            this.gates[i] = RuleGate.ALWAYS;
             this.statuses[i] = RuleStatus.DISABLED;
         }
     }
@@ -136,6 +178,27 @@ public class LogisticsProcessorBlockEntity extends AbstractTerminalBlockEntity i
 
     public RuleStatus ruleStatus(int rule) {
         return this.statuses[rule];
+    }
+
+    public RuleGate ruleGate(int rule) {
+        return this.gates[rule];
+    }
+
+    /** Set a rule's port condition directly (used by the gallery's stall-alarm demo). */
+    public void setRuleGate(int rule, RuleGate gate) {
+        this.gates[rule] = gate;
+        setChanged();
+    }
+
+    public void cycleRuleGate(int rule) {
+        RuleGate[] values = RuleGate.values();
+        this.gates[rule] = values[(this.gates[rule].ordinal() + 1) % values.length];
+        setChanged();
+    }
+
+    /** Current redstone output (read by the block's {@code getSignal}). */
+    public int signal() {
+        return this.signal;
     }
 
     public void toggleRuleAbove(int rule) {
@@ -183,6 +246,7 @@ public class LogisticsProcessorBlockEntity extends AbstractTerminalBlockEntity i
             output.putInt("RuleThr" + i, this.thresholds[i]);
             output.putInt("RuleAct" + i, this.actions[i].ordinal());
             output.putInt("RuleOn" + i, this.enabled[i] ? 1 : 0);
+            output.putInt("RuleGate" + i, this.gates[i].ordinal());
         }
     }
 
@@ -190,6 +254,7 @@ public class LogisticsProcessorBlockEntity extends AbstractTerminalBlockEntity i
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
         RuleAction[] actionValues = RuleAction.values();
+        RuleGate[] gateValues = RuleGate.values();
         for (int i = 0; i < RULE_COUNT; i++) {
             this.ghosts.setItem(i, input.read("RuleItem" + i, ItemStack.OPTIONAL_CODEC).orElse(ItemStack.EMPTY));
             this.above[i] = input.getIntOr("RuleAbove" + i, 0) != 0;
@@ -199,6 +264,9 @@ public class LogisticsProcessorBlockEntity extends AbstractTerminalBlockEntity i
             this.actions[i] = act >= 0 && act < actionValues.length ? actionValues[act]
                     : RuleAction.KEEP_STOCKED_ADJACENT;
             this.enabled[i] = input.getIntOr("RuleOn" + i, 1) != 0;
+            // Rules saved before port conditions existed have no gate: ALWAYS (unchanged behaviour).
+            int gate = input.getIntOr("RuleGate" + i, 0);
+            this.gates[i] = gate >= 0 && gate < gateValues.length ? gateValues[gate] : RuleGate.ALWAYS;
         }
     }
 
@@ -225,17 +293,49 @@ public class LogisticsProcessorBlockEntity extends AbstractTerminalBlockEntity i
         ConduitNetwork network = adjacentItemNetwork(level, pos);
         NetworkStorageIndex index = network == null ? null : network.storageIndex();
         Adjacent adjacent = findAdjacentInventory(level, pos);
+        // The gate port is resolved once per pass, and only when some enabled rule has a gate.
+        RocketCargoPortBlockEntity gatePort = null;
+        boolean anyGate = false;
         for (int i = 0; i < RULE_COUNT; i++) {
-            this.statuses[i] = evaluateRule(level, i, network, index, adjacent);
+            anyGate |= this.enabled[i] && this.gates[i] != RuleGate.ALWAYS;
+        }
+        if (anyGate && network != null) {
+            gatePort = nearestPort(level, network);
+        }
+        boolean alarm = false;
+        for (int i = 0; i < RULE_COUNT; i++) {
+            this.statuses[i] = evaluateRule(level, i, network, index, adjacent, gatePort);
+            alarm |= this.statuses[i] == RuleStatus.ALARM;
+        }
+        int newSignal = alarm ? 15 : 0;
+        if (newSignal != this.signal) {
+            this.signal = newSignal;
+            level.updateNeighborsAt(pos, getBlockState().getBlock());
         }
     }
 
     private RuleStatus evaluateRule(Level level, int rule, @Nullable ConduitNetwork network,
-            @Nullable NetworkStorageIndex index, @Nullable Adjacent adjacent) {
+            @Nullable NetworkStorageIndex index, @Nullable Adjacent adjacent,
+            @Nullable RocketCargoPortBlockEntity gatePort) {
         if (!this.enabled[rule]) {
             return RuleStatus.DISABLED;
         }
         ItemStack proto = this.ghosts.getItem(rule);
+        RuleGate gate = this.gates[rule];
+        if (gate != RuleGate.ALWAYS) {
+            if (network == null) {
+                return RuleStatus.NO_NETWORK;
+            }
+            if (gatePort == null || level.getServer() == null) {
+                return RuleStatus.NO_PORT;
+            }
+            if (!gate.holds(gatePort, level.getServer())) {
+                return RuleStatus.GATED;
+            }
+            if (proto.isEmpty()) {
+                return RuleStatus.ALARM; // alarm-only rule: the gate holding is the whole point
+            }
+        }
         if (proto.isEmpty()) {
             return RuleStatus.DISABLED;
         }
@@ -273,8 +373,10 @@ public class LogisticsProcessorBlockEntity extends AbstractTerminalBlockEntity i
                 if (port == null) {
                     yield RuleStatus.NO_PORT;
                 }
-                // Fuel is priced per route at launch time; "any fuel buffered" is the idle heuristic.
-                if (NeroLogisticsConfig.shipFuelPerLaunch() > 0 && !port.hasFuelBuffered(1)) {
+                // Stub routes: fuel items are priced at launch; "any fuel buffered" is the idle heuristic.
+                // Nerospace routes: the docked rocket carries the fuel, so the port holds none.
+                if (RouteProviders.get().chargesOwnFuel() && NeroLogisticsConfig.shipFuelPerLaunch() > 0
+                        && !port.hasFuelBuffered(1)) {
                     yield RuleStatus.NO_FUEL;
                 }
                 long netCount = networkCount(level, index, proto);

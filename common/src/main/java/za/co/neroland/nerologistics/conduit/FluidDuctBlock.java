@@ -1,5 +1,7 @@
 package za.co.neroland.nerologistics.conduit;
 
+import java.util.Set;
+
 import com.mojang.serialization.MapCodec;
 
 import net.minecraft.core.BlockPos;
@@ -10,6 +12,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 import za.co.neroland.nerolandcore.registry.BlockCodecs;
+import za.co.neroland.nerologistics.network.NetworkMedium;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 
 /** Fluid duct — routes fluids across its network. */
@@ -29,6 +32,11 @@ public class FluidDuctBlock extends AbstractConduitBlock {
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new FluidDuctBlockEntity(pos, state);
+    }
+
+    @Override
+    protected Set<NetworkMedium> carriedMedia() {
+        return Set.of(NetworkMedium.FLUID);
     }
 
     @Override

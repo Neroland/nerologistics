@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import za.co.neroland.nerologistics.conduit.LogisticsProcessorBlockEntity;
 import za.co.neroland.nerologistics.conduit.LogisticsProcessorBlockEntity.RuleAction;
+import za.co.neroland.nerologistics.conduit.LogisticsProcessorBlockEntity.RuleGate;
 import za.co.neroland.nerologistics.conduit.LogisticsProcessorBlockEntity.RuleStatus;
 import za.co.neroland.nerologistics.registry.ModMenuTypes;
 
@@ -28,20 +29,22 @@ import za.co.neroland.nerologistics.registry.ModMenuTypes;
  * into a low-15-bit and high-bit pair of data slots.
  *
  * <p>Button id encoding: {@code id = rule * 100 + op} with ops {@link #OP_TOGGLE_ENABLED},
- * {@link #OP_TOGGLE_COMPARATOR}, {@link #OP_CYCLE_ACTION}, and {@code OP_THRESHOLD_DOWN/UP + k}
+ * {@link #OP_TOGGLE_COMPARATOR}, {@link #OP_CYCLE_ACTION}, {@link #OP_CYCLE_GATE}, and {@code OP_THRESHOLD_DOWN/UP + k}
  * where {@code k = 0..3} selects a ±10^k step (the screen picks k from shift/ctrl).</p>
  */
 public class LogisticsProcessorMenu extends AbstractContainerMenu {
 
     public static final int RULES = LogisticsProcessorBlockEntity.RULE_COUNT;
 
-    /** Data slots per rule: comparator, action, enabled, status, thrLow, thrHigh. */
-    public static final int DATA_PER_RULE = 6;
+    /** Data slots per rule: comparator, action, enabled, status, thrLow, thrHigh, port gate. */
+    public static final int DATA_PER_RULE = 7;
     public static final int DATA_COUNT = RULES * DATA_PER_RULE;
 
     public static final int OP_TOGGLE_ENABLED = 0;
     public static final int OP_TOGGLE_COMPARATOR = 1;
     public static final int OP_CYCLE_ACTION = 2;
+    /** Cycle the rule's port condition ({@link RuleGate}); the screen sends it on a right-click of the action. */
+    public static final int OP_CYCLE_GATE = 3;
     /** {@code OP_THRESHOLD_DOWN + k} subtracts 10^k (k = 0..3). */
     public static final int OP_THRESHOLD_DOWN = 10;
     /** {@code OP_THRESHOLD_UP + k} adds 10^k (k = 0..3). */
@@ -88,7 +91,8 @@ public class LogisticsProcessorMenu extends AbstractContainerMenu {
                         case 2 -> be.ruleEnabled(rule) ? 1 : 0;
                         case 3 -> be.ruleStatus(rule).ordinal();
                         case 4 -> be.ruleThreshold(rule) & 0x7FFF;
-                        default -> be.ruleThreshold(rule) >>> 15;
+                        case 5 -> be.ruleThreshold(rule) >>> 15;
+                        default -> be.ruleGate(rule).ordinal();
                     };
                 }
 
@@ -206,6 +210,10 @@ public class LogisticsProcessorMenu extends AbstractContainerMenu {
             this.blockEntity.cycleRuleAction(rule);
             return true;
         }
+        if (op == OP_CYCLE_GATE) {
+            this.blockEntity.cycleRuleGate(rule);
+            return true;
+        }
         if (op >= OP_THRESHOLD_DOWN && op < OP_THRESHOLD_DOWN + 4) {
             this.blockEntity.adjustRuleThreshold(rule, -pow10(op - OP_THRESHOLD_DOWN));
             return true;
@@ -250,6 +258,12 @@ public class LogisticsProcessorMenu extends AbstractContainerMenu {
         RuleStatus[] values = RuleStatus.values();
         int ordinal = this.data.get(rule * DATA_PER_RULE + 3);
         return ordinal >= 0 && ordinal < values.length ? values[ordinal] : RuleStatus.DISABLED;
+    }
+
+    public RuleGate ruleGate(int rule) {
+        RuleGate[] values = RuleGate.values();
+        int ordinal = this.data.get(rule * DATA_PER_RULE + 6);
+        return ordinal >= 0 && ordinal < values.length ? values[ordinal] : RuleGate.ALWAYS;
     }
 
     public int ruleThreshold(int rule) {

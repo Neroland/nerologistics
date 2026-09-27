@@ -1,9 +1,10 @@
 package za.co.neroland.nerologistics.ship;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -34,24 +35,28 @@ import za.co.neroland.nerologistics.transport.InventoryTransfer;
  */
 public final class ShipmentManager {
 
-    private static final Map<ResourceKey<Level>, Map<Integer, List<BlockPos>>> PORTS = new HashMap<>();
+    /**
+     * Dimension → channel → registered port positions. Insertion-ordered sets: {@code registerPort} runs
+     * on every port's first tick and {@code unregisterPort} on every removal, so membership is O(1) instead
+     * of the old list's O(n) {@code contains}/{@code remove}; {@link #findPort} keeps first-registered order.
+     */
+    private static final Map<ResourceKey<Level>, Map<Integer, Set<BlockPos>>> PORTS = new HashMap<>();
+
+    /** Ticks between full {@link ShipmentState#get} calls (which also refresh its recovery backup). */
+    private static final int STATE_REFRESH_TICKS = 20;
 
     private ShipmentManager() {
     }
 
-    private static List<BlockPos> ports(ResourceKey<Level> dim, int channel) {
-        return PORTS.computeIfAbsent(dim, k -> new HashMap<>()).computeIfAbsent(channel, c -> new ArrayList<>());
+    private static Set<BlockPos> ports(ResourceKey<Level> dim, int channel) {
+        return PORTS.computeIfAbsent(dim, k -> new HashMap<>()).computeIfAbsent(channel, c -> new LinkedHashSet<>());
     }
 
     public static void registerPort(Level level, BlockPos pos, int channel) {
         if (level.isClientSide()) {
             return;
         }
-        List<BlockPos> list = ports(level.dimension(), channel);
-        BlockPos key = pos.immutable();
-        if (!list.contains(key)) {
-            list.add(key);
-        }
+        ports(level.dimension(), channel).add(pos.immutable());
     }
 
     public static void unregisterPort(Level level, BlockPos pos, int channel) {
@@ -73,16 +78,17 @@ public final class ShipmentManager {
      */
     public static void clearAll() {
         PORTS.clear();
+        ShipmentState.clearCache();
     }
 
     /** A destination port in {@code destDim} on {@code channel}, other than {@code exclude}, or null. */
     @Nullable
     public static BlockPos findPort(ResourceKey<Level> destDim, int channel, BlockPos exclude) {
-        Map<Integer, List<BlockPos>> byChannel = PORTS.get(destDim);
+        Map<Integer, Set<BlockPos>> byChannel = PORTS.get(destDim);
         if (byChannel == null) {
             return null;
         }
-        List<BlockPos> list = byChannel.get(channel);
+        Set<BlockPos> list = byChannel.get(channel);
         if (list == null) {
             return null;
         }
@@ -104,7 +110,7 @@ public final class ShipmentManager {
 
     /** Number of shipments currently in transit (for the dashboard). */
     public static int pendingCount(MinecraftServer server) {
-        return ShipmentState.get(server).count();
+        return ShipmentState.cached(server).count();
     }
 
     /** Whether the in-transit queue is at its hard cap (ports must stop launching). */
@@ -115,11 +121,15 @@ public final class ShipmentManager {
     /** Deliver any shipments whose arrival tick has passed. Call once per server tick. */
     public static void tick(MinecraftServer server) {
         LogisticsMetrics.tick(server); // daily attribution retention prune
-        ShipmentState state = ShipmentState.get(server);
+        RouteProviders.tickAll(server); // Nerospace flight-event drain + reconciliation (no-op when idle)
+        long now = server.overworld().getGameTime();
+        // The per-tick path reads the instance cached for this server; the full guarded accessor (which
+        // also keeps the recovery backup fresh) runs once a second. Empty queue = no further work.
+        ShipmentState state = now % STATE_REFRESH_TICKS == 0L ? ShipmentState.get(server)
+                : ShipmentState.cached(server);
         if (state.count() == 0) {
             return;
         }
-        long now = server.overworld().getGameTime();
         for (CargoManifest manifest : state.drainDue(m -> now >= m.arrivalTick())) {
             deliver(server, manifest);
         }

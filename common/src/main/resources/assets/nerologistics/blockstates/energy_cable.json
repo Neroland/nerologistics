@@ -1,1 +1,223 @@
-{"variants":{"":{"model":"nerologistics:block/energy_cable"}}}
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "nerologistics:block/energy_cable_core"
+      }
+    },
+    {
+      "apply": {
+        "model": "nerologistics:block/energy_cable_arm"
+      },
+      "when": {
+        "north": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "nerologistics:block/energy_cable_wall"
+      },
+      "when": {
+        "north": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "nerologistics:block/energy_cable_arm",
+        "y": 90
+      },
+      "when": {
+        "east": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "nerologistics:block/energy_cable_wall",
+        "y": 90
+      },
+      "when": {
+        "east": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "nerologistics:block/energy_cable_arm",
+        "y": 180
+      },
+      "when": {
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "nerologistics:block/energy_cable_wall",
+        "y": 180
+      },
+      "when": {
+        "south": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "nerologistics:block/energy_cable_arm",
+        "y": 270
+      },
+      "when": {
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "nerologistics:block/energy_cable_wall",
+        "y": 270
+      },
+      "when": {
+        "west": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "nerologistics:block/energy_cable_arm",
+        "x": 270
+      },
+      "when": {
+        "up": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "nerologistics:block/energy_cable_wall",
+        "x": 270
+      },
+      "when": {
+        "up": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "nerologistics:block/energy_cable_arm",
+        "x": 90
+      },
+      "when": {
+        "down": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "nerologistics:block/energy_cable_wall",
+        "x": 90
+      },
+      "when": {
+        "down": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "nerologistics:block/conduit_edge_down_north"
+      },
+      "when": {
+        "down": "false",
+        "north": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "nerologistics:block/conduit_edge_down_south"
+      },
+      "when": {
+        "down": "false",
+        "south": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "nerologistics:block/conduit_edge_down_west"
+      },
+      "when": {
+        "down": "false",
+        "west": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "nerologistics:block/conduit_edge_down_east"
+      },
+      "when": {
+        "down": "false",
+        "east": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "nerologistics:block/conduit_edge_up_north"
+      },
+      "when": {
+        "up": "false",
+        "north": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "nerologistics:block/conduit_edge_up_south"
+      },
+      "when": {
+        "up": "false",
+        "south": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "nerologistics:block/conduit_edge_up_west"
+      },
+      "when": {
+        "up": "false",
+        "west": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "nerologistics:block/conduit_edge_up_east"
+      },
+      "when": {
+        "up": "false",
+        "east": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "nerologistics:block/conduit_edge_north_west"
+      },
+      "when": {
+        "north": "false",
+        "west": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "nerologistics:block/conduit_edge_north_east"
+      },
+      "when": {
+        "north": "false",
+        "east": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "nerologistics:block/conduit_edge_south_west"
+      },
+      "when": {
+        "south": "false",
+        "west": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "nerologistics:block/conduit_edge_south_east"
+      },
+      "when": {
+        "south": "false",
+        "east": "false"
+      }
+    }
+  ]
+}

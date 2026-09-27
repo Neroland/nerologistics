@@ -11,6 +11,7 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 import za.co.neroland.nerologistics.config.NeroLogisticsConfig;
+import za.co.neroland.nerologistics.world.AttributionOptOutState;
 
 /**
  * Logistics telemetry powering the dashboard.
@@ -32,6 +33,10 @@ public final class LogisticsMetrics {
         public long dronesDispatched;
         public long shipmentsLaunched;
         public long shipmentsDelivered;
+        /** Nerospace flights that entered HOLDING at their destination (counted once per flight). */
+        public long shipmentsHeld;
+        /** Nerospace flights whose cargo was crated at the destination after the hold timeout. */
+        public long shipmentsDropped;
     }
 
     private static final Map<ResourceKey<Level>, Counters> COUNTERS = new HashMap<>();
@@ -87,10 +92,29 @@ public final class LogisticsMetrics {
         }
     }
 
+    // Dimension-keyed variants for flights Nerospace reports from its own tick (server side by construction).
+
+    public static void recordShipmentLaunched(ResourceKey<Level> dim) {
+        counters(dim).shipmentsLaunched++;
+    }
+
+    public static void recordShipmentDelivered(ResourceKey<Level> dim) {
+        counters(dim).shipmentsDelivered++;
+    }
+
+    public static void recordShipmentHeld(ResourceKey<Level> dim) {
+        counters(dim).shipmentsHeld++;
+    }
+
+    public static void recordShipmentDropped(ResourceKey<Level> dim) {
+        counters(dim).shipmentsDropped++;
+    }
+
     /** Opt-in attribution of a shipment to its port's owner. No-op unless attribution is enabled. */
     public static void recordPlayerShipment(MinecraftServer server, @Nullable UUID owner) {
-        if (owner == null || !NeroLogisticsConfig.perPlayerThroughputAttribution()) {
-            return;
+        if (owner == null || !NeroLogisticsConfig.perPlayerThroughputAttribution()
+                || AttributionOptOutState.get(server).isOptedOut(owner)) {
+            return; // opted out: the shipment still counts in the per-dimension aggregates
         }
         long[] record = ATTRIBUTION.computeIfAbsent(owner, u -> new long[] {today(), 0L});
         record[0] = today();
@@ -99,6 +123,12 @@ public final class LogisticsMetrics {
 
     /** POPIA/GDPR erasure: remove everything stored for {@code player}. Registered with Core. */
     public static void erasePlayer(MinecraftServer server, UUID player) {
+        ATTRIBUTION.remove(player);
+        AttributionOptOutState.get(server).setOptedOut(player, false);
+    }
+
+    /** In-game opt-out: drop the player's attribution record now (the aggregates are untouched). */
+    public static void forgetAttribution(UUID player) {
         ATTRIBUTION.remove(player);
     }
 

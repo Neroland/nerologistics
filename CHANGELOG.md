@@ -7,6 +7,141 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0-beta.1] - 2026-09-27
+
+Rocket cargo as real **Nerospace** cargo flights (Nerospace 1.3.0+, optional), shipping schedules,
+port conditions for the Logistics Processor, a player attribution opt-out, and the first unit tests.
+
+### Phase 1 — Nerospace route API (rocket cargo as real Nerospace flights)
+
+Requires **Nerospace 1.3.0+** for rocket routing; without it (or with `nerospaceRouting=false`) the
+standalone stub routes behave exactly as before.
+
+#### Added
+
+- **Real cargo flights.** With Nerospace 1.3.0+ a Rocket Cargo Port launches through Nerospace's
+  semver-stable route API (`za.co.neroland.nerospace.api.route`): the port must touch a Cargo Pad with a
+  docked, fuelled Cargo Rocket, destinations are the **Cargo Pads and stations** the player may ship to
+  (stations prefixed "Station:"), and Nerospace flies, persists, holds and — after its timeout — crates
+  the cargo. The port supplies the manifest and pays energy only; it no longer consumes
+  `nerologistics:rocket_fuel` items on this path (no double fuel charge).
+- **Dispatcher.** Under Nerospace routing a port stores the UUID of the player who last picked a
+  destination on it, because Nerospace launches on behalf of a player. Functionally necessary (stored
+  regardless of the attribution toggle), UUID only, never logged, shown only as "you" / "someone else" /
+  "nobody", deleted with the block and erased through Core's `PlayerDataErasure` (tombstones for
+  unloaded ports). Documented in `PRIVACY.md` and the wiki.
+- **Port status.** Every destination click (and sneak-use with the Configurator) prints the destination,
+  lane, origin pad, dispatcher (relative to you), return-empty setting and the **last refusal** with its
+  retry countdown. Refused launches keep the cargo and back off exponentially, capped by
+  `shipDenialBackoffMaxTicks`; interacting with the port resets the wait.
+- **Return empty** per port (sneak-right-click under Nerospace routing, where channels do not apply),
+  defaulting to the new `shipReturnEmpty` config.
+- **Shipping report** in the Logistics Dashboard and the new **`/nerologistics shipping`** command:
+  in-transit shipments with state and ETA, nearby ports that are not launching and why, held / crated
+  counts, and a crate-recovery hint for dropped flights. Proximity-scoped (own dimension, 128 blocks).
+- Config: `nerospaceRouting` (default `true`), `shipDenialBackoffMaxTicks` (default `2400`),
+  `shipReturnEmpty` (default `false`).
+
+#### Changed
+
+- Shipping lanes under Nerospace routing trade **energy and priority** instead of fuel and time
+  (Nerospace owns both): Express launches first when ports share a pad and pays `expressFuelFactor`%
+  energy, Bulk waits for a full buffer and pays `bulkFuelFactor`%. Standalone lanes are unchanged.
+- The `RouteProvider` seam now thinks in destinations with a stable identity (`pad:<id>` or
+  `dim:<id>`) and owns the launch itself; the reflective binding against the dimension-level
+  `NerospaceRoutes` facade is gone. Nerospace is a `compileOnly` dependency behind the existing
+  `isModLoaded` guard, so no Nerospace class loads without Nerospace; a Nerospace older than the route
+  API logs one warning and keeps the stub.
+- Loader manifests floor the optional Nerospace dependency at the compiled version (`[1.3.0,2.0)` on
+  NeoForge/Forge; `suggests >=1.3.0 <2.0.0` on Fabric).
+- The Logistics Processor's *Ship above* rule no longer reports "no fuel" under Nerospace routing (the
+  port holds no fuel there).
+
+#### Migration
+
+- Ports saved their destination as `DestIndex`, an index into a live list. They now save `Dest`
+  (`pad:<id>` / `dim:<namespace:path>`). An old port resolves its index once against the standalone
+  dimension list on first use and rewrites itself; nothing else changes. Under Nerospace routing an old
+  dimension destination names no pad, so the port asks for a destination once.
+
+#### Build
+
+- `nerospace_version=1.3.0` in `gradle.properties`; `compileOnly` per loader node, resolved from
+  `mavenLocal()` or Nerospace's GitHub Packages feed. **Until the Nerospace 1.3.0 tag publishes, run
+  `./gradlew publishToMavenLocal` in `../nerospace` first** — CI resolves it only once that package
+  exists. `-PwithNerospace` loads Nerospace in dev runs (default runs stay without it).
+
+### Phase 2 — Shipping features
+
+#### Added
+
+- **In-transit liveness** (chat report, list form): the dashboard and `/nerologistics shipping` list each
+  shipment launched nearby with its state — in flight (with ETA), waiting for the destination to load,
+  holding (with how long), unloading — and flag crated cargo. No GUI yet; the chat report comes first.
+- **Launch schedules** per port, cycled with the Configurator's sneak-use: **every interval** (the
+  default and the old behaviour), **when full** (every slot holds a stack) and **manual** (one launch
+  per redstone pulse, no interval work at all). Ports saved before this load as *every interval*.
+- **Port conditions on Logistics Processor rules** (right-click a rule's action): *needs fuel*, *in
+  transit*, *stalled*. A conditioned rule only acts while its condition holds; a conditioned rule with
+  no item is an **alarm** that makes the processor emit a full redstone signal. Rules saved before this
+  load with no condition.
+- **`/nerologistics privacy optout|optin`**: any player can opt out of per-player attribution for
+  themselves. Opted-out shipments count only in the anonymous totals; the player's attribution record
+  and loaded ports' owner UUID are dropped at once (unloaded ports on next load). UUID-only SavedData,
+  cleared by Core's `PlayerDataErasure` with everything else.
+- **Crate-recovery hint**: when Nerospace crates a flight's cargo, the report names the destination pad —
+  and its position when the viewer may ship to that pad anyway. Position only, no player data.
+- **`/nerologistics gallery`** gains a live **Rocket shipping** row: a fed, powered Rocket Cargo Port with
+  no destination yet (so it reports why it is not launching), a Logistics Processor on the same duct with a
+  *port stalled* alarm rule driving a redstone lamp, and a Logistics Dashboard for the shipping report. The
+  showcase hints for the port, processor, dashboard and Configurator describe the new controls, and the
+  build message points at `/nerologistics shipping` and `/nerologistics privacy`.
+
+### Conduit look
+
+#### Changed
+
+- **Conduits render like Nerospace's Universal Pipe**: a seamless translucent tube with a glowing,
+  animated core line and thin dark edge lines — arms are open-ended, a core wall is only drawn on
+  unconnected sides, and a core edge line only where both of its faces are walls, so a line reads as
+  one continuous pipe with edges along its length and no joints or inner panes — tinted by medium (amber item duct, blue fluid duct, red
+  energy cable, teal universal duct). A multipart model driven by six connection block-state properties
+  shows an arm only towards a same-medium conduit or something the conduit can serve (inventory, drive
+  bay, fluid or energy storage, network controller), and hides it on a **Disabled** face.
+- Cosmetic only: transport never reads the connection properties, so networks, endpoints and
+  throughput are unchanged. Connections are computed server-side on placement, neighbour change and
+  face-mode change, plus a staggered 100-tick safety refresh; clients get ordinary block updates (no
+  new packets, no block-entity renderer).
+- The conduits no longer occlude neighbours, and their hitbox follows the tube (8×8 core plus arms)
+  instead of a full cube. Existing worlds pick up their arms on the first tick after loading.
+
+### Phase 3 — Optimisation and hygiene
+
+No profiling session was run for this change (it needs an in-game world with ~50 ports); the changes
+below are the cheap, pre-identified ones only.
+
+#### Changed
+
+- `ShipmentManager`'s port directory uses insertion-ordered sets instead of lists (O(1) register /
+  unregister instead of O(n) `contains`/`remove`); `findPort` keeps first-registered order.
+- A rocket cargo port's launch attempt scans its 10-slot buffer once (cargo, fullness and the fuel stack
+  together) instead of up to three times. Stub fuel is paid from the largest fuel stack.
+- The per-tick shipment driver reads the `ShipmentState` instance cached for the running server and
+  runs the full guarded accessor (which also refreshes its recovery backup) once a second; the cache is
+  dropped on server stop.
+
+#### Removed
+
+- The reflective `NerospaceRoutes` binding, its `MB_PER_FUEL_ITEM` item-fuel conversion and the unused
+  `RouteProvider` overloads.
+
+#### Tests
+
+- First unit tests (`common/src/test/java`, JUnit 5, run on the NeoForge nodes like Nerospace's):
+  destination keys and the `DestIndex` migration, retry backoff, lane maths, and contract tests that
+  fail the build if Nerospace adds a denial, flight state or schedule mode the NeroLogistics mirrors do
+  not know.
+
 ## [0.3.0-alpha.1] - 2026-09-24
 
 EMI compatibility. No gameplay, id, tag or config change.

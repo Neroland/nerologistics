@@ -36,6 +36,9 @@ import za.co.neroland.nerologistics.network.NetworkMedium;
  */
 public abstract class AbstractConduitBlockEntity extends BlockEntity {
 
+    /** Ticks between a conduit's cosmetic arm re-checks (staggered by position so a line never spikes). */
+    private static final int CONNECTION_REFRESH_TICKS = 100;
+
     /** Conduits are non-directional; relative faces are resolved against a fixed reference facing. */
     private static final Direction REFERENCE_FACING = Direction.NORTH;
 
@@ -85,6 +88,8 @@ public abstract class AbstractConduitBlockEntity extends BlockEntity {
                 for (NetworkMedium m : media()) {
                     NetworkManager.invalidateAt(this.level, m, this.worldPosition);
                 }
+                // A DISABLED face hides its arm; re-enabling it shows the arm again (cosmetic only).
+                AbstractConduitBlock.refreshConnections(this.level, this.worldPosition);
             }
         }
         return changed;
@@ -136,6 +141,12 @@ public abstract class AbstractConduitBlockEntity extends BlockEntity {
                 NetworkManager.onPlaced(level, pos, m);
             }
             be.joined = true;
+            AbstractConduitBlock.refreshConnections(level, pos); // arms for worlds saved before 0.4
+        } else if (level.getGameTime() % CONNECTION_REFRESH_TICKS == Math.floorMod(pos.hashCode(), CONNECTION_REFRESH_TICKS)) {
+            // Slow, position-staggered safety net for storages that appear without a block update (e.g.
+            // another mod's block entity finishing its setup). Cosmetic only; neighbour changes and
+            // face-mode edits refresh immediately.
+            AbstractConduitBlock.refreshConnections(level, pos);
         }
         if (level instanceof ServerLevel serverLevel) {
             for (NetworkMedium m : be.media()) {

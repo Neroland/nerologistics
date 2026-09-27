@@ -29,20 +29,30 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
+import za.co.neroland.nerolandcore.sideconfig.SideMode;
 import za.co.neroland.nerolandcore.storage.CreativeItemStoreBlockEntity;
 
 import za.co.neroland.nerologistics.NeroLogisticsCommon;
+import za.co.neroland.nerologistics.config.NeroLogisticsConfig;
+import za.co.neroland.nerologistics.conduit.AbstractConduitBlockEntity;
+import za.co.neroland.nerologistics.conduit.LogisticsProcessorBlockEntity;
+import za.co.neroland.nerologistics.conduit.RocketCargoPortBlockEntity;
+import za.co.neroland.nerologistics.dashboard.LogisticsMetrics;
+import za.co.neroland.nerologistics.dashboard.ShippingReport;
 import za.co.neroland.nerologistics.entity.DeliveryDroneEntity;
 import za.co.neroland.nerologistics.registry.ModBlocks;
 import za.co.neroland.nerologistics.registry.ModItems;
 import za.co.neroland.nerologistics.storage.DriveBayBlockEntity;
+import za.co.neroland.nerologistics.world.AttributionOptOutState;
 
 /**
  * {@code /nerologistics gallery} — builds a creative-only showcase of every NeroLogistics block in
  * front of the player, each with a one-line usage hint under its name, plus <b>live</b> demo lines
  * for every network (energy, items, fluid, the digital storage network and the logistics processor)
  * that actually move resources (powered by Neroland Core's creative source/sink blocks).
- * {@code /nerologistics gallery clear} removes it again.
+ * {@code /nerologistics gallery clear} removes it again. {@code /nerologistics shipping} prints the
+ * shipping report for the player's surroundings; {@code /nerologistics privacy optout|optin} sets the
+ * caller's own attribution opt-out.
  * Mirrors {@code /nerospace gallery}. Registered per loader via the loader command-registration event.
  */
 public final class NeroLogisticsCommands {
@@ -69,7 +79,7 @@ public final class NeroLogisticsCommands {
             "54-slot warehouse — the network (and storage index) reads it",
             "Holds 6 storage cells — the network's digital storage",
             "Search, sort and pull anything on the network — put it on a duct",
-            "Open it: rules keep stocked / export excess / ship above",
+            "Rules: stock / export / ship — right-click an action for a port condition or alarm",
             "Ghost a 3×3 recipe — crafts from network stock, needs energy",
             "Keep-stocked or passive cache — set a target level in its GUI",
             "Name it, add Drone items — flies cargo to the matching port",
@@ -81,8 +91,8 @@ public final class NeroLogisticsCommands {
             "Pulls filtered items into its buffer (legacy request flow)",
             "Passive chest bridge for Create-style trains",
             "Links docked drones to wireless channels",
-            "Cross-dimension shipping — Configurator cycles Express/Bulk",
-            "Right-click for live network stats"
+            "Click: destination + status · Configurator: lane, sneak: schedule",
+            "Live stats + shipping report (also /nerologistics shipping)"
     };
 
     /** The non-block item components, shown in floating item frames alongside the block row. */
@@ -95,7 +105,7 @@ public final class NeroLogisticsCommands {
     private static final String[] ITEM_SHOWCASE_USAGE = {
             "Load into a Drone Port — each drone is a parallel lane",
             "Drone Port upgrade — instant, unrendered transfer",
-            "Wrench: cycles duct face modes and shipping class",
+            "Duct face modes · cargo port lane (sneak: launch schedule)",
             "Sneak-click a Controller to bind, then use anywhere in range",
             "Item storage for the Drive Bay — sneak-use to partition/prioritise",
             "Fluid storage for the Drive Bay"
@@ -105,7 +115,7 @@ public final class NeroLogisticsCommands {
     private static final int SPACING = 6;
 
     /** Depth (+Z) of the gallery floor/clear region — covers all demo rows. */
-    private static final int DEPTH = 31;
+    private static final int DEPTH = 37;
 
     private NeroLogisticsCommands() {
     }
@@ -114,6 +124,18 @@ public final class NeroLogisticsCommands {
         dispatcher.register(
                 Commands.literal("nerologistics")
                         .requires(src -> src.getPlayer() != null)
+                        .then(Commands.literal("shipping")
+                                .executes(ctx -> runSafely(ctx.getSource(), "shipping",
+                                        () -> shipping(ctx.getSource()))))
+                        .then(Commands.literal("privacy")
+                                .executes(ctx -> runSafely(ctx.getSource(), "privacy",
+                                        () -> privacy(ctx.getSource(), null)))
+                                .then(Commands.literal("optout")
+                                        .executes(ctx -> runSafely(ctx.getSource(), "privacy optout",
+                                                () -> privacy(ctx.getSource(), Boolean.TRUE))))
+                                .then(Commands.literal("optin")
+                                        .executes(ctx -> runSafely(ctx.getSource(), "privacy optin",
+                                                () -> privacy(ctx.getSource(), Boolean.FALSE)))))
                         .then(Commands.literal("gallery")
                                 .executes(ctx -> runSafely(ctx.getSource(), "gallery",
                                         () -> buildGallery(ctx.getSource())))
@@ -123,6 +145,49 @@ public final class NeroLogisticsCommands {
     }
 
     // ---------------------------------------------------------------------------------------------
+
+    /**
+     * {@code /nerologistics shipping} — the dashboard's shipping section around the player (in-transit
+     * shipments with state + ETA, nearby ports' last refusal, recently crated cargo). Proximity-scoped
+     * (128 blocks, own dimension), aggregate data only; any player may run it.
+     */
+    private static int shipping(CommandSourceStack source) {
+        ServerPlayer player = source.getPlayer();
+        if (player == null) {
+            source.sendFailure(Component.literal("Run this as a player."));
+            return 0;
+        }
+        player.sendSystemMessage(Component.translatable("nerologistics.ship.report.header"));
+        ShippingReport.send(player.level(), player.blockPosition(), player);
+        return 1;
+    }
+
+    /**
+     * {@code /nerologistics privacy [optout|optin]} — the caller's own attribution setting (never anyone
+     * else's). Opting out drops their attribution record and loaded ports' owner UUID at once; their
+     * shipments keep counting in the aggregates. No argument reports the current state.
+     */
+    private static int privacy(CommandSourceStack source, Boolean optOut) {
+        ServerPlayer player = source.getPlayer();
+        if (player == null) {
+            source.sendFailure(Component.literal("Run this as a player."));
+            return 0;
+        }
+        AttributionOptOutState state = AttributionOptOutState.get(source.getServer());
+        if (optOut != null) {
+            state.setOptedOut(player.getUUID(), optOut);
+            if (optOut) {
+                LogisticsMetrics.forgetAttribution(player.getUUID());
+                RocketCargoPortBlockEntity.optOutAttribution(player.getUUID());
+            }
+        }
+        boolean out = state.isOptedOut(player.getUUID());
+        player.sendSystemMessage(Component.translatable(out ? "nerologistics.privacy.opted_out"
+                : "nerologistics.privacy.opted_in"));
+        player.sendSystemMessage(Component.translatable(NeroLogisticsConfig.perPlayerThroughputAttribution()
+                ? "nerologistics.privacy.server_on" : "nerologistics.privacy.server_off"));
+        return 1;
+    }
 
     private static int buildGallery(CommandSourceStack source) {
         ServerPlayer player = source.getPlayer();
@@ -217,12 +282,60 @@ public final class NeroLogisticsCommands {
         label(level, new BlockPos(bx, fy + 3, bz + 29),
                 Component.literal("Logistics Processor — open it, ghost bread, pick Keep Stocked: it fills the chest"));
 
+        // ROCKET SHIPPING (live — a fed, powered Rocket Cargo Port with no destination yet, so it refuses to
+        // launch; a Logistics Processor on the same duct carries an alarm rule ("port stalled", no item) that
+        // lights the lamp. Right-click the port to pick a destination and read its status; the dashboard
+        // shows the shipping report.)
+        buildShippingDemo(level, bx, fy, bz + 34);
+
         source.sendSuccess(() -> Component.literal(
                 "Built the NeroLogistics gallery: every block with a usage hint under its name, the item "
                 + "components, and live lines for each network — Energy, Items, Fluid (right-click the "
                 + "source with a water bucket), the legacy Request Terminal, the Storage network "
-                + "(Drive Bay + Storage Terminal) and the Logistics Processor."), false);
+                + "(Drive Bay + Storage Terminal), the Logistics Processor, and Rocket shipping (a stalled "
+                + "cargo port with a processor stall alarm — right-click the port to pick a destination). "
+                + "Try /nerologistics shipping and /nerologistics privacy."), false);
         return 1;
+    }
+
+    /**
+     * The rocket-shipping row at {@code z}: creative item store → item duct ×2 → Rocket Cargo Port ← energy
+     * cable ← creative battery, a Logistics Processor on the second duct with rule 1 set to an alarm
+     * ("port stalled", no item) and a redstone lamp on it, plus a Logistics Dashboard. The port starts
+     * with no destination, so its first attempt is refused and the lamp lights within a few seconds.
+     */
+    private static void buildShippingDemo(ServerLevel level, int bx, int fy, int z) {
+        int y = fy + 1;
+        BlockPos store = new BlockPos(bx, y, z);
+        level.setBlockAndUpdate(store, coreBlock("creative_item_store").defaultBlockState());
+        preloadItemStore(level, store, new ItemStack(Items.COBBLESTONE));
+        level.setBlockAndUpdate(new BlockPos(bx + 1, y, z), ModBlocks.ITEM_DUCT.get().defaultBlockState());
+        level.setBlockAndUpdate(new BlockPos(bx + 2, y, z), ModBlocks.ITEM_DUCT.get().defaultBlockState());
+        level.setBlockAndUpdate(new BlockPos(bx + 3, y, z), ModBlocks.ROCKET_CARGO_PORT.get().defaultBlockState());
+        level.setBlockAndUpdate(new BlockPos(bx + 4, y, z), ModBlocks.ENERGY_CABLE.get().defaultBlockState());
+        level.setBlockAndUpdate(new BlockPos(bx + 5, y, z), coreBlock("creative_battery").defaultBlockState());
+        BlockPos processor = new BlockPos(bx + 2, y, z + 1);
+        level.setBlockAndUpdate(processor, ModBlocks.LOGISTICS_PROCESSOR.get().defaultBlockState());
+        if (level.getBlockEntity(processor) instanceof LogisticsProcessorBlockEntity rules) {
+            rules.setRuleGate(0, LogisticsProcessorBlockEntity.RuleGate.PORT_STALLED); // alarm-only rule
+        }
+        level.setBlockAndUpdate(new BlockPos(bx + 2, y, z + 2), Blocks.REDSTONE_LAMP.defaultBlockState());
+        level.setBlockAndUpdate(new BlockPos(bx + 7, y, z), ModBlocks.LOGISTICS_DASHBOARD.get().defaultBlockState());
+        // One-way line: pull from the store, push into the port (IO faces would shuttle cargo back out of
+        // the port and it would never hold any), and leave the processor's face alone.
+        if (level.getBlockEntity(new BlockPos(bx + 1, y, z)) instanceof AbstractConduitBlockEntity in) {
+            in.setFaceMode(Direction.WEST, SideMode.INPUT);
+        }
+        if (level.getBlockEntity(new BlockPos(bx + 2, y, z)) instanceof AbstractConduitBlockEntity out) {
+            out.setFaceMode(Direction.EAST, SideMode.OUTPUT);
+            out.setFaceMode(Direction.SOUTH, SideMode.DISABLED);
+        }
+        label(level, new BlockPos(bx, fy + 3, z), Component.literal(
+                "Rocket shipping — right-click the port: destination + status; the lamp is a processor stall alarm"));
+        label(level, new BlockPos(bx + 7, fy + 2, z), Component.literal(
+                "Dashboard: stats + shipping report"));
+        label(level, new BlockPos(bx + 3, fy + 3, z + 2), Component.literal(
+                "With Nerospace: put the port beside a Cargo Pad with a docked, fuelled Cargo Rocket"));
     }
 
     /** A source → conduit ×3 → sink line at y+1 starting at (x, z), returning the source position. */

@@ -17,6 +17,20 @@ Conduits are the local transport backbone. The legacy line-up is three block typ
 All three are crafted cheaply (a row of iron around glass / copper / redstone, six at a time) and
 mined with a pickaxe.
 
+## Look
+
+Every conduit (the Universal Duct included) renders as a slim tinted **glass tube** with a glowing, animated
+core line and thin dark edge lines, in the style of Nerospace's Universal Pipe. Connected conduits
+form one seamless pipe: the edge lines run along its length and only close off where the pipe turns or
+ends, with no joints or inner walls. The colour tells the medium apart: **amber** item duct, **blue** fluid duct, **red** energy
+cable, **teal** universal duct. An arm reaches out only where the conduit actually connects: to a
+conduit sharing its medium, or to something it can move that medium to or from (an inventory, a drive
+bay, a tank, an energy storage, a network controller). A face set to **Disabled** with the
+Configurator hides its arm.
+
+The look is cosmetic only. Networks, endpoints and throughput are exactly as before, and the hitbox
+follows the tube, so you can walk beside a line instead of on it.
+
 ## Networks
 
 Conduits of the **same medium** that touch each other form a single **network**. Networks are tracked

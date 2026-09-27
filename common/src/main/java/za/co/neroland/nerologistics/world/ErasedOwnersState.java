@@ -18,7 +18,7 @@ import za.co.neroland.nerologistics.NeroLogisticsCommon;
 /**
  * POPIA/GDPR erasure tombstones: the set of player UUIDs whose data-erasure request has been
  * processed. A {@code RocketCargoPortBlockEntity} whose chunk was <em>unloaded</em> when the erasure
- * ran still carries the owner UUID in its NBT; each port consults this set on its first server tick
+ * ran still carries the owner (opt-in attribution) and/or dispatcher (Nerospace routing) UUID in its NBT; each port consults this set on its first server tick
  * after loading and scrubs itself if its owner was erased — so an erasure request is guaranteed to
  * reach every port eventually, without force-loading the whole world at erasure time.
  *

@@ -1,5 +1,7 @@
 package za.co.neroland.nerologistics.conduit;
 
+import java.util.Set;
+
 import com.mojang.serialization.MapCodec;
 
 import net.minecraft.core.BlockPos;
@@ -17,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import za.co.neroland.nerolandcore.registry.BlockCodecs;
 import za.co.neroland.nerologistics.menu.MenuOpener;
+import za.co.neroland.nerologistics.network.NetworkMedium;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 
 /** Item duct — routes items across its network. */
@@ -47,6 +50,11 @@ public class ItemDuctBlock extends AbstractConduitBlock {
             MenuOpener.open(serverPlayer, provider);
         }
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    protected Set<NetworkMedium> carriedMedia() {
+        return Set.of(NetworkMedium.ITEM);
     }
 
     @Override

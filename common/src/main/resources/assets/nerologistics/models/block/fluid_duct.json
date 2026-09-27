@@ -1,1 +1,7 @@
-{"parent":"minecraft:block/cube_all","textures":{"all":"nerologistics:block/fluid_duct"}}
+{
+  "parent": "nerologistics:block/template_conduit_item",
+  "textures": {
+    "tube": "nerologistics:block/fluid_duct",
+    "glow": "nerologistics:block/fluid_duct_glow"
+  }
+}
