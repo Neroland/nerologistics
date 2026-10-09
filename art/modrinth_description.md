@@ -33,7 +33,7 @@ Built on **Neroland Core**, so its energy, side-config, progression gates and da
 
 ## Privacy-first (POPIA / GDPR)
 
-NeroLogistics stores **no personal data by default** — everything is keyed by block and dimension, never by player. Optional per-player throughput attribution is **off by default**, UUID-only when enabled, retention-pruned, and erasable through Core's shared data-erasure hook. Anonymous crash reporting is opt-out and carries only version strings — never names, UUIDs, IPs or world data. Full disclosure in `PRIVACY.md`.
+NeroLogistics stores **no personal data by default** — everything is keyed by block and dimension, never by player. Optional per-player throughput attribution is **off by default**, UUID-only when enabled, retention-pruned, and erasable through Core's shared data-erasure hook. Anonymous crash reporting (Sentry, EU servers) carries only stack traces and version strings — never names, UUIDs, IPs or world data. **On by default** — opt out any time with `telemetryEnabled = false` in `config/nerologistics.properties`. Full disclosure in [PRIVACY.md](https://github.com/Neroland/nerologistics/blob/main/PRIVACY.md).
 
 ## Why it fits the ecosystem
 

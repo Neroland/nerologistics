@@ -70,6 +70,15 @@ pads only and does not launch until someone right-clicks it.
 This mirrors the ecosystem-wide pattern: any mod that stores player data routes erasure through Core
 so a single request clears a player everywhere.
 
+### Crash reporting
+
+NeroLogistics sends anonymous crash reports to the developers via Sentry (EU servers): the stack trace
+of an error in NeroLogistics' own code plus mod, loader, Minecraft, OS and Java versions. No names,
+UUIDs, IP addresses, chat, coordinates or world data are sent, file paths are scrubbed of your account
+name, and reports are capped at 10 per session. It is **on by default** and **opt-out**: set
+`telemetryEnabled=false` in `config/nerologistics.properties` (client-local, takes effect on next
+launch). Full disclosure in `PRIVACY.md` in the source repository.
+
 ## See also
 
 - [Configuration](Configuration.md) · [Cross-Dimension Shipping](Cross-Dimension-Shipping.md)

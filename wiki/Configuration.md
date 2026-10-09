@@ -158,6 +158,13 @@ See [Storage Network](Storage-Network.md).
 
 See [Dashboard & Privacy](Dashboard-and-Privacy.md) for the data posture.
 
+## Crash reporting
+
+- **`telemetryEnabled`** (default `true`) — anonymous, NeroLogistics-only crash reports via Sentry (EU
+  servers): stack trace and mod/game/OS/Java versions, never names, UUIDs, IPs or world data. **On by
+  default; set `false` in `config/nerologistics.properties` to opt out.** This is the one key that is
+  **not** server-authoritative: it is client-local, never synced, and takes effect on next launch.
+
 > **Standalone:** NeroLogistics needs only **Neroland Core**. Everything works out of the box with no
 > progression unlock and nothing to configure, whether or not the other Nero mods are installed.
 

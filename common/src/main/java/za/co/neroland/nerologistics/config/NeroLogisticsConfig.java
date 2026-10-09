@@ -252,8 +252,8 @@ public final class NeroLogisticsConfig {
     // --- Telemetry (anonymous crash reporting; CLIENT-LOCAL opt-out, not server-synced) ----
     private static final ConfigValue<Boolean> TELEMETRY_ENABLED = SCHEMA.bool("telemetryEnabled",
             true, false, "anonymous error reporting to the developers (stack trace + mod/MC/loader/OS/Java "
-            + "versions only — never names, UUIDs, IPs, or world data; POPIA/GDPR-compliant). Set false to "
-            + "opt out");
+            + "versions only — never names, UUIDs, IPs, or world data; POPIA/GDPR-compliant). On by default; "
+            + "set false to opt out (client-local, takes effect on restart). See PRIVACY.md");
 
     private NeroLogisticsConfig() {
     }

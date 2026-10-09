@@ -1,13 +1,14 @@
 # NeroLogistics privacy & telemetry disclosure
 
-NeroLogistics includes optional, anonymous error reporting so that crashes and bugs caused by the
-mod can be found and fixed. This page is the full disclosure required by CurseForge's moderation
+NeroLogistics includes anonymous error reporting so that crashes and bugs caused by the mod can be
+found and fixed. It is **on by default** and **opt-out** (see [How to opt out](#how-to-opt-out)).
+This page is the full disclosure required by CurseForge's moderation
 rules for mods that use an external analytics/error service, and it documents how the mod is
 designed to comply with the GDPR (EU) and POPIA (South Africa).
 
-> **Note:** error reporting only becomes active once NeroLogistics' own Sentry DSN is configured in
-> the build (`NeroLogisticsTelemetry.DSN`). While that field is blank, NeroLogistics sends
-> **nothing**, regardless of the settings below.
+> **Status:** NeroLogistics' own Sentry DSN is built into published jars, so reporting is live unless
+> you opt out. A build with the DSN blanked (`NeroLogisticsTelemetry.DSN`) sends **nothing**,
+> regardless of the settings below.
 
 ## What is collected (error reporting)
 
@@ -28,8 +29,17 @@ addresses, chat, coordinates, or world data are ever sent.**
 
 ## How to opt out
 
-Set `telemetryEnabled=false` in `config/nerologistics.properties` (client-local; takes effect on
-restart). Error reporting then sends nothing.
+Crash reporting is **on by default**. To opt out, set the following in
+`config/nerologistics.properties` (created on first launch):
+
+```properties
+telemetryEnabled=false
+```
+
+This is a client-local switch (not server-synced, so a server cannot turn your reporting back on)
+and takes effect on next launch. Error reporting then sends nothing, and nothing is ever sent before
+the config — and therefore your choice — has been loaded. Server owners can opt out for the whole
+server the same way.
 
 ## Player data inside the mod (POPIA / GDPR)
 
@@ -64,3 +74,19 @@ NeroLogistics also remembers which Nerospace flights it requested (flight, pad a
 positions and ticks — no player data) so its dashboard stays right across restarts.
 
 See the [wiki Dashboard & Privacy page](wiki/Dashboard-and-Privacy.md) for the in-game side.
+
+## Contact
+
+To exercise any data-subject right (access, deletion, objection) for an error report, contact
+**[info@neroland.co.za](mailto:info@neroland.co.za)** with the approximate date/time of the crash so
+the matching event can be located and removed. Sentry acts as a data processor; see the
+[Sentry privacy policy](https://sentry.io/privacy/) and
+[data processing addendum](https://sentry.io/legal/dpa/).
+
+---
+
+> **Telemetry notice:** NeroLogistics sends anonymous error reports (stack trace + mod/game versions
+> only — never IPs, usernames, UUIDs, or world data) to the developers via Sentry (EU servers) so
+> crashes can be fixed. On by default — opt out any time by setting `telemetryEnabled = false` in
+> `config/nerologistics.properties`. Full details:
+> [PRIVACY.md](https://github.com/Neroland/nerologistics/blob/main/PRIVACY.md).

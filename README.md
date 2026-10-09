@@ -39,3 +39,11 @@ See [`AGENTS.md`](AGENTS.md) / [`CLAUDE.md`](CLAUDE.md) for agent and contributo
 - [Wiki](https://github.com/Neroland/nerologistics/wiki) — player- and contributor-facing docs
   (source lives in [`wiki/`](wiki/); edit there, never the `.wiki` repo directly).
 - [`CHANGELOG.md`](CHANGELOG.md) — release history.
+- [`PRIVACY.md`](PRIVACY.md) — data posture and crash reporting.
+
+## Privacy
+
+NeroLogistics sends anonymous crash reports (stack trace + mod/game versions only — never IPs,
+usernames, UUIDs, or world data) via Sentry on EU servers. It is **on by default** and **opt-out**:
+set `telemetryEnabled=false` in `config/nerologistics.properties` (client-local, takes effect on next
+launch). Per-player throughput attribution is off by default. Full disclosure: [`PRIVACY.md`](PRIVACY.md).
