@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0-beta.1] - 2026-10-11
+
+An optional per-launch freight fee for servers running **NeroEconomy** 0.3.0-beta.1 or later. Off by
+default (`freightFee = 0`): without NeroEconomy, or with the fee left at 0, nothing changes.
+
+### Added
+
+- **Freight fee** (`freightFee`). Charged to a rocket cargo port's dispatcher per launch, after every
+  other check on the port has passed; the credits go to NeroEconomy's Reserve. A port with no dispatcher
+  (an automated port nobody configured) is never charged.
+- **`CANNOT_PAY` launch refusal**, appended to the port's refusal list (existing names unchanged). Shown
+  in the port status line; the dispatcher sees NeroEconomy's exact reason, other players the generic one.
+  It matches the name of Nerospace 1.4.0's new launch/docking-fee refusal, so that maps here too.
+- A fee paid for a launch that Nerospace then refuses (no rocket, not enough fuel, …) is kept for the
+  retry, so a port is never charged twice for the same cargo.
+
+### Changed
+
+- NeroEconomy is declared as an optional dependency (Fabric `suggests`, NeoForge `optional`, Forge
+  `mandatory = false`) and compiled `compileOnly`; it is never bundled or required. Builds resolve it from
+  mavenLocal or, when credentials are present, its GitHub Packages feed.
+
+Privacy: no new per-player data; the dispatcher UUID is never logged or used as a request key — see
+[PRIVACY.md](PRIVACY.md).
+
 ## [0.4.0-beta.1] - 2026-09-27
 
 Rocket cargo as real **Nerospace** cargo flights (Nerospace 1.3.0+, optional), shipping schedules,

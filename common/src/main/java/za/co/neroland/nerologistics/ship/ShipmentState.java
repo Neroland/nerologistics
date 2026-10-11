@@ -36,6 +36,12 @@ public final class ShipmentState extends SavedData {
 
     private final List<CargoManifest> shipments = new ArrayList<>();
 
+    /**
+     * Server-wide count of freight-fee charges ever attempted: gives each charge a unique, non-identifying
+     * request key ({@code freight/<n>}). One number for the world — not keyed by any player or port.
+     */
+    private long freightSequence;
+
     public ShipmentState() {
     }
 
@@ -114,17 +120,27 @@ public final class ShipmentState extends SavedData {
         return out;
     }
 
+    /** The next freight-fee sequence number (advances and persists on every call). */
+    public long nextFreightSequence() {
+        this.freightSequence++;
+        setDirty();
+        return this.freightSequence;
+    }
+
     // --- persistence --------------------------------------------------------
 
     private static Codec<ShipmentState> codec() {
         return RecordCodecBuilder.create(inst -> inst.group(
                 CargoManifest.CODEC.listOf().optionalFieldOf("shipments", List.of())
-                        .forGetter(s -> List.copyOf(s.shipments))
+                        .forGetter(s -> List.copyOf(s.shipments)),
+                // Optional so files written before the freight fee existed load unchanged.
+                Codec.LONG.optionalFieldOf("freight_sequence", 0L).forGetter(s -> s.freightSequence)
         ).apply(inst, ShipmentState::fromData));
     }
 
-    private static ShipmentState fromData(List<CargoManifest> shipments) {
+    private static ShipmentState fromData(List<CargoManifest> shipments, long freightSequence) {
         ShipmentState state = new ShipmentState();
+        state.freightSequence = Math.max(0L, freightSequence);
         state.shipments.addAll(shipments);
         return state;
     }

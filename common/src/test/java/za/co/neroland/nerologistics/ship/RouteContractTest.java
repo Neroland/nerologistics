@@ -30,6 +30,16 @@ class RouteContractTest {
     }
 
     @Test
+    @DisplayName("CANNOT_PAY is appended and matches Nerospace's appended name")
+    void cannotPay() {
+        // Append-only: the earlier constants keep their ordinals; the fee denial is last.
+        ShipDenial[] values = ShipDenial.values();
+        assertEquals(ShipDenial.CANNOT_PAY, values[values.length - 1]);
+        assertEquals(ShipDenial.OTHER.ordinal() + 1, ShipDenial.CANNOT_PAY.ordinal());
+        assertEquals(ShipDenial.CANNOT_PAY, ShipDenial.byName("CANNOT_PAY"));
+    }
+
+    @Test
     @DisplayName("every Nerospace flight state has a FlightView state")
     void states() {
         for (FlightState state : FlightState.values()) {

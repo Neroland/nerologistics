@@ -26,6 +26,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.Nullable;
 
 import za.co.neroland.nerologistics.NeroLogisticsCommon;
+import za.co.neroland.nerologistics.compat.neroeconomy.NeroLogisticsEconomy;
 import za.co.neroland.nerologistics.config.NeroLogisticsConfig;
 import za.co.neroland.nerologistics.dashboard.LogisticsMetrics;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
@@ -122,6 +123,18 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
     @Nullable
     private ShipDenial lastDenial;
     private long lastDenialTick;
+    /**
+     * Optional NeroEconomy freight fee already paid for the cargo now waiting on this port: set when the
+     * charge went through but the launch was then refused (no rocket, not enough fuel, …), so the retry does
+     * not charge again; cleared when a launch is accepted. A flag on the block, not player data.
+     */
+    private boolean freightPrepaid;
+    /**
+     * Transient: NeroEconomy's translation key for the last refused freight fee. Shown in the status line to
+     * the dispatcher only — another viewer sees the generic "cannot pay" line, never the reason.
+     */
+    @Nullable
+    private String freightRefusalKey;
     /** Transient backoff: no attempt before this game tick; level = consecutive backed-off denials. */
     private long nextAttemptTick;
     private int backoffLevel;
@@ -327,8 +340,11 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
         }
         if (this.lastDenial != null) {
             long now = level.getGameTime();
+            String reasonKey = this.lastDenial == ShipDenial.CANNOT_PAY && this.freightRefusalKey != null
+                    && this.dispatcher != null && this.dispatcher.equals(viewer)
+                    ? this.freightRefusalKey : this.lastDenial.translationKey();
             MutableComponent line = Component.translatable("nerologistics.ship.status.denied",
-                    Component.translatable(this.lastDenial.translationKey()),
+                    Component.translatable(reasonKey),
                     Math.max(0L, (now - this.lastDenialTick) / 20L));
             if (this.nextAttemptTick > now) {
                 line.append(Component.translatable("nerologistics.ship.status.retry",
@@ -372,6 +388,9 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
             output.putString("LastDenial", this.lastDenial.name());
             output.putLong("LastDenialTick", this.lastDenialTick);
         }
+        if (this.freightPrepaid) {
+            output.putBoolean("FreightPrepaid", true);
+        }
         // POPIA/GDPR data minimisation: the owner UUID is only ever written while per-player
         // attribution is opted in; with attribution OFF (the default) no analytics data is persisted.
         boolean writeOwner = this.owner != null && NeroLogisticsConfig.perPlayerThroughputAttribution();
@@ -398,6 +417,7 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
         String denial = input.getStringOr("LastDenial", "");
         this.lastDenial = denial.isEmpty() ? null : ShipDenial.byName(denial);
         this.lastDenialTick = input.getLongOr("LastDenialTick", 0L);
+        this.freightPrepaid = input.getBooleanOr("FreightPrepaid", false);
         this.owner = readUuid(input, "OwnerMost", "OwnerLeast");
         if (this.owner != null && !NeroLogisticsConfig.perPlayerThroughputAttribution()) {
             // Attribution was switched off since this port was saved: drop the stale UUID now and,
@@ -607,11 +627,28 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
         for (int i = 0; i < stacks; i++) {
             payload.add(this.buffer.getItem(cargoSlots[i]).copy());
         }
+        // Optional NeroEconomy freight fee: only after every check on this side passed, and only when the
+        // port ships as a dispatcher (an automated port with nobody behind it is never charged).
+        if (!this.freightPrepaid && origin.dispatcher() != null) {
+            NeroLogisticsEconomy.Fee fee = NeroLogisticsEconomy.chargeFreight(server, origin.dispatcher());
+            if (fee == NeroLogisticsEconomy.Fee.REFUSED) {
+                this.freightRefusalKey = NeroLogisticsEconomy.lastRefusalKey();
+                recordDenial(now, ShipDenial.CANNOT_PAY);
+                return;
+            }
+            if (fee == NeroLogisticsEconomy.Fee.PAID) {
+                this.freightPrepaid = true;
+                setChanged();
+            }
+        }
         LaunchResult result = provider.launch(server, origin, dest.get(), payload, qos, returnEmpty());
         if (!result.isAccepted()) {
-            recordDenial(now, result.denial());
+            this.freightRefusalKey = null; // Nerospace's own reason now (its fees surface as CANNOT_PAY too)
+            recordDenial(now, result.denial()); // a paid fee stays prepaid for the retry
             return;
         }
+        this.freightPrepaid = false;
+        this.freightRefusalKey = null;
         // Accepted: the provider owns the cargo now. Charge energy (+ stub fuel) and clear the slots.
         this.energy.consume(energyCost);
         if (fuelNeed > 0) {

@@ -195,6 +195,7 @@
   "nerologistics.ship.denial.not_enough_fuel": "the rocket does not have enough fuel",
   "nerologistics.ship.denial.too_many_flights": "the dispatcher has too many flights in the air",
   "nerologistics.ship.denial.other": "refused (see the pad)",
+  "nerologistics.ship.denial.cannot_pay": "the dispatcher cannot pay the freight fee",
   "nerologistics.ship.state.in_flight": "in flight",
   "nerologistics.ship.state.awaiting_chunk": "waiting for the destination to load",
   "nerologistics.ship.state.holding": "holding",

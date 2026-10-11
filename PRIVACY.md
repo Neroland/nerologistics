@@ -70,6 +70,14 @@ on it.
   An erased dispatcher leaves the port listing public pads only and unable to launch until someone
   configures it again.
 
+**Optional freight fee (NeroEconomy only).** If NeroEconomy is installed and the server sets
+`freightFee` above `0` (default `0` = off), the dispatcher's UUID is passed to NeroEconomy for that one
+charge. NeroLogistics stores nothing new about the player for this: the request key is a world-wide
+counter (`freight/<n>`), never a UUID or name, nothing is logged, and only the dispatcher is shown why a
+charge was refused — other players see the generic "cannot pay" line. A port remembers only a yes/no
+flag that its next launch is already paid. The charge itself is a row in NeroEconomy's ledger
+(`nerologistics/freight_fee`), covered by NeroEconomy's own privacy notice, export and erasure.
+
 NeroLogistics also remembers which Nerospace flights it requested (flight, pad and port ids, dimensions,
 positions and ticks — no player data) so its dashboard stays right across restarts.
 

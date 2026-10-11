@@ -40,7 +40,15 @@ public enum ShipDenial {
     NOT_ENOUGH_FUEL(true),
     TOO_MANY_FLIGHTS(true),
     /** A denial this build does not know yet (a newer Nerospace), or an unexpected error. */
-    OTHER(true);
+    OTHER(true),
+
+    // --- Appended (never reorder the constants above) ---------------------------
+    /**
+     * The dispatcher could not pay the server's freight fee (NeroEconomy installed and {@code freightFee} set).
+     * Same name as Nerospace's appended {@code Denial.CANNOT_PAY}, so a Nerospace launch/docking-fee refusal
+     * maps here too. Added in 0.5.0.
+     */
+    CANNOT_PAY(true);
 
     private final boolean backsOff;
 

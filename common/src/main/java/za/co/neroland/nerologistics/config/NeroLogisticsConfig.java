@@ -139,6 +139,11 @@ public final class NeroLogisticsConfig {
             2_400, 1, 1_728_000, true, "cap on the exponential retry backoff after a refused launch (e.g. no "
             + "rocket / not enough fuel); a player interacting with the port resets it");
 
+    // Optional NeroEconomy freight fee: 0 = off (the default), so nothing changes unless a server opts in.
+    private static final ConfigValue<Integer> FREIGHT_FEE = SCHEMA.intRange("freightFee",
+            0, 0, 1_000_000, true, "credits charged to a port's dispatcher per rocket cargo launch (0 = off; needs "
+            + "NeroEconomy; a dispatcher who cannot pay holds the launch; ports with no dispatcher are never charged)");
+
     private static final ConfigValue<Boolean> SHIP_RETURN_EMPTY = SCHEMA.bool("shipReturnEmpty",
             false, true, "default for new ports' return-empty toggle (Nerospace routing): true = the rocket flies "
             + "back empty and the return leg's fuel is charged at launch; false = it stays at the destination");
@@ -505,6 +510,11 @@ public final class NeroLogisticsConfig {
 
     public static int shipDenialBackoffMaxTicks() {
         return SHIP_DENIAL_BACKOFF_MAX.get();
+    }
+
+    /** Credits per rocket cargo launch charged to the port's dispatcher; 0 = off. Used only with NeroEconomy. */
+    public static int freightFee() {
+        return FREIGHT_FEE.get();
     }
 
     public static boolean shipReturnEmpty() {

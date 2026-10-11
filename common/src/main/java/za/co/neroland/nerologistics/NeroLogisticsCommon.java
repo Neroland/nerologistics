@@ -38,6 +38,9 @@ public final class NeroLogisticsCommon {
         // Nerospace soft-dep: when present, swap the stub route provider for the nerospace.api
         // planet/station catalog (reflective binding — never a compile-time Nerospace import).
         NerospaceCompat.init();
+        // NeroEconomy soft-dep: claims the caller handle for the optional freight fee (common init only).
+        // Inert without NeroEconomy, and freightFee defaults to 0 = off.
+        za.co.neroland.nerologistics.compat.neroeconomy.NeroLogisticsEconomy.init();
         // POPIA/GDPR: route opt-in per-player attribution through Core's shared erasure hook, so one
         // erase request (or the inactivity sweep) purges a player here too — both the in-memory
         // attribution map and any rocket-cargo-port owner UUIDs (loaded ports immediately; unloaded

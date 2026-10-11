@@ -27,6 +27,10 @@
   "suggests": {
     "nerospace": ">=${nerospace_version} <2.0.0",
     "nerotech": "*",
-    "energizedpower": "*"
+    "energizedpower": "*",
+    "neroeconomy": ">=0.3.0-beta.1"
+  },
+  "breaks": {
+    "neroeconomy": "<0.3.0-beta.1"
   }
 }

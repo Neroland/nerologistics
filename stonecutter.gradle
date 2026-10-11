@@ -64,6 +64,22 @@ subprojects {
             }
             content { includeGroup 'za.co.neroland.nerospace' }
         }
+        // NeroEconomy (optional, compileOnly) from its GitHub Packages feed. Declared ONLY when credentials
+        // are present: a maven repo with a null username fails the whole resolve, so a tokenless local build
+        // must not see it (it resolves NeroEconomy from mavenLocal instead).
+        def neGprUser = providers.gradleProperty('gpr.user').orElse(providers.environmentVariable('GITHUB_ACTOR')).getOrNull()
+        def neGprKey = providers.gradleProperty('gpr.key').orElse(providers.environmentVariable('GITHUB_TOKEN')).getOrNull()
+        if (neGprUser != null && neGprKey != null) {
+            maven {
+                name = 'NeroEconomyGitHubPackages'
+                url = 'https://maven.pkg.github.com/Neroland/neroeconomy'
+                credentials {
+                    username = neGprUser
+                    password = neGprKey
+                }
+                content { includeGroup 'za.co.neroland.neroeconomy' }
+            }
+        }
         mavenCentral()
         maven { url 'https://maven.fabricmc.net/' }
         maven { url 'https://maven.neoforged.net/releases/' }

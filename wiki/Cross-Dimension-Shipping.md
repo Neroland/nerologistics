@@ -49,6 +49,8 @@ Every launch:
   port, the reason is shown in its status, and the port **backs off**: each consecutive refusal doubles
   the wait, up to `shipDenialBackoffMaxTicks`. Right-clicking the port resets the wait. Shortages that
   fix themselves (energy, the server-wide in-transit cap) are retried every interval instead.
+- On servers running **NeroEconomy** with a `freightFee` set, the port's dispatcher also pays that fee
+  per launch; if they cannot, the launch is held with the reason *cannot pay the freight fee*.
 
 ## Standalone: stub routes
 

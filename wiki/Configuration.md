@@ -99,6 +99,15 @@ See [Trains](Trains.md).
   the rocket home empty after unloading (return fuel charged at launch), `false` leaves it at the
   destination. Each port can override it (sneak-right-click).
 
+### Freight fee (optional — needs NeroEconomy)
+
+- **`freightFee`** (default `0` = off) — credits charged to a port's **dispatcher** for each rocket cargo
+  launch, once every other check on the port has passed. The fee goes to NeroEconomy's Reserve. A
+  dispatcher who cannot pay holds the launch (status *the dispatcher cannot pay the freight fee*; the
+  dispatcher sees NeroEconomy's exact reason) and the port backs off like any other refusal. A fee that
+  was paid for a launch Nerospace then refuses is kept for the retry, never charged twice. Ports with no
+  dispatcher are never charged. Has no effect without NeroEconomy.
+
 ### Shipping classes (QoS)
 
 - **`enableShippingQos`** (default `true`) — master toggle for per-port shipping classes; off = every
