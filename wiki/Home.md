@@ -3,7 +3,7 @@
 Player- and contributor-facing documentation for **NeroLogistics**, part of the **Neroland**
 sci-fi Minecraft mod ecosystem. Built on **Neroland Core**.
 
-> **Status:** alpha (version `0.4.0-alpha.1`), built on Neroland Core across the nine cross-loader
+> **Status:** beta (version `0.6.0-beta.1`), built on Neroland Core across the nine cross-loader
 > cells. NeroLogistics is the ecosystem's automation brain — it moves items, fluids, energy and
 > cargo within a base, across a base wirelessly, by drone, and between dimensions.
 
@@ -33,6 +33,10 @@ sci-fi Minecraft mod ecosystem. Built on **Neroland Core**.
 - [Dashboard & Privacy](Dashboard-and-Privacy.md) — the logistics dashboard, the shipping report and
   the POPIA/GDPR data posture (attribution opt-out, the port dispatcher).
 - [Configuration](Configuration.md) — every config key, with defaults.
+
+NeroLogistics also ships a **quest pack** (chapter "Supply Lines", 15 quests) that appears in the quest book
+when a compatible quest mod is installed and is inert otherwise; its rewards and the data they store are
+described under [Dashboard & Privacy](Dashboard-and-Privacy.md).
 
 Add one page per block, item, or system as it is built, and link it here. Keep this page as the index.
 

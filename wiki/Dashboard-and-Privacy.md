@@ -9,7 +9,14 @@ Right-click the **Logistics Dashboard** block to read a summary in chat:
 - **shipping** — launched, delivered and in-transit counts, plus, with Nerospace, how many flights were
   **held** at their destination and how many were **crated**;
 - **drones dispatched**;
-- the **shipping report** for everything within 128 blocks of the dashboard (below).
+- the **shipping report** for everything within 128 blocks of the dashboard (below);
+- a cosmetic **badge line**, if a quest reward granted you one (only you see it).
+
+Throughput, shipping and drone totals are saved with the world (per dimension) and survive restarts. When a
+dimension's total first passes a milestone, NeroLogistics publishes an anonymous world event on Neroland
+Core's bus — `shipments_delivered` (1 / 10 / 100 / 1000), `drones_dispatched` (100 / 1000), `items_moved`
+(10k / 1M / 100M) — scoped by dimension id, which quest packs can follow for server-wide "world log"
+quests.
 
 The same shipping report is available anywhere with **`/nerologistics shipping`**, centred on you.
 
@@ -48,6 +55,12 @@ NeroLogistics is built to store as little personal data as possible:
   loaded ports are dropped at once, and unloaded ports drop it when they next load. The opt-out list is
   UUIDs only; a data-erasure request removes you from it along with everything else, so run the command
   again afterwards if you want to stay opted out.
+- **Quest perks.** NeroLogistics ships a quest pack (chapter "Supply Lines") that a quest mod can show;
+  without one it is inert. Two rewards unlock perks stored per player (UUID only): the dashboard badge
+  above and a saved **cell preset** slot (see [Storage Network](Storage-Network.md)). Both are cosmetic
+  convenience, gate nothing, are never logged or shown to others, and are removed in full by a
+  data-erasure request. The "First Delivery" quest reads a progression gate that NeroLogistics opens for the
+  player a rocket port's accepted launch is attributed to; that gate lives in Neroland Core's store.
 
 ### The port's dispatcher (Nerospace routing only)
 

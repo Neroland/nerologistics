@@ -1,0 +1,27 @@
+{
+  "title": "quest.nerologistics.supply_lines.off_the_leash.title",
+  "description": "quest.nerologistics.supply_lines.off_the_leash.desc",
+  "icon": "nerologistics:wireless_terminal",
+  "prerequisites": [
+    "nerologistics:supply_lines/at_your_fingertips"
+  ],
+  "objectives": [
+    {
+      "type": "neroquests:craft_item",
+      "item": "nerologistics:wireless_terminal",
+      "count": 1
+    }
+  ],
+  "rewards": [
+    {
+      "type": "neroquests:xp",
+      "amount": 80
+    },
+    {
+      "type": "neroquests:item",
+      "item": "minecraft:ender_pearl",
+      "count": 2
+    }
+  ],
+  "scope": "player"
+}

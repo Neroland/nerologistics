@@ -10,7 +10,9 @@ import za.co.neroland.nerologistics.conduit.RocketCargoPortBlockEntity;
 import za.co.neroland.nerologistics.config.NeroLogisticsConfig;
 import za.co.neroland.nerologistics.dashboard.LogisticsMetrics;
 import za.co.neroland.nerologistics.network.NeroLogisticsNetwork;
+import za.co.neroland.nerologistics.quest.QuestHooks;
 import za.co.neroland.nerologistics.registry.ModRegistries;
+import za.co.neroland.nerologistics.world.QuestPerksState;
 
 /**
  * Loader-agnostic entry point for NeroLogistics. Each loader entry point
@@ -41,13 +43,21 @@ public final class NeroLogisticsCommon {
         // NeroEconomy soft-dep: claims the caller handle for the optional freight fee (common init only).
         // Inert without NeroEconomy, and freightFee defaults to 0 = off.
         za.co.neroland.nerologistics.compat.neroeconomy.NeroLogisticsEconomy.init();
+        // Quest-pack hooks: turn Core's hook/* record-gate opens into per-player cosmetic perks. Consumes Core
+        // progression events only — no quest mod is imported or required.
+        QuestHooks.init();
         // POPIA/GDPR: route opt-in per-player attribution through Core's shared erasure hook, so one
         // erase request (or the inactivity sweep) purges a player here too — both the in-memory
         // attribution map and any rocket-cargo-port owner UUIDs (loaded ports immediately; unloaded
-        // ports via the durable tombstone list they consult on next load).
+        // ports via the durable tombstone list they consult on next load), plus any quest-unlocked perks.
         PlayerDataErasure.register((server, player) -> {
             LogisticsMetrics.erasePlayer(server, player);
             RocketCargoPortBlockEntity.erasePlayer(server, player);
+            QuestPerksState perks = QuestPerksState.get(server);
+            if (perks.erase(player)) {
+                za.co.neroland.nerologistics.world.SavedDataRecovery.backupNow(server.overworld(),
+                        QuestPerksState.TYPE, perks, QuestPerksState.ID.toString());
+            }
         });
     }
 }

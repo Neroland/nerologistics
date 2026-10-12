@@ -1,0 +1,82 @@
+{
+  "title": "chapter.nerologistics.supply_lines.title",
+  "icon": "nerologistics:network_controller",
+  "allow_server_scope": true,
+  "quests": [
+    {
+      "quest": "nerologistics:supply_lines/first_conduit",
+      "x": 0,
+      "y": 2
+    },
+    {
+      "quest": "nerologistics:supply_lines/nerve_centre",
+      "x": 2,
+      "y": 2
+    },
+    {
+      "quest": "nerologistics:supply_lines/digital_vault",
+      "x": 4,
+      "y": 1
+    },
+    {
+      "quest": "nerologistics:supply_lines/at_your_fingertips",
+      "x": 4,
+      "y": 3
+    },
+    {
+      "quest": "nerologistics:supply_lines/liquid_assets",
+      "x": 6,
+      "y": 0
+    },
+    {
+      "quest": "nerologistics:supply_lines/cell_ladder",
+      "x": 6,
+      "y": 1
+    },
+    {
+      "quest": "nerologistics:supply_lines/off_the_leash",
+      "x": 6,
+      "y": 3
+    },
+    {
+      "quest": "nerologistics:supply_lines/self_assembly",
+      "x": 6,
+      "y": 4
+    },
+    {
+      "quest": "nerologistics:supply_lines/drone_corps",
+      "x": 8,
+      "y": 2
+    },
+    {
+      "quest": "nerologistics:supply_lines/rail_freight",
+      "x": 8,
+      "y": 4
+    },
+    {
+      "quest": "nerologistics:supply_lines/orbital_freight",
+      "x": 10,
+      "y": 2
+    },
+    {
+      "quest": "nerologistics:supply_lines/half_a_million",
+      "x": 10,
+      "y": 0
+    },
+    {
+      "quest": "nerologistics:supply_lines/first_delivery",
+      "x": 12,
+      "y": 2
+    },
+    {
+      "quest": "nerologistics:supply_lines/fleet_week",
+      "x": 10,
+      "y": 4
+    },
+    {
+      "quest": "nerologistics:supply_lines/logistics_empire",
+      "x": 12,
+      "y": 0
+    }
+  ]
+}

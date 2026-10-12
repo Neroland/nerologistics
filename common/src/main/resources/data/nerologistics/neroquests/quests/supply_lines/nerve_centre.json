@@ -1,0 +1,26 @@
+{
+  "title": "quest.nerologistics.supply_lines.nerve_centre.title",
+  "description": "quest.nerologistics.supply_lines.nerve_centre.desc",
+  "icon": "nerologistics:network_controller",
+  "prerequisites": [
+    "nerologistics:supply_lines/first_conduit"
+  ],
+  "objectives": [
+    {
+      "type": "neroquests:craft_item",
+      "item": "nerologistics:network_controller",
+      "count": 1
+    }
+  ],
+  "rewards": [
+    {
+      "type": "neroquests:xp",
+      "amount": 60
+    },
+    {
+      "type": "neroquests:currency",
+      "amount": 50
+    }
+  ],
+  "scope": "player"
+}

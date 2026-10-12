@@ -20,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import za.co.neroland.nerologistics.config.NeroLogisticsConfig;
 import za.co.neroland.nerologistics.dashboard.LogisticsMetrics;
+import za.co.neroland.nerologistics.quest.QuestHooks;
 import za.co.neroland.nerologistics.transport.InventoryTransfer;
 
 /**
@@ -121,6 +122,7 @@ public final class ShipmentManager {
     /** Deliver any shipments whose arrival tick has passed. Call once per server tick. */
     public static void tick(MinecraftServer server) {
         LogisticsMetrics.tick(server); // daily attribution retention prune
+        QuestHooks.tick(server); // server handle for hook-gate perks + drain of early opens
         RouteProviders.tickAll(server); // Nerospace flight-event drain + reconciliation (no-op when idle)
         long now = server.overworld().getGameTime();
         // The per-tick path reads the instance cached for this server; the full guarded accessor (which

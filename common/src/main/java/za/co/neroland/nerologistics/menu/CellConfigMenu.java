@@ -2,7 +2,9 @@ package za.co.neroland.nerologistics.menu;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -19,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import za.co.neroland.nerologistics.registry.ModMenuTypes;
 import za.co.neroland.nerologistics.storage.CellSettings;
 import za.co.neroland.nerologistics.storage.StorageCellItem;
+import za.co.neroland.nerologistics.world.QuestPerksState;
 
 /**
  * Configuration menu for a held {@link StorageCellItem} (opened by sneak-use): nine <b>ghost</b>
@@ -31,16 +34,29 @@ import za.co.neroland.nerologistics.storage.StorageCellItem;
  * not consumed); click with an empty cursor to clear it; shift-click a player-inventory stack to
  * stamp the first free ghost slot. For fluid cells, stamp <b>buckets</b> — the partition matches
  * the bucket's fluid. Priority rides {@link #clickMenuButton} (−10/−1/+1/+10).</p>
+ *
+ * <p><b>Preset slot</b> (buttons {@link #BUTTON_PRESET_SAVE} / {@link #BUTTON_PRESET_LOAD}): a player whose
+ * {@code nerologistics:hook/cell_preset} perk is unlocked (a quest reward, see {@code quest.QuestHooks}) can
+ * save the current partition + priority as their one preset and stamp it onto any cell later. The preset is
+ * that player's own data in {@link QuestPerksState}; the synced {@link #presetState()} only tells the screen
+ * whether to draw the buttons (0 = locked, 1 = empty slot, 2 = preset saved).</p>
  */
 public class CellConfigMenu extends AbstractContainerMenu {
 
     public static final int PARTITION = CellSettings.PARTITION_SLOTS; // 9 (3×3)
-    public static final int DATA_COUNT = 1;                            // [0] = priority
+    public static final int DATA_COUNT = 2;                            // [0] = priority, [1] = preset state
 
     public static final int BUTTON_PRIORITY_DOWN_10 = 0;
     public static final int BUTTON_PRIORITY_DOWN_1 = 1;
     public static final int BUTTON_PRIORITY_UP_1 = 2;
     public static final int BUTTON_PRIORITY_UP_10 = 3;
+    public static final int BUTTON_PRESET_SAVE = 4;
+    public static final int BUTTON_PRESET_LOAD = 5;
+
+    /** Values of data slot [1]. */
+    public static final int PRESET_LOCKED = 0;
+    public static final int PRESET_EMPTY = 1;
+    public static final int PRESET_SAVED = 2;
 
     /** Ghost-grid top-left (3×3, 18px pitch). */
     public static final int GRID_X = 26;
@@ -59,6 +75,7 @@ public class CellConfigMenu extends AbstractContainerMenu {
 
     private final SimpleContainer ghosts = new SimpleContainer(PARTITION);
     private int priority;
+    private int presetState = PRESET_LOCKED;
 
     private final ContainerData data;
 
@@ -82,6 +99,7 @@ public class CellConfigMenu extends AbstractContainerMenu {
             this.cellStack = this.player.getItemInHand(hand);
             CellSettings initial = StorageCellItem.settings(this.cellStack);
             this.priority = initial.priority();
+            this.presetState = readPresetState();
             List<ItemStack> partition = initial.partition();
             for (int i = 0; i < PARTITION; i++) {
                 this.ghosts.setItem(i, i < partition.size() ? partition.get(i).copy() : ItemStack.EMPTY);
@@ -89,7 +107,7 @@ public class CellConfigMenu extends AbstractContainerMenu {
             this.data = new ContainerData() {
                 @Override
                 public int get(int index) {
-                    return CellConfigMenu.this.priority;
+                    return index == 1 ? CellConfigMenu.this.presetState : CellConfigMenu.this.priority;
                 }
 
                 @Override
@@ -191,6 +209,9 @@ public class CellConfigMenu extends AbstractContainerMenu {
 
     @Override
     public boolean clickMenuButton(Player buttonPlayer, int id) {
+        if (id == BUTTON_PRESET_SAVE || id == BUTTON_PRESET_LOAD) {
+            return presetButton(id == BUTTON_PRESET_SAVE);
+        }
         int delta = switch (id) {
             case BUTTON_PRIORITY_DOWN_10 -> -10;
             case BUTTON_PRIORITY_DOWN_1 -> -1;
@@ -220,12 +241,62 @@ public class CellConfigMenu extends AbstractContainerMenu {
         if (this.player == null || this.player.level().isClientSide()) {
             return;
         }
+        StorageCellItem.storeSettings(this.cellStack, snapshot());
+    }
+
+    // --- Preset slot (server only) -------------------------------------------
+
+    private int readPresetState() {
+        QuestPerksState perks = perks();
+        if (perks == null || this.player == null || !perks.hasPresetSlot(this.player.getUUID())) {
+            return PRESET_LOCKED;
+        }
+        return perks.preset(this.player.getUUID()) == null ? PRESET_EMPTY : PRESET_SAVED;
+    }
+
+    @Nullable
+    private QuestPerksState perks() {
+        if (this.player == null || this.player.level().isClientSide()) {
+            return null;
+        }
+        MinecraftServer server = this.player.level().getServer();
+        return server == null ? null : QuestPerksState.get(server);
+    }
+
+    /** Save the working state into, or load it from, the player's preset slot. Ignored while locked. */
+    private boolean presetButton(boolean save) {
+        QuestPerksState perks = perks();
+        if (perks == null || this.player == null) {
+            return false;
+        }
+        UUID id = this.player.getUUID();
+        if (!perks.hasPresetSlot(id)) {
+            return false; // locked: the screen never shows the buttons, so this is a stale or forged click
+        }
+        if (save) {
+            perks.savePreset(id, snapshot());
+        } else {
+            CellSettings preset = perks.preset(id);
+            if (preset == null) {
+                return false;
+            }
+            List<ItemStack> partition = preset.partition();
+            for (int i = 0; i < PARTITION; i++) {
+                this.ghosts.setItem(i, i < partition.size() ? partition.get(i).copy() : ItemStack.EMPTY);
+            }
+            this.priority = Math.max(PRIORITY_MIN, Math.min(PRIORITY_MAX, preset.priority()));
+            saveToStack();
+        }
+        this.presetState = readPresetState();
+        return true;
+    }
+
+    private CellSettings snapshot() {
         List<ItemStack> partition = new ArrayList<>(PARTITION);
         for (int i = 0; i < PARTITION; i++) {
             partition.add(this.ghosts.getItem(i).copy());
         }
-        StorageCellItem.storeSettings(this.cellStack,
-                new CellSettings(List.copyOf(partition), this.priority));
+        return new CellSettings(List.copyOf(partition), this.priority);
     }
 
     // --- Screen helpers -----------------------------------------------------
@@ -233,5 +304,10 @@ public class CellConfigMenu extends AbstractContainerMenu {
     /** The synced priority of the edited cell. */
     public int priority() {
         return this.data.get(0);
+    }
+
+    /** Synced preset-slot state: {@link #PRESET_LOCKED}, {@link #PRESET_EMPTY} or {@link #PRESET_SAVED}. */
+    public int presetState() {
+        return this.data.get(1);
     }
 }

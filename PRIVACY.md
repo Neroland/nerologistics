@@ -79,7 +79,27 @@ flag that its next launch is already paid. The charge itself is a row in NeroEco
 (`nerologistics/freight_fee`), covered by NeroEconomy's own privacy notice, export and erasure.
 
 NeroLogistics also remembers which Nerospace flights it requested (flight, pad and port ids, dimensions,
-positions and ticks — no player data) so its dashboard stays right across restarts.
+positions and ticks — no player data) so its dashboard stays right across restarts, and, since 0.6.0, the
+dashboard's per-dimension throughput totals themselves (keyed by dimension id only — no player data).
+
+**Quest perks (NeroQuests or any quest pack, optional).** A quest reward may open one of two record gates
+NeroLogistics ships (`nerologistics:hook/dashboard_badge`, `nerologistics:hook/cell_preset`). When one opens,
+NeroLogistics stores a small per-player entry in the world (`nerologistics:quest_perks`): the player's
+**UUID** (never a name), two yes/no flags, and — once the player saves one — their own storage-cell preset
+(nine ghost item ids and a priority).
+
+- **Purpose and lawful basis:** delivering the cosmetic reward the player earned (a dashboard badge line
+  only they see; Save/Load buttons for their preset). Neither perk gates access to anything.
+- **Data minimisation:** nothing is logged or sent to telemetry, and nothing is shown to other players.
+- **Retention:** the life of the world, or until erased.
+- **Erasure:** Core's shared data-erasure hook removes the entry in full and refreshes the recovery backup
+  at once.
+
+The quest pack also reads one progression gate, `nerologistics:first_shipment`, opened for the player a
+rocket cargo port's accepted launch is attributed to (dispatcher, opt-in owner, or the player who last picked
+the destination — the last of those is held in memory only and never written to disk). Gate rows are stored
+and erased by Neroland Core under its own privacy notice. The world-log threshold channels NeroLogistics
+publishes carry a dimension id as their scope — never a player, UUID or coordinates.
 
 See the [wiki Dashboard & Privacy page](wiki/Dashboard-and-Privacy.md) for the in-game side.
 

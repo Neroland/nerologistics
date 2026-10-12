@@ -1,0 +1,26 @@
+{
+  "title": "quest.nerologistics.supply_lines.at_your_fingertips.title",
+  "description": "quest.nerologistics.supply_lines.at_your_fingertips.desc",
+  "icon": "nerologistics:storage_terminal",
+  "prerequisites": [
+    "nerologistics:supply_lines/nerve_centre"
+  ],
+  "objectives": [
+    {
+      "type": "neroquests:craft_item",
+      "item": "nerologistics:storage_terminal",
+      "count": 1
+    }
+  ],
+  "rewards": [
+    {
+      "type": "neroquests:xp",
+      "amount": 40
+    },
+    {
+      "type": "neroquests:currency",
+      "amount": 40
+    }
+  ],
+  "scope": "player"
+}

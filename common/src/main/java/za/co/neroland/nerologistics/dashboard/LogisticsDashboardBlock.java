@@ -24,6 +24,7 @@ import za.co.neroland.nerologistics.network.NetworkMedium;
 import za.co.neroland.nerologistics.ship.RocketFlightsState;
 import za.co.neroland.nerologistics.ship.RouteProviders;
 import za.co.neroland.nerologistics.ship.ShipmentManager;
+import za.co.neroland.nerologistics.world.QuestPerksState;
 
 /**
  * Logistics dashboard: right-click to read a summary of the logistics state — the adjacent network's
@@ -55,7 +56,15 @@ public class LogisticsDashboardBlock extends Block {
     }
 
     private void report(Level level, BlockPos pos, ServerPlayer player) {
+        MinecraftServer server = level.getServer();
+        if (server == null) {
+            return;
+        }
         player.sendSystemMessage(Component.translatable("block.nerologistics.logistics_dashboard.header"));
+        // Cosmetic quest badge: shown only to the player who earned it, never to anyone else.
+        if (QuestPerksState.get(server).hasDashboardBadge(player.getUUID())) {
+            player.sendSystemMessage(Component.translatable("block.nerologistics.logistics_dashboard.badge"));
+        }
 
         for (Direction dir : Direction.values()) {
             BlockPos neighbor = pos.relative(dir);
@@ -72,14 +81,12 @@ public class LogisticsDashboardBlock extends Block {
             }
         }
 
-        LogisticsMetrics.Counters c = LogisticsMetrics.countersOf(level.dimension());
+        LogisticsMetrics.Counters c = LogisticsMetrics.countersOf(server, level.dimension());
         player.sendSystemMessage(Component.translatable("block.nerologistics.logistics_dashboard.throughput",
                 c.itemsMoved, c.fluidMoved, c.energyMoved));
-        MinecraftServer server = level.getServer();
         // Stub manifests + tracked Nerospace flights (the latter only ever non-zero with Nerospace).
-        int inTransit = server == null ? 0
-                : ShipmentManager.pendingCount(server)
-                        + (RouteProviders.nerospaceBound() ? RocketFlightsState.get(server).count() : 0);
+        int inTransit = ShipmentManager.pendingCount(server)
+                + (RouteProviders.nerospaceBound() ? RocketFlightsState.get(server).count() : 0);
         player.sendSystemMessage(Component.translatable("block.nerologistics.logistics_dashboard.shipping",
                 c.shipmentsLaunched, c.shipmentsDelivered, inTransit));
         if (c.shipmentsHeld > 0 || c.shipmentsDropped > 0) {

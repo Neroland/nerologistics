@@ -1,0 +1,26 @@
+{
+  "title": "quest.nerologistics.supply_lines.cell_ladder.title",
+  "description": "quest.nerologistics.supply_lines.cell_ladder.desc",
+  "icon": "nerologistics:item_cell_64k",
+  "prerequisites": [
+    "nerologistics:supply_lines/digital_vault"
+  ],
+  "objectives": [
+    {
+      "type": "neroquests:collect_item",
+      "item": "nerologistics:item_cell_64k",
+      "count": 1
+    }
+  ],
+  "rewards": [
+    {
+      "type": "neroquests:xp",
+      "amount": 100
+    },
+    {
+      "type": "neroquests:currency",
+      "amount": 100
+    }
+  ],
+  "scope": "player"
+}

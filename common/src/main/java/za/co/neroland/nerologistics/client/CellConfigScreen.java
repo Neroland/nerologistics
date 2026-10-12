@@ -13,7 +13,9 @@ import za.co.neroland.nerologistics.menu.CellConfigMenu;
  * Storage-cell configuration screen — a procedural dark-hull panel (no texture asset). Left: the
  * 3×3 partition ghost grid (click with a carried stack to stamp, empty cursor to clear; buckets
  * partition fluid cells). Right: the synced priority with −10/−1/+1/+10 buttons, routed through
- * {@code handleInventoryButtonClick} like every other NeroLogistics menu (no custom packets).
+ * {@code handleInventoryButtonClick} like every other NeroLogistics menu (no custom packets). Below them, when
+ * the player's quest-unlocked preset slot is open, Save / Load buttons for their one saved preset; a locked
+ * slot draws nothing (the perk is cosmetic convenience, never a gate).
  */
 public class CellConfigScreen extends AbstractContainerScreen<CellConfigMenu> {
 
@@ -35,6 +37,12 @@ public class CellConfigScreen extends AbstractContainerScreen<CellConfigMenu> {
     private static final int BW = 17;
     private static final int BH = 12;
     private static final String[] BUTTON_LABELS = {"-10", "-1", "+1", "+10"};
+    private static final int DISABLED_TEXT = 0xFF5E6E80;
+
+    /** Preset strip: Save at PX, Load at PX + PW + 2, both PW×BH at PY. Only drawn when the slot is unlocked. */
+    private static final int PX = 96;
+    private static final int PY = 58;
+    private static final int PW = 36;
 
     public CellConfigScreen(CellConfigMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title, 176, 166);
@@ -68,7 +76,22 @@ public class CellConfigScreen extends AbstractContainerScreen<CellConfigMenu> {
             int tw = this.font.width(label);
             extractor.text(this.font, label, bx + (BW - tw) / 2, by + 2, BUTTON_TEXT, false);
         }
+        int preset = this.menu.presetState();
+        if (preset != CellConfigMenu.PRESET_LOCKED) {
+            drawPresetButton(extractor, x + PX, y + PY,
+                    Component.translatable("gui.nerologistics.cell_config.preset_save"), true);
+            drawPresetButton(extractor, x + PX + PW + 2, y + PY,
+                    Component.translatable("gui.nerologistics.cell_config.preset_load"),
+                    preset == CellConfigMenu.PRESET_SAVED);
+        }
         super.extractContents(extractor, mouseX, mouseY, partialTick);
+    }
+
+    private void drawPresetButton(GuiGraphicsExtractor extractor, int bx, int by, Component label, boolean enabled) {
+        extractor.fill(bx - 1, by - 1, bx + PW + 1, by + BH + 1, BUTTON_EDGE);
+        extractor.fill(bx, by, bx + PW, by + BH, BUTTON_BG);
+        int tw = this.font.width(label);
+        extractor.text(this.font, label, bx + (PW - tw) / 2, by + 2, enabled ? BUTTON_TEXT : DISABLED_TEXT, false);
     }
 
     @Override
@@ -96,6 +119,23 @@ public class CellConfigScreen extends AbstractContainerScreen<CellConfigMenu> {
                 return true;
             }
         }
+        int preset = this.menu.presetState();
+        if (preset != CellConfigMenu.PRESET_LOCKED && my >= this.topPos + PY && my < this.topPos + PY + BH) {
+            int saveX = this.leftPos + PX;
+            int loadX = saveX + PW + 2;
+            if (mx >= saveX && mx < saveX + PW) {
+                return presetClick(CellConfigMenu.BUTTON_PRESET_SAVE);
+            }
+            if (mx >= loadX && mx < loadX + PW && preset == CellConfigMenu.PRESET_SAVED) {
+                return presetClick(CellConfigMenu.BUTTON_PRESET_LOAD);
+            }
+        }
         return super.mouseClicked(mouseButtonEvent, doubleClick);
+    }
+    private boolean presetClick(int button) {
+        if (this.minecraft != null && this.minecraft.gameMode != null) {
+            this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, button);
+        }
+        return true;
     }
 }

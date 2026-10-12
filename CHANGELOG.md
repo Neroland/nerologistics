@@ -7,6 +7,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0-beta.1] - 2026-10-11
+
+Quest-pack support and persisted throughput counters. **Requires Neroland Core 1.15.0** (player-scope
+gates opened by UUID and sourced threshold crossings). No new required or optional mods.
+
+### Added
+
+- **NeroQuests quest pack.** Ships chapter `nerologistics:supply_lines` "Supply Lines" — 15 quests, from
+  the first universal duct through controller, drive bay, cells, terminals, fluids, auto-crafting, drones,
+  rail freight and the rocket cargo port, plus two server-wide "world log" quests — that appears in the
+  quest book when NeroQuests is installed. Inert otherwise: plain data and lang keys in this jar, no
+  dependency on NeroQuests in any form.
+- **`nerologistics:first_shipment` gate** (player scope, record only). Opened through Core for the player a
+  rocket cargo port's accepted launch can be attributed to — the dispatcher under Nerospace routing, else
+  the opt-in owner, else the player who last picked the destination on that port. Gates nothing.
+- **World-log threshold channels** on Core's event bus, scoped by **dimension id** (never a player or a
+  position): `nerologistics:shipments_delivered` (rungs 1, 10, 100, 1000), `nerologistics:drones_dispatched`
+  (100, 1000) and `nerologistics:items_moved` (10k, 1M, 100M). Each rung fires once per dimension for the
+  life of the world.
+- **Quest hooks** `nerologistics:hook/dashboard_badge` and `nerologistics:hook/cell_preset` (player-scope record
+  gates a quest reward may open). The first adds a cosmetic badge line to that player's Logistics Dashboard
+  read-out; the second unlocks **Save / Load** buttons in the cell configuration screen for one saved
+  partition + priority preset the player can stamp onto any storage cell. Neither gates anything.
+
+### Changed
+
+- **Dashboard counters persist.** The per-dimension throughput, shipping and drone totals now live in the
+  world's saved data (`nerologistics:logistics_counters`, overworld data folder, guarded by the saved-data
+  recovery ladder) instead of resetting on every restart. Still world data keyed by dimension; the opt-in
+  per-player attribution is unchanged and stays in memory.
+
+Privacy: the two quest perks are the only new stored personal data — a UUID-keyed entry holding two flags and
+the player's own cell preset, in `nerologistics:quest_perks`, never logged or shown to others, erased in full
+through Core's `PlayerDataErasure`. The gate rows live in Core's progression store. The port's "last
+operator" used for `first_shipment` is held in memory only and never written to disk. See
+[PRIVACY.md](PRIVACY.md).
+
 ## [0.5.0-beta.1] - 2026-10-11
 
 An optional per-launch freight fee for servers running **NeroEconomy** 0.3.0-beta.1 or later. Off by

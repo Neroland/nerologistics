@@ -25,6 +25,8 @@ import net.minecraft.world.level.storage.ValueOutput;
 
 import org.jetbrains.annotations.Nullable;
 
+import za.co.neroland.nerolandcore.progression.ProgressionGates;
+
 import za.co.neroland.nerologistics.NeroLogisticsCommon;
 import za.co.neroland.nerologistics.compat.neroeconomy.NeroLogisticsEconomy;
 import za.co.neroland.nerologistics.config.NeroLogisticsConfig;
@@ -118,6 +120,19 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
     /** The player this port ships as under Nerospace routing (see class doc). */
     @Nullable
     private UUID dispatcher;
+    /**
+     * The player who last configured this port (destination pick), kept <b>in memory only</b> — never written to
+     * disk, never logged, discarded when the block entity unloads. Used for exactly one thing: crediting the
+     * {@link #FIRST_SHIPMENT} progression gate when a launch is accepted and neither a dispatcher nor an opt-in
+     * owner is known (stub routing with attribution off, the default). The gate row itself lives in Core's
+     * progression store and is covered by Core's erasure.
+     */
+    @Nullable
+    private UUID lastOperator;
+
+    /** Player-scope record gate opened once per player on their first accepted launch (quest packs read it). */
+    public static final Identifier FIRST_SHIPMENT =
+            Identifier.fromNamespaceAndPath(NeroLogisticsCommon.MOD_ID, "first_shipment");
 
     /** Last refusal (persisted by name + game tick so the status survives a restart); null = none. */
     @Nullable
@@ -270,6 +285,7 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
             this.dispatcher = player; // functionally necessary — see class doc (POPIA/GDPR)
             setChanged();
         }
+        this.lastOperator = player; // transient, see field doc
         List<RouteDestination> dests = provider.destinations(server, origin(level));
         if (dests.isEmpty()) {
             return Optional.empty();
@@ -511,6 +527,9 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
                 port.dispatcher = null;
                 changed = true;
             }
+            if (player.equals(port.lastOperator)) {
+                port.lastOperator = null;
+            }
             if (changed) {
                 port.setChanged();
             }
@@ -658,8 +677,20 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
             this.buffer.setItem(cargoSlots[i], ItemStack.EMPTY);
         }
         LogisticsMetrics.recordPlayerShipment(server, this.owner); // no-op unless attribution opted in
+        creditFirstShipment(server);
         this.lastDenial = null;
         resetBackoff();
         setChanged();
+    }
+    /**
+     * Open the {@link #FIRST_SHIPMENT} record gate for the player this launch can be attributed to: the
+     * dispatcher (Nerospace routing), else the opt-in owner, else the transient last operator. A gate that is
+     * already open is a no-op in Core, so this costs nothing after the first launch. Never logs the UUID.
+     */
+    private void creditFirstShipment(MinecraftServer server) {
+        UUID credit = this.dispatcher != null ? this.dispatcher : this.owner != null ? this.owner : this.lastOperator;
+        if (credit != null) {
+            ProgressionGates.open(server, credit, FIRST_SHIPMENT);
+        }
     }
 }

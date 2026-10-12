@@ -25,6 +25,9 @@ and slotted into another carries its inventory with it.
 - **Priority.** The same screen sets a signed priority (default 0, −9999…9999). Higher-priority
   cells fill first — partition an ore cell at priority 10 and your ores sort themselves before
   anything falls through to general storage.
+- **Preset slot.** A quest reward can unlock one saved preset per player: **Save** stores the open
+  cell's partition and priority, **Load** stamps them onto whatever cell you are configuring. Until
+  unlocked the buttons are simply absent — nothing else about cells changes.
 - **Tooltip.** Every cell shows its fill, type count, priority and whether it is partitioned.
 - Cells never stack, and crafting a higher tier uses three of the lower tier (contents are kept on
   the ingredient cells' stacks — empty them first to be safe).

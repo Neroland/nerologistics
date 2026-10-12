@@ -1,0 +1,31 @@
+{
+  "title": "quest.nerologistics.supply_lines.self_assembly.title",
+  "description": "quest.nerologistics.supply_lines.self_assembly.desc",
+  "icon": "nerologistics:auto_crafter",
+  "prerequisites": [
+    "nerologistics:supply_lines/at_your_fingertips"
+  ],
+  "objectives": [
+    {
+      "type": "neroquests:craft_item",
+      "item": "nerologistics:auto_crafter",
+      "count": 1
+    },
+    {
+      "type": "neroquests:craft_item",
+      "item": "nerologistics:logistics_processor",
+      "count": 1
+    }
+  ],
+  "rewards": [
+    {
+      "type": "neroquests:xp",
+      "amount": 80
+    },
+    {
+      "type": "neroquests:currency",
+      "amount": 75
+    }
+  ],
+  "scope": "player"
+}

@@ -1,0 +1,32 @@
+{
+  "title": "quest.nerologistics.supply_lines.liquid_assets.title",
+  "description": "quest.nerologistics.supply_lines.liquid_assets.desc",
+  "icon": "nerologistics:fluid_cell_16b",
+  "prerequisites": [
+    "nerologistics:supply_lines/digital_vault"
+  ],
+  "objectives": [
+    {
+      "type": "neroquests:craft_item",
+      "item": "nerologistics:fluid_duct",
+      "count": 4
+    },
+    {
+      "type": "neroquests:craft_item",
+      "item": "nerologistics:fluid_cell_16b",
+      "count": 1
+    }
+  ],
+  "rewards": [
+    {
+      "type": "neroquests:xp",
+      "amount": 50
+    },
+    {
+      "type": "neroquests:item",
+      "item": "minecraft:bucket",
+      "count": 1
+    }
+  ],
+  "scope": "player"
+}

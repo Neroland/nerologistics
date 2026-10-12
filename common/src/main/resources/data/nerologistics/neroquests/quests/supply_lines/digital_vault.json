@@ -1,0 +1,32 @@
+{
+  "title": "quest.nerologistics.supply_lines.digital_vault.title",
+  "description": "quest.nerologistics.supply_lines.digital_vault.desc",
+  "icon": "nerologistics:drive_bay",
+  "prerequisites": [
+    "nerologistics:supply_lines/nerve_centre"
+  ],
+  "objectives": [
+    {
+      "type": "neroquests:craft_item",
+      "item": "nerologistics:drive_bay",
+      "count": 1
+    },
+    {
+      "type": "neroquests:craft_item",
+      "item": "nerologistics:item_cell_1k",
+      "count": 1
+    }
+  ],
+  "rewards": [
+    {
+      "type": "neroquests:xp",
+      "amount": 50
+    },
+    {
+      "type": "neroquests:item",
+      "item": "minecraft:iron_ingot",
+      "count": 8
+    }
+  ],
+  "scope": "player"
+}

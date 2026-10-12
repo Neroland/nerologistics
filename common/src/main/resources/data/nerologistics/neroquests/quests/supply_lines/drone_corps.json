@@ -1,0 +1,33 @@
+{
+  "title": "quest.nerologistics.supply_lines.drone_corps.title",
+  "description": "quest.nerologistics.supply_lines.drone_corps.desc",
+  "icon": "nerologistics:drone",
+  "prerequisites": [
+    "nerologistics:supply_lines/nerve_centre",
+    "nerologistics:supply_lines/self_assembly"
+  ],
+  "objectives": [
+    {
+      "type": "neroquests:craft_item",
+      "item": "nerologistics:drone_port",
+      "count": 1
+    },
+    {
+      "type": "neroquests:craft_item",
+      "item": "nerologistics:drone",
+      "count": 2
+    }
+  ],
+  "rewards": [
+    {
+      "type": "neroquests:xp",
+      "amount": 80
+    },
+    {
+      "type": "neroquests:item",
+      "item": "minecraft:phantom_membrane",
+      "count": 2
+    }
+  ],
+  "scope": "player"
+}

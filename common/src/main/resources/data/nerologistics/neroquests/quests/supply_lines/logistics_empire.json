@@ -1,0 +1,24 @@
+{
+  "title": "quest.nerologistics.supply_lines.logistics_empire.title",
+  "description": "quest.nerologistics.supply_lines.logistics_empire.desc",
+  "icon": "nerologistics:logistics_dashboard",
+  "objectives": [
+    {
+      "type": "neroquests:custom_event",
+      "channel": "nerologistics:items_moved",
+      "direction": "rising",
+      "min_value": 1000000
+    }
+  ],
+  "rewards": [
+    {
+      "type": "neroquests:xp",
+      "amount": 200
+    },
+    {
+      "type": "neroquests:currency",
+      "amount": 250
+    }
+  ],
+  "scope": "server"
+}

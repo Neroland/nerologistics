@@ -1,0 +1,32 @@
+{
+  "title": "quest.nerologistics.supply_lines.rail_freight.title",
+  "description": "quest.nerologistics.supply_lines.rail_freight.desc",
+  "icon": "nerologistics:train_station",
+  "prerequisites": [
+    "nerologistics:supply_lines/self_assembly"
+  ],
+  "objectives": [
+    {
+      "type": "neroquests:craft_item",
+      "item": "nerologistics:train_station",
+      "count": 2
+    },
+    {
+      "type": "neroquests:craft_item",
+      "item": "nerologistics:train_cargo_interface",
+      "count": 1
+    }
+  ],
+  "rewards": [
+    {
+      "type": "neroquests:xp",
+      "amount": 80
+    },
+    {
+      "type": "neroquests:item",
+      "item": "minecraft:rail",
+      "count": 16
+    }
+  ],
+  "scope": "player"
+}

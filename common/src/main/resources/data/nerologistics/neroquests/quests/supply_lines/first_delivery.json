@@ -1,0 +1,29 @@
+{
+  "title": "quest.nerologistics.supply_lines.first_delivery.title",
+  "description": "quest.nerologistics.supply_lines.first_delivery.desc",
+  "icon": "nerologistics:rocket_cargo_port",
+  "prerequisites": [
+    "nerologistics:supply_lines/orbital_freight"
+  ],
+  "objectives": [
+    {
+      "type": "neroquests:gate_open",
+      "gate": "nerologistics:first_shipment"
+    }
+  ],
+  "rewards": [
+    {
+      "type": "neroquests:xp",
+      "amount": 150
+    },
+    {
+      "type": "neroquests:currency",
+      "amount": 200
+    },
+    {
+      "type": "neroquests:mod_hook",
+      "gate": "nerologistics:hook/dashboard_badge"
+    }
+  ],
+  "scope": "player"
+}

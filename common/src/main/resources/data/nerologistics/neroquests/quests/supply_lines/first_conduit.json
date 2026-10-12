@@ -1,0 +1,24 @@
+{
+  "title": "quest.nerologistics.supply_lines.first_conduit.title",
+  "description": "quest.nerologistics.supply_lines.first_conduit.desc",
+  "icon": "nerologistics:universal_duct",
+  "objectives": [
+    {
+      "type": "neroquests:craft_item",
+      "item": "nerologistics:universal_duct",
+      "count": 8
+    }
+  ],
+  "rewards": [
+    {
+      "type": "neroquests:xp",
+      "amount": 30
+    },
+    {
+      "type": "neroquests:item",
+      "item": "minecraft:redstone",
+      "count": 8
+    }
+  ],
+  "scope": "player"
+}

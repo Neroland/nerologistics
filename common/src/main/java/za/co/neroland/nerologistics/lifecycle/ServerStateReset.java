@@ -6,6 +6,7 @@ import za.co.neroland.nerologistics.network.DronePortRegistry;
 import za.co.neroland.nerologistics.network.NetworkManager;
 import za.co.neroland.nerologistics.network.TrainStationRegistry;
 import za.co.neroland.nerologistics.network.WirelessRegistry;
+import za.co.neroland.nerologistics.quest.QuestHooks;
 import za.co.neroland.nerologistics.ship.RouteProviders;
 import za.co.neroland.nerologistics.ship.ShipmentManager;
 import za.co.neroland.nerologistics.world.SavedDataRecovery;
@@ -20,7 +21,7 @@ import za.co.neroland.nerologistics.world.SavedDataRecovery;
  *
  * <p>Everything cleared here is a lazily-rebuilt cache: block entities re-register on their first
  * server tick after the next world load, so no durable state is lost. Durable state (in-transit
- * shipments, erased-owner tombstones) lives in SavedData and is untouched.
+ * shipments, erased-owner tombstones, throughput counters, quest perks) lives in SavedData and is untouched.
  */
 public final class ServerStateReset {
 
@@ -37,6 +38,7 @@ public final class ServerStateReset {
         RouteProviders.resetAll(); // origin-pad id cache + queued Nerospace flight events
         LogisticsMetrics.clearAll();
         RocketCargoPortBlockEntity.clearAll();
+        QuestHooks.clearAll();
         SavedDataRecovery.clearAll();
     }
 }

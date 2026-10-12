@@ -1,0 +1,27 @@
+{
+  "title": "quest.nerologistics.supply_lines.orbital_freight.title",
+  "description": "quest.nerologistics.supply_lines.orbital_freight.desc",
+  "icon": "nerologistics:rocket_cargo_port",
+  "prerequisites": [
+    "nerologistics:supply_lines/drone_corps",
+    "nerologistics:supply_lines/rail_freight"
+  ],
+  "objectives": [
+    {
+      "type": "neroquests:craft_item",
+      "item": "nerologistics:rocket_cargo_port",
+      "count": 1
+    }
+  ],
+  "rewards": [
+    {
+      "type": "neroquests:xp",
+      "amount": 120
+    },
+    {
+      "type": "neroquests:currency",
+      "amount": 150
+    }
+  ],
+  "scope": "player"
+}

@@ -1,0 +1,35 @@
+{
+  "title": "quest.nerologistics.supply_lines.half_a_million.title",
+  "description": "quest.nerologistics.supply_lines.half_a_million.desc",
+  "icon": "nerologistics:item_cell_512k",
+  "prerequisites": [
+    "nerologistics:supply_lines/cell_ladder"
+  ],
+  "objectives": [
+    {
+      "type": "neroquests:collect_item",
+      "item": "nerologistics:item_cell_512k",
+      "count": 1
+    }
+  ],
+  "rewards": [
+    {
+      "type": "neroquests:xp",
+      "amount": 200
+    },
+    {
+      "type": "neroquests:currency",
+      "amount": 250
+    },
+    {
+      "type": "neroquests:item",
+      "item": "minecraft:diamond",
+      "count": 2
+    },
+    {
+      "type": "neroquests:mod_hook",
+      "gate": "nerologistics:hook/cell_preset"
+    }
+  ],
+  "scope": "player"
+}

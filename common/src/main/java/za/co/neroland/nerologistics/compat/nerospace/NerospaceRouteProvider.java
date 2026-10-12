@@ -368,14 +368,14 @@ public final class NerospaceRouteProvider implements RouteProvider {
                 continue; // not a flight NeroLogistics requested
             }
             switch (event.kind()) {
-                case DEPARTED -> LogisticsMetrics.recordShipmentLaunched(tracked.originDim());
+                case DEPARTED -> LogisticsMetrics.recordShipmentLaunched(server, tracked.originDim());
                 case ARRIVED -> {
                     state.untrack(tracked.flightId());
-                    LogisticsMetrics.recordShipmentDelivered(destDim(server, tracked));
+                    LogisticsMetrics.recordShipmentDelivered(server, destDim(server, tracked));
                 }
                 case HELD -> {
                     state.markHeld(tracked.flightId(), now);
-                    LogisticsMetrics.recordShipmentHeld(destDim(server, tracked));
+                    LogisticsMetrics.recordShipmentHeld(server, destDim(server, tracked));
                 }
                 case DROPPED -> dropped(server, state, tracked, now);
                 default -> {
@@ -399,7 +399,7 @@ public final class NerospaceRouteProvider implements RouteProvider {
             FlightState fs = flight.get().state();
             if (fs == FlightState.DELIVERED) {
                 state.untrack(tracked.flightId());
-                LogisticsMetrics.recordShipmentDelivered(destDim(server, tracked));
+                LogisticsMetrics.recordShipmentDelivered(server, destDim(server, tracked));
             } else if (fs == FlightState.DROPPED) {
                 dropped(server, state, tracked, now);
             } else if (fs == FlightState.HOLDING && tracked.heldSince() < 0) {
@@ -413,7 +413,7 @@ public final class NerospaceRouteProvider implements RouteProvider {
         state.untrack(tracked.flightId());
         state.recordDrop(new RocketFlightsState.Dropped(tracked.flightId(), tracked.originDim(), tracked.originPos(),
                 tracked.destPadId(), now));
-        LogisticsMetrics.recordShipmentDropped(destDim(server, tracked));
+        LogisticsMetrics.recordShipmentDropped(server, destDim(server, tracked));
         NeroLogisticsCommon.LOGGER.info("[NeroLogistics] cargo flight {} was crated at destination pad {}",
                 tracked.flightId(), tracked.destPadId());
     }

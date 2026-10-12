@@ -1,0 +1,24 @@
+{
+  "title": "quest.nerologistics.supply_lines.fleet_week.title",
+  "description": "quest.nerologistics.supply_lines.fleet_week.desc",
+  "icon": "nerologistics:drone_hub",
+  "objectives": [
+    {
+      "type": "neroquests:custom_event",
+      "channel": "nerologistics:drones_dispatched",
+      "direction": "rising",
+      "min_value": 1000
+    }
+  ],
+  "rewards": [
+    {
+      "type": "neroquests:xp",
+      "amount": 100
+    },
+    {
+      "type": "neroquests:currency",
+      "amount": 100
+    }
+  ],
+  "scope": "server"
+}
