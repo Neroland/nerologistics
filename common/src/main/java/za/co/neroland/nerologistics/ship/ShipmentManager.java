@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import za.co.neroland.nerologistics.config.NeroLogisticsConfig;
 import za.co.neroland.nerologistics.dashboard.LogisticsMetrics;
 import za.co.neroland.nerologistics.quest.QuestHooks;
+import za.co.neroland.nerologistics.link.NeroLogisticsLinkEvents;
 import za.co.neroland.nerologistics.transport.InventoryTransfer;
 
 /**
@@ -163,6 +164,9 @@ public final class ShipmentManager {
                 }
             }
             LogisticsMetrics.recordShipmentDelivered(level);
+            // Companion clients: "cargo landed". A manifest carries no owner, so this can only ever be
+            // a broadcast — see NeroLogisticsLinkEvents for what that payload is allowed to contain.
+            NeroLogisticsLinkEvents.shipmentArrived(manifest);
         } finally {
             if (forcedHere) {
                 level.setChunkForced(cx, cz, false);

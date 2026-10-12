@@ -254,6 +254,15 @@ public final class NeroLogisticsConfig {
     private static final ConfigValue<Integer> BULK_FUEL_FACTOR = SCHEMA.intRange("bulkFuelFactor",
             50, 1, 100, true, "BULK fuel cost as % of the route's base (50 = half fuel, rounded up, min 1)");
 
+    // --- NeroLink companion module -----------------------------------------
+    // Server-authoritative kill-switch for the whole link surface. With it off NeroLogistics
+    // registers nothing with Core's NeroLinkRegistry, publishes no events and refuses every action,
+    // so a companion client simply reports the module as absent. Nothing in the mod's own behaviour
+    // changes either way.
+    private static final ConfigValue<Boolean> ENABLE_LINK_MODULE = SCHEMA.bool("enableLinkModule",
+            true, true, "expose NeroLogistics storage/network/shipment/drone data to companion clients "
+            + "through Neroland Core's link API; off = the module is not registered at all");
+
     // --- Telemetry (anonymous crash reporting; CLIENT-LOCAL opt-out, not server-synced) ----
     private static final ConfigValue<Boolean> TELEMETRY_ENABLED = SCHEMA.bool("telemetryEnabled",
             true, false, "anonymous error reporting to the developers (stack trace + mod/MC/loader/OS/Java "
@@ -519,6 +528,11 @@ public final class NeroLogisticsConfig {
 
     public static boolean shipReturnEmpty() {
         return SHIP_RETURN_EMPTY.get();
+    }
+
+    /** Whether the NeroLink companion module is registered and answering (server-authoritative). */
+    public static boolean linkModuleEnabled() {
+        return ENABLE_LINK_MODULE.get();
     }
 
     public static boolean telemetryEnabled() {

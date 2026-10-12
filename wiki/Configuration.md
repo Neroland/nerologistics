@@ -167,6 +167,15 @@ See [Storage Network](Storage-Network.md).
 
 See [Dashboard & Privacy](Dashboard-and-Privacy.md) for the data posture.
 
+## Companion link module
+
+- **`enableLinkModule`** (default `true`) — expose a proximity-scoped view of storage, networks,
+  shipments and drones (plus two safe actions) to NeroLink companion clients through Neroland Core's
+  link API. Off = the module is never registered, no events are published, every action is refused and
+  a companion client reports NeroLogistics as absent. Nothing in the mod behaves differently either way.
+
+See [Companion Link Module](Link-Module.md) for what it shows and why it is scoped by proximity.
+
 ## Crash reporting
 
 - **`telemetryEnabled`** (default `true`) — anonymous, NeroLogistics-only crash reports via Sentry (EU
@@ -180,4 +189,4 @@ See [Dashboard & Privacy](Dashboard-and-Privacy.md) for the data posture.
 ## See also
 
 - [Conduits](Conduits.md) · [Terminals](Terminals.md) · [Drones](Drones.md) ·
-  [Cross-Dimension Shipping](Cross-Dimension-Shipping.md)
+  [Cross-Dimension Shipping](Cross-Dimension-Shipping.md) · [Companion Link Module](Link-Module.md)

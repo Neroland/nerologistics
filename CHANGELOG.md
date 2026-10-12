@@ -7,6 +7,61 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+#### NeroLink companion module
+
+- NeroLogistics now registers a **link module** with Neroland Core's link API, so a NeroLink
+  companion client can see the mod at all — it previously reported `nerologistics: absent`, which
+  left the app's drones screen with no data source.
+- Four sections:
+  - **`storage`** — the network storage index's aggregated item and fluid totals (searchable via
+    `q`, paged via `limit`), plus every drive bay in range with its cells' kind, tier, capacity,
+    fill, distinct types, priority and partition state.
+  - **`network`** — per-network medium, conduit and endpoint counts, node-cap state, controller
+    status/modules/charge and throughput multiplier, plus the dimension's persisted throughput
+    counters and the configured per-tick budgets. Reports the three media explicitly, since there
+    is no gas medium.
+  - **`shipments`** — the same proximity-scoped view as the Logistics Dashboard and
+    `/nerologistics shipping`, on whichever route is active (stub or Nerospace cargo flights):
+    flights launched nearby with state and ETA, and the rocket cargo ports in range with shipping
+    class, schedule, last refusal, fuel (stub route) and charge.
+  - **`drones`** — drone ports (mode, routing name, lanes installed vs in flight, Hyperspeed, buffer,
+    charge) and the delivery drones currently in the air.
+- Two conservative actions: **`set_shipping_class`** (online- and reach-gated, owner-gated where a
+  port records an opt-in owner, refused when `enableShippingQos=false` just like the Configurator)
+  and **`acknowledge_alert`**. Nothing that moves items, cancels a shipment in flight, or touches
+  another player's network.
+- Three event topics — owner-scoped `shipments`, broadcast `shipment_state` (departed, and arrived on
+  the stub route) and broadcast `network_fault` (the active route's in-transit count hit
+  `maxPendingShipments`) — plus one rate-limited **shipment-queue-full** alert for a port's owner.
+- New config key **`enableLinkModule`** (default `true`, server-authoritative): off = the module is
+  never registered, no events are published and every action is refused.
+- Documented in the new [Companion Link Module](wiki/Link-Module.md) wiki page.
+
+**Scope and privacy.** NeroLogistics records no owner for a network, drive bay, cell, drone port,
+drone or manifest, so the module does not invent one and does not answer with the server-wide
+registries. Every section is scoped to what the requester could already see by standing where they
+are: their own dimension, within 128 blocks, while online. A shipment's far side is reported only as
+the label the game already shows, never a position. The only owner-scoped surfaces are the
+`shipments` event and the queue-full alert, which therefore exist only on servers that opted into
+`perPlayerThroughputAttribution`; that UUID is used solely for routing and gating and is never read
+out into a snapshot. The Nerospace dispatcher is not used by the module at all. No new stored data;
+alerts live in Core's per-player alert store and are erased by Core's `PlayerDataErasure`. See
+[PRIVACY.md](PRIVACY.md).
+
+### Changed
+
+- `RocketCargoPortBlockEntity` gained `hasOwner()` / `isOwnedBy(UUID)` (deliberately questions rather
+  than a UUID getter) and `setShippingClass(...)` (resets the launch backoff like the Configurator's
+  cycle); `DronePortBlockEntity` gained `dronesInFlight()` and `NetworkManager` gained
+  `networksIn(...)` — read-only accessors for status surfaces.
+- `NeroLogisticsCommon.MOD_VERSION` mirrors `mod_version` for the link module's discovery entry.
+- Publishing: CurseForge uploads now run strictly one at a time (`max-parallel: 1`) and retry a 5xx
+  answer up to four attempts with a 30-second wait; a 4xx still fails at once.
+- `PRIVACY.md` gained "What is NOT collected", "Legal basis and your rights" and "Changes to this
+  policy" sections, the attribution opt-out command, and the companion-module disclosure.
+
 ## [0.6.0-beta.1] - 2026-10-11
 
 Quest-pack support and persisted throughput counters. **Requires Neroland Core 1.15.0** (player-scope

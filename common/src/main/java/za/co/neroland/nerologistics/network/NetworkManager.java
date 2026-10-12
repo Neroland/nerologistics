@@ -1,6 +1,7 @@
 package za.co.neroland.nerologistics.network;
 
 import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.Deque;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -117,6 +118,16 @@ public final class NetworkManager {
     /** The network containing {@code pos}, or {@code null}. */
     public static ConduitNetwork networkAt(Level level, NetworkMedium medium, BlockPos pos) {
         return table(level, medium).get(pos);
+    }
+
+    /**
+     * Every distinct network tracked in {@code level} for {@code medium}, de-duplicated (the backing
+     * table maps every member position to its network, so the same object appears many times). A
+     * snapshot copy — read-only status surfaces (the dashboard, the NeroLink {@code network} section)
+     * use this instead of walking the world. Never mutate the returned networks.
+     */
+    public static Collection<ConduitNetwork> networksIn(Level level, NetworkMedium medium) {
+        return new LinkedHashSet<>(table(level, medium).values());
     }
 
     /** Drop the cached endpoints of the network at {@code pos} (e.g. after a face-mode/neighbour change). */
