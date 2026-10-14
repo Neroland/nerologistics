@@ -1,0 +1,28 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "nerologistics:auto_crafter",
+      "required": false
+    },
+    "nerologistics:buffer",
+    "nerologistics:drive_bay",
+    "nerologistics:drone_hub",
+    "nerologistics:drone_port",
+    "nerologistics:energy_cable",
+    "nerologistics:fluid_duct",
+    "nerologistics:item_duct",
+    "nerologistics:item_storage",
+    "nerologistics:logistics_dashboard",
+    "nerologistics:logistics_processor",
+    "nerologistics:network_controller",
+    "nerologistics:network_module",
+    "nerologistics:rocket_cargo_port",
+    "nerologistics:storage_request_terminal",
+    "nerologistics:storage_terminal",
+    "nerologistics:train_cargo_interface",
+    "nerologistics:train_station",
+    "nerologistics:universal_duct",
+    "nerologistics:wireless_cargo_terminal"
+  ]
+}
