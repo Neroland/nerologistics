@@ -31,6 +31,7 @@ import za.co.neroland.nerologistics.NeroLogisticsCommon;
 import za.co.neroland.nerologistics.compat.neroeconomy.NeroLogisticsEconomy;
 import za.co.neroland.nerologistics.config.NeroLogisticsConfig;
 import za.co.neroland.nerologistics.dashboard.LogisticsMetrics;
+import za.co.neroland.nerologistics.link.NeroLogisticsLinkEvents;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 import za.co.neroland.nerologistics.ship.DestinationKey;
 import za.co.neroland.nerologistics.ship.LaunchBackoff;
@@ -170,6 +171,24 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
         setChanged();
     }
 
+    /**
+     * Whether this port has a recorded owner at all. Only ever true on worlds that opted into
+     * {@code perPlayerThroughputAttribution}; with attribution off (the default) no port has one.
+     */
+    public boolean hasOwner() {
+        return this.owner != null;
+    }
+
+    /**
+     * Whether {@code player} is this port's recorded owner. Deliberately a question rather than a
+     * getter: callers that only need the gate (the NeroLink action handler, the alert publisher) never
+     * receive the UUID itself, so a recorded owner cannot leak out through a status surface
+     * (POPIA/GDPR data minimisation).
+     */
+    public boolean isOwnedBy(@org.jetbrains.annotations.Nullable UUID player) {
+        return player != null && player.equals(this.owner);
+    }
+
     public int cycleChannel() {
         int old = this.channel;
         this.channel = (this.channel + 1) % WirelessCargoTerminalBlockEntity.CHANNELS;
@@ -195,6 +214,18 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
     /** Cycle STANDARD → EXPRESS → BULK; returns the new class. */
     public ShippingClass cycleShippingClass() {
         this.shippingClass = this.shippingClass.next();
+        resetBackoff();
+        setChanged();
+        return this.shippingClass;
+    }
+
+    /**
+     * Set the QoS lane outright (the Configurator cycles; the NeroLink action may name one). Purely a
+     * per-port setting — it changes no quantity of anything and is reversible with the same call. Resets
+     * the launch backoff like {@link #cycleShippingClass()}, since a player just touched the port.
+     */
+    public ShippingClass setShippingClass(ShippingClass shippingClass) {
+        this.shippingClass = shippingClass == null ? ShippingClass.STANDARD : shippingClass;
         resetBackoff();
         setChanged();
         return this.shippingClass;
@@ -615,6 +646,9 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
         }
         if (provider.atCapacity(server)) {
             recordDenial(now, ShipDenial.AT_CAPACITY);
+            // Companion clients: the server-wide in-transit cap is reached (rate-limited broadcast; the owner
+            // alert only exists on worlds that opted into attribution).
+            NeroLogisticsLinkEvents.shipmentQueueFull(server, this.owner, pos);
             return;
         }
         ShipOrigin origin = origin(level);
@@ -678,6 +712,14 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
         }
         LogisticsMetrics.recordPlayerShipment(server, this.owner); // no-op unless attribution opted in
         creditFirstShipment(server);
+        // Companion clients: "cargo away". Owner-scoped detail only where this port records an opt-in owner
+        // (and only then is an ETA quoted); the broadcast twin carries dimensions and counts and nothing
+        // else. The owner UUID is handed straight to the event router and never exposed through a getter.
+        int etaTicks = this.owner == null ? -1
+                : provider.estimateTicks(server, origin, dest.get(), payload, returnEmpty())
+                        .map(ticks -> ownFuel ? qos.applyTransit(ticks) : ticks).orElse(-1);
+        NeroLogisticsLinkEvents.shipmentDeparted(this.owner, pos, level.dimension(), dest.get().dimension(),
+                qos, payload, etaTicks);
         this.lastDenial = null;
         resetBackoff();
         setChanged();

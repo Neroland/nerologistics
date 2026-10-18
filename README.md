@@ -8,6 +8,8 @@
 
 **NeroQuests (optional):** the jar carries a quest pack — chapter "Supply Lines", 15 quests — that shows up in the quest book when NeroQuests is installed and is inert data otherwise (no dependency). Quest rewards can unlock a cosmetic dashboard badge and a saved cell-preset slot; see [`PRIVACY.md`](PRIVACY.md) for what that stores.
 
+**NeroLink (optional):** NeroLogistics registers a link module with Neroland Core's link API, so a NeroLink companion app can show the storage, conduit networks, rocket shipments and drone ports around the player — scoped to their own dimension within 128 blocks while they are online, never a server-wide roster — plus two safe actions (set a nearby cargo port's shipping class, acknowledge your own alert). Off with `enableLinkModule=false`; see [wiki/Link-Module.md](wiki/Link-Module.md).
+
 ## Build targets
 
 - **Minecraft:** 26.1.2, 26.2 and 26.3

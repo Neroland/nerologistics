@@ -9,6 +9,7 @@ import za.co.neroland.nerologistics.compat.NerospaceCompat;
 import za.co.neroland.nerologistics.conduit.RocketCargoPortBlockEntity;
 import za.co.neroland.nerologistics.config.NeroLogisticsConfig;
 import za.co.neroland.nerologistics.dashboard.LogisticsMetrics;
+import za.co.neroland.nerologistics.link.NeroLogisticsLinkModule;
 import za.co.neroland.nerologistics.network.NeroLogisticsNetwork;
 import za.co.neroland.nerologistics.quest.QuestHooks;
 import za.co.neroland.nerologistics.registry.ModRegistries;
@@ -23,6 +24,15 @@ import za.co.neroland.nerologistics.world.QuestPerksState;
 public final class NeroLogisticsCommon {
 
     public static final String MOD_ID = "nerologistics";
+
+    /**
+     * Mirrors {@code mod_version} in gradle.properties — the public version string surfaces that have
+     * no loader metadata handy report (currently the NeroLink module's discovery entry). <b>Release
+     * checklist: every {@code mod_version} bump must update this constant too</b>; it is not
+     * build-injected.
+     */
+    public static final String MOD_VERSION = "0.6.0-beta.1";
+
     public static final Logger LOGGER = LoggerFactory.getLogger("NeroLogistics");
 
     private NeroLogisticsCommon() {
@@ -59,5 +69,9 @@ public final class NeroLogisticsCommon {
                         QuestPerksState.TYPE, perks, QuestPerksState.ID.toString());
             }
         });
+        // LAST: expose NeroLogistics to companion clients through Core's link registry. Registered
+        // after everything above so a client is never told about a subsystem the mod has not finished
+        // wiring, and wrapped internally so a link failure can never take the mod down.
+        NeroLogisticsLinkModule.init();
     }
 }

@@ -130,6 +130,15 @@ public class DronePortBlockEntity extends AbstractTerminalBlockEntity implements
         return Math.min(total, NeroLogisticsConfig.maxDronesPerPort());
     }
 
+    /**
+     * Drones this port currently has in the air. Read-only view of the lane counter for status
+     * surfaces; it may briefly over-report after a drone was lost without its callback landing, which
+     * the {@link #IN_FLIGHT_STALE_TICKS} self-heal window corrects on the next dispatch.
+     */
+    public int dronesInFlight() {
+        return this.inFlight;
+    }
+
     public boolean hasHyperspeed() {
         for (int i = 0; i < this.upgradeSlots.getContainerSize(); i++) {
             if (this.upgradeSlots.getItem(i).getItem() == ModItems.HYPERSPEED_CARD.get()) {

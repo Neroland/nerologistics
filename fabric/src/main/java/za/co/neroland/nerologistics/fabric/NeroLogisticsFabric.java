@@ -15,6 +15,7 @@ import za.co.neroland.nerologistics.NeroLogisticsCommon;
 import za.co.neroland.nerologistics.command.NeroLogisticsCommands;
 import za.co.neroland.nerologistics.conduit.AbstractTerminalBlockEntity;
 import za.co.neroland.nerologistics.lifecycle.ServerStateReset;
+import za.co.neroland.nerologistics.link.NeroLogisticsLinkModule;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 import za.co.neroland.nerologistics.ship.ShipmentManager;
 import za.co.neroland.nerologistics.telemetry.NeroLogisticsTelemetry;
@@ -53,8 +54,12 @@ public final class NeroLogisticsFabric implements ModInitializer {
         item(ModBlockEntities.DRONE_HUB.get());
         item(ModBlockEntities.ROCKET_CARGO_PORT.get());
 
-        // Drive cross-dimension shipment arrivals once per server tick.
-        ServerTickEvents.END_SERVER_TICK.register(ShipmentManager::tick);
+        // Drive cross-dimension shipment arrivals once per server tick, and capture the running server
+        // for the NeroLink module (Core's SPI hands a provider nothing but a player UUID).
+        ServerTickEvents.END_SERVER_TICK.register(server -> {
+            NeroLogisticsLinkModule.rememberServer(server);
+            ShipmentManager.tick(server);
+        });
         // Clear the common server-scoped static caches so nothing leaks into the next (single-player) world.
         ServerLifecycleEvents.SERVER_STOPPED.register(server -> ServerStateReset.serverStopped());
 

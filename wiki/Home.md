@@ -30,6 +30,8 @@ sci-fi Minecraft mod ecosystem. Built on **Neroland Core**.
   real Nerospace cargo flights, launch schedules, and the express/bulk shipping classes.
 - [Logistics Programming](Logistics-Programming.md) — the logistics processor's rule-based supply
   policies (keep stocked, export excess, auto-ship), rocket-port conditions and redstone alarms.
+- [Companion Link Module](Link-Module.md) — the read-only storage/network/shipment/drone view a
+  NeroLink companion client sees, the two safe actions, and why it is scoped by proximity.
 - [Dashboard & Privacy](Dashboard-and-Privacy.md) — the logistics dashboard, the shipping report and
   the POPIA/GDPR data posture (attribution opt-out, the port dispatcher).
 - [Configuration](Configuration.md) — every config key, with defaults.
@@ -44,10 +46,12 @@ Add one page per block, item, or system as it is built, and link it here. Keep t
 
 Everything is built on **Neroland Core**: conduits and cables discover neighbours through Core's
 energy/fluid surfaces and vanilla inventories, machine faces speak Core's **side-config** vocabulary,
-progression is gated by Core's **gates**, config flows through Core's **config manager**, and any
-player data routes through Core's **data-erasure** hook. NeroLogistics never hard-depends on Nerospace,
-Nerotech, Create or AE2 — it interoperates through Core capabilities, tags and seams, so each of those
-is optional.
+config flows through Core's **config manager**, any player data routes through Core's
+**data-erasure** hook, and companion apps read it through Core's **link API**. Core's **gates** are used
+only as records a quest pack can read (such as the first accepted rocket launch) — nothing in
+NeroLogistics is locked behind a gate; it is standalone-first and paced by its own recipes and
+materials. NeroLogistics never hard-depends on Nerospace, Nerotech, Create or AE2 — it interoperates
+through Core capabilities, tags and seams, so each of those is optional.
 
 ## See also
 

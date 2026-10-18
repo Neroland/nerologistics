@@ -2,6 +2,7 @@ package za.co.neroland.nerologistics.lifecycle;
 
 import za.co.neroland.nerologistics.conduit.RocketCargoPortBlockEntity;
 import za.co.neroland.nerologistics.dashboard.LogisticsMetrics;
+import za.co.neroland.nerologistics.link.NeroLogisticsLinkEvents;
 import za.co.neroland.nerologistics.network.DronePortRegistry;
 import za.co.neroland.nerologistics.network.NetworkManager;
 import za.co.neroland.nerologistics.network.TrainStationRegistry;
@@ -39,6 +40,7 @@ public final class ServerStateReset {
         LogisticsMetrics.clearAll();
         RocketCargoPortBlockEntity.clearAll();
         QuestHooks.clearAll();
+        NeroLogisticsLinkEvents.reset();
         SavedDataRecovery.clearAll();
     }
 }

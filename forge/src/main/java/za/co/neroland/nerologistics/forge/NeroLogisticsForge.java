@@ -12,6 +12,7 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 import za.co.neroland.nerologistics.NeroLogisticsCommon;
 import za.co.neroland.nerologistics.command.NeroLogisticsCommands;
 import za.co.neroland.nerologistics.lifecycle.ServerStateReset;
+import za.co.neroland.nerologistics.link.NeroLogisticsLinkModule;
 import za.co.neroland.nerologistics.registry.ForgeRegistrationFactory;
 import za.co.neroland.nerologistics.ship.ShipmentManager;
 import za.co.neroland.nerologistics.telemetry.NeroLogisticsTelemetry;
@@ -32,8 +33,12 @@ public final class NeroLogisticsForge {
         ForgeNetwork.register();
         // Anonymous, NeroLogistics-only crash reporting (opt-out via config; off in dev unless DSN set).
         NeroLogisticsTelemetry.init();
-        // Drive cross-dimension shipment arrivals once per server tick.
-        TickEvent.ServerTickEvent.Post.BUS.addListener(event -> ShipmentManager.tick(event.server()));
+        // Drive cross-dimension shipment arrivals once per server tick, and capture the running server
+        // for the NeroLink module (Core's SPI hands a provider nothing but a player UUID).
+        TickEvent.ServerTickEvent.Post.BUS.addListener(event -> {
+            NeroLogisticsLinkModule.rememberServer(event.server());
+            ShipmentManager.tick(event.server());
+        });
         // Clear the common server-scoped static caches so nothing leaks into the next (single-player) world.
         ServerStoppedEvent.BUS.addListener(event -> ServerStateReset.serverStopped());
         // /nerologistics gallery
