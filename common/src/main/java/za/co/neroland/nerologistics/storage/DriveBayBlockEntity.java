@@ -6,7 +6,10 @@ import java.util.List;
 import java.util.function.BiConsumer;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -23,6 +26,8 @@ import org.jetbrains.annotations.Nullable;
 
 import za.co.neroland.nerologistics.config.NeroLogisticsConfig;
 import za.co.neroland.nerologistics.menu.DriveBayMenu;
+import za.co.neroland.nerologistics.network.NetworkManager;
+import za.co.neroland.nerologistics.network.NetworkMedium;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 
 /**
@@ -246,6 +251,37 @@ public class DriveBayBlockEntity extends BlockEntity implements StorageNode, Men
     @Override
     public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player player) {
         return new DriveBayMenu(id, playerInventory, this);
+    }
+
+    // --- Removal -------------------------------------------------------------
+
+    /**
+     * Breaking the bay drops every installed cell as its exact {@link ItemStack} — the cell's stored
+     * contents live in its data components, so nothing stored is lost. Each bay is emptied as it is
+     * dropped ({@code removeItemNoUpdate}, so no change cascade fires mid-removal) and the version
+     * bumps, so no later network query can see or extract the dropped contents (no duplication).
+     * Adjacent networks' cached endpoints are invalidated so their storage index forgets this node,
+     * mirroring the network controller's removal path. World-inert apart from the drops.
+     */
+    @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+        super.preRemoveSideEffects(pos, state);
+        if (!(this.level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        for (int i = 0; i < BAYS; i++) {
+            ItemStack cell = this.bays.removeItemNoUpdate(i);
+            if (!cell.isEmpty()) {
+                Containers.dropItemStack(serverLevel, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, cell);
+            }
+        }
+        this.version++;
+        for (Direction dir : Direction.values()) {
+            BlockPos neighbor = pos.relative(dir);
+            for (NetworkMedium medium : NetworkMedium.values()) {
+                NetworkManager.invalidateAt(serverLevel, medium, neighbor);
+            }
+        }
     }
 
     // --- Persistence ---------------------------------------------------------

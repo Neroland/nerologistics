@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Block and loot drops work as intended on Minecraft 26.3** (NeoForge, Fabric and Forge). Minecraft
+  26.3 changed the loot-table file format and silently ignores the old one, so conditions and drop
+  modifiers (explosion survival, door/slab block-state checks, drop counts, random chances) were skipped.
+  The 26.3 builds now ship every loot table in the new format. 26.1.2 and 26.2 were not affected.
+- **Breaking a Drive Bay no longer deletes its storage cells.** The installed cells now drop as items
+  when the bay is broken, keeping everything stored inside them, and the attached network forgets the
+  bay straight away so the dropped contents can't also be pulled out through a terminal.
+
 ### Added
 
 #### NeroLink companion module
