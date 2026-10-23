@@ -10,7 +10,6 @@ import za.co.neroland.nerologistics.network.WirelessRegistry;
 import za.co.neroland.nerologistics.quest.QuestHooks;
 import za.co.neroland.nerologistics.ship.RouteProviders;
 import za.co.neroland.nerologistics.ship.ShipmentManager;
-import za.co.neroland.nerologistics.world.SavedDataRecovery;
 
 /**
  * One entry point that clears every common static server-scoped cache when a server stops, invoked
@@ -41,6 +40,5 @@ public final class ServerStateReset {
         RocketCargoPortBlockEntity.clearAll();
         QuestHooks.clearAll();
         NeroLogisticsLinkEvents.reset();
-        SavedDataRecovery.clearAll();
     }
 }

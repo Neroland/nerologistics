@@ -20,8 +20,9 @@ import net.minecraft.world.level.saveddata.SavedDataType;
 
 import org.jetbrains.annotations.Nullable;
 
+import za.co.neroland.nerolandcore.data.SavedDataRecovery;
+
 import za.co.neroland.nerologistics.NeroLogisticsCommon;
-import za.co.neroland.nerologistics.world.SavedDataRecovery;
 
 /**
  * The Nerospace flights NeroLogistics itself requested. Nerospace persists and flies the flight; this

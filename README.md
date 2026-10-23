@@ -2,7 +2,7 @@
 
 > Part of the **Neroland** sci-fi Minecraft mod ecosystem, built on **Neroland Core**.
 
-**Status:** in development — version `0.6.0-beta.1`. Ships the Network Controller, Universal Duct, energy cables, item storage (incl. 54-slot storage block), the digital storage network, auto-crafting, buffers, the logistics processor, drone ports, logistics trains, rocket cargo ports — real Nerospace cargo flights when Nerospace 1.3.0+ is installed, standalone stub routes otherwise — and chat-report dashboards. Key follow-ups: Forge capability wiring, the live dashboard GUI, and the full 5-tab terminal.
+**Status:** in development — version `0.7.0-beta.1`. Ships the Network Controller, Universal Duct, energy cables, item storage (incl. 54-slot storage block), the digital storage network, auto-crafting, buffers, the logistics processor, drone ports, logistics trains, rocket cargo ports — real Nerospace cargo flights when Nerospace 1.3.0+ is installed, standalone stub routes otherwise — and chat-report dashboards. Key follow-ups: Forge capability wiring, the live dashboard GUI, and the full 5-tab terminal.
 
 **Nerospace (optional):** built against Nerospace `1.3.0` (`compileOnly`). Until that tag publishes to GitHub Packages, run `./gradlew publishToMavenLocal` in `../nerospace` before building. See [docs/NEROSPACE-ROUTE-INTEGRATION.md](docs/NEROSPACE-ROUTE-INTEGRATION.md).
 

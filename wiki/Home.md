@@ -3,7 +3,7 @@
 Player- and contributor-facing documentation for **NeroLogistics**, part of the **Neroland**
 sci-fi Minecraft mod ecosystem. Built on **Neroland Core**.
 
-> **Status:** beta (version `0.6.0-beta.1`), built on Neroland Core across the nine cross-loader
+> **Status:** beta (version `0.7.0-beta.1`), built on Neroland Core across the nine cross-loader
 > cells. NeroLogistics is the ecosystem's automation brain — it moves items, fluids, energy and
 > cargo within a base, across a base wirelessly, by drone, and between dimensions.
 

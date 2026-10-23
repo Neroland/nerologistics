@@ -31,7 +31,7 @@ public final class NeroLogisticsCommon {
      * checklist: every {@code mod_version} bump must update this constant too</b>; it is not
      * build-injected.
      */
-    public static final String MOD_VERSION = "0.6.0-beta.1";
+    public static final String MOD_VERSION = "0.7.0-beta.1";
 
     public static final Logger LOGGER = LoggerFactory.getLogger("NeroLogistics");
 
@@ -65,7 +65,7 @@ public final class NeroLogisticsCommon {
             RocketCargoPortBlockEntity.erasePlayer(server, player);
             QuestPerksState perks = QuestPerksState.get(server);
             if (perks.erase(player)) {
-                za.co.neroland.nerologistics.world.SavedDataRecovery.backupNow(server.overworld(),
+                za.co.neroland.nerolandcore.data.SavedDataRecovery.backupNow(server.overworld(),
                         QuestPerksState.TYPE, perks, QuestPerksState.ID.toString());
             }
         });

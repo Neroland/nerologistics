@@ -9,7 +9,7 @@
   logistics network); add shared content under `common/` and wire it through each loader entry point.
 - Mod id: **`nerologistics`** (matches the registry namespace + every loader manifest). Package root:
   `za.co.neroland.nerologistics`. Author: **Neroland**.
-- Version: **0.6.0-beta.1**.
+- Version: **0.7.0-beta.1**.
 - Optional **Nerospace** (1.3.0+, `compileOnly`): rocket cargo flies through Nerospace's route API. Only
   `compat/nerospace/` may import `za.co.neroland.nerospace.*`, and only behind `NerospaceCompat`'s
   `isModLoaded` guard. Until the Nerospace tag publishes, run `./gradlew publishToMavenLocal` in

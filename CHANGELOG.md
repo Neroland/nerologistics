@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0-beta.1] - 2026-10-20
+
 ### Fixed
 
 - **Block and loot drops work as intended on Minecraft 26.3** (NeoForge, Fabric and Forge). Minecraft
@@ -71,6 +73,12 @@ alerts live in Core's per-player alert store and are erased by Core's `PlayerDat
   answer up to four attempts with a 30-second wait; a 4xx still fails at once.
 - `PRIVACY.md` gained "What is NOT collected", "Legal basis and your rights" and "Changes to this
   policy" sections, the attribution opt-out command, and the companion-module disclosure.
+- **Internal: saved-data crash recovery now comes from Neroland Core.** NeroLogistics' own copy of the
+  corrupt-save guard was removed and all of its saved data (shipments, rocket flights, erased-owner
+  records, attribution opt-outs, throughput counters and quest perks) now uses the shared guard that
+  ships in Neroland Core 1.15.0. Existing last-known-good backup files keep the same names and are still
+  used. The shared guard also catches save files that load silently empty or half-read, restoring the
+  backup instead of overwriting it. Nothing changes in gameplay.
 
 ## [0.6.0-beta.1] - 2026-10-11
 
