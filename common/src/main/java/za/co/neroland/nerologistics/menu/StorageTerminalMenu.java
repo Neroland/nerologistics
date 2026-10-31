@@ -411,7 +411,18 @@ public class StorageTerminalMenu extends AbstractContainerMenu {
         if (!(carried.getItem() instanceof BucketItem bucketItem)) {
             return;
         }
+        //? if >=1.21.9 {
         Fluid fluid = bucketItem.getContent();
+        //?} else {
+        /*// Before 1.21.9 a bucket's fluid is private; find the source fluid whose bucket this is.
+        Fluid fluid = Fluids.EMPTY;
+        for (Fluid candidate : net.minecraft.core.registries.BuiltInRegistries.FLUID) {
+            if (candidate.getBucket() == bucketItem && candidate.defaultFluidState().isSource()) {
+                fluid = candidate;
+                break;
+            }
+        }
+        *///?}
         if (fluid == Fluids.EMPTY) {
             return;
         }

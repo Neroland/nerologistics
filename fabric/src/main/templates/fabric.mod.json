@@ -19,13 +19,13 @@
   ],
   "depends": {
     "fabricloader": ">=${fabric_loader_version}",
-    "minecraft": ">=${minecraft_version}",
+    "minecraft": "${minecraft_requirement}",
     "java": ">=21",
     "fabric-api": "*",
     "nerolandcore": ">=${nerolandcore_version}"
   },
   "suggests": {
-    "nerospace": ">=${nerospace_version} <2.0.0",
+    "nerospace": ">=${nerospace_version} <3.0.0",
     "nerotech": "*",
     "energizedpower": "*",
     "neroeconomy": ">=0.3.0-beta.1"

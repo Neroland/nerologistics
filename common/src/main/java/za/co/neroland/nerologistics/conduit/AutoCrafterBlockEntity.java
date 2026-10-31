@@ -74,17 +74,31 @@ public class AutoCrafterBlockEntity extends AbstractTerminalBlockEntity implemen
         return new AutoCrafterMenu(id, playerInventory, this);
     }
 
+    //? if >=1.21.6 {
     @Override
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
+    //?} else {
+    /*@Override
+    protected void saveAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        ValueOutput output = ValueOutput.of(tag, registries);
+    *///?}
         for (int i = 0; i < PATTERN_SIZE; i++) {
             output.store("Pat" + i, ItemStack.OPTIONAL_CODEC, this.pattern.getItem(i));
         }
     }
 
+    //? if >=1.21.6 {
     @Override
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
+    //?} else {
+    /*@Override
+    protected void loadAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        ValueInput input = ValueInput.of(tag, registries);
+    *///?}
         for (int i = 0; i < PATTERN_SIZE; i++) {
             this.pattern.setItem(i, input.read("Pat" + i, ItemStack.OPTIONAL_CODEC).orElse(ItemStack.EMPTY));
         }

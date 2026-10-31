@@ -36,7 +36,7 @@ public final class ErasedOwnersState extends SavedData {
             Identifier.fromNamespaceAndPath(NeroLogisticsCommon.MOD_ID, "erased_owners");
 
     public static final SavedDataType<ErasedOwnersState> TYPE =
-            new SavedDataType<>(ID, ErasedOwnersState::new, codec(), null);
+            za.co.neroland.nerolandcore.data.SavedDataCompat.type(ID, ErasedOwnersState::new, codec());
 
     /** Canonical string forms of the erased UUIDs. */
     private final Set<String> erased = new HashSet<>();

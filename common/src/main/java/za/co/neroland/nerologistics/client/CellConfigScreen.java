@@ -45,12 +45,35 @@ public class CellConfigScreen extends AbstractContainerScreen<CellConfigMenu> {
     private static final int PW = 36;
 
     public CellConfigScreen(CellConfigMenu menu, Inventory playerInventory, Component title) {
+        //? if >=26.1 {
         super(menu, playerInventory, title, 176, 166);
+        //?} else {
+        /*super(menu, playerInventory, title);
+        this.imageWidth = 176;
+        this.imageHeight = 166;
+        *///?}
         this.titleLabelX = 8;
         this.inventoryLabelX = 8;
     }
 
+    //? if <26.1 {
+    /*// Before 26.1 the panel is the container background (renderBg); render() then draws the slots, labels
+    // and tooltip on top, which 26.x does inside extractContents.
     @Override
+    protected void renderBg(GuiGraphicsExtractor extractor, float partialTick, int mouseX, int mouseY) {
+        extractContents(extractor, mouseX, mouseY, partialTick);
+    }
+
+    @Override
+    public void render(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+        super.render(extractor, mouseX, mouseY, partialTick);
+        this.renderTooltip(extractor, mouseX, mouseY);
+    }
+
+    *///?}
+    //? if >=26.1 {
+    @Override
+    //?}
     public void extractContents(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
         int x = this.leftPos;
         int y = this.topPos;
@@ -84,7 +107,9 @@ public class CellConfigScreen extends AbstractContainerScreen<CellConfigMenu> {
                     Component.translatable("gui.nerologistics.cell_config.preset_load"),
                     preset == CellConfigMenu.PRESET_SAVED);
         }
+        //? if >=26.1 {
         super.extractContents(extractor, mouseX, mouseY, partialTick);
+        //?}
     }
 
     private void drawPresetButton(GuiGraphicsExtractor extractor, int bx, int by, Component label, boolean enabled) {
@@ -105,8 +130,14 @@ public class CellConfigScreen extends AbstractContainerScreen<CellConfigMenu> {
         extractor.text(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, SUBTLE, false);
     }
 
+    //? if >=1.21.9 {
     @Override
     public boolean mouseClicked(MouseButtonEvent mouseButtonEvent, boolean doubleClick) {
+    //?} else {
+    /*@Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        MouseButtonEvent mouseButtonEvent = new MouseButtonEvent(mouseX, mouseY, button);
+    *///?}
         double mx = mouseButtonEvent.x();
         double my = mouseButtonEvent.y();
         for (int i = 0; i < BUTTON_LABELS.length; i++) {
@@ -130,7 +161,11 @@ public class CellConfigScreen extends AbstractContainerScreen<CellConfigMenu> {
                 return presetClick(CellConfigMenu.BUTTON_PRESET_LOAD);
             }
         }
+        //? if >=1.21.9 {
         return super.mouseClicked(mouseButtonEvent, doubleClick);
+        //?} else {
+        /*return super.mouseClicked(mouseX, mouseY, button);
+        *///?}
     }
     private boolean presetClick(int button) {
         if (this.minecraft != null && this.minecraft.gameMode != null) {

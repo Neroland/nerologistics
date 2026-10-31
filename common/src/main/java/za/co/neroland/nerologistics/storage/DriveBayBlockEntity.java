@@ -263,9 +263,14 @@ public class DriveBayBlockEntity extends BlockEntity implements StorageNode, Men
      * Adjacent networks' cached endpoints are invalidated so their storage index forgets this node,
      * mirroring the network controller's removal path. World-inert apart from the drops.
      */
+    //? if >=1.21.5 {
     @Override
     public void preRemoveSideEffects(BlockPos pos, BlockState state) {
         super.preRemoveSideEffects(pos, state);
+    //?} else {
+    /*// Before 1.21.5 there is no block-entity removal hook; the block's onRemove calls this.
+    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+    *///?}
         if (!(this.level instanceof ServerLevel serverLevel)) {
             return;
         }
@@ -286,17 +291,31 @@ public class DriveBayBlockEntity extends BlockEntity implements StorageNode, Men
 
     // --- Persistence ---------------------------------------------------------
 
+    //? if >=1.21.6 {
     @Override
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
+    //?} else {
+    /*@Override
+    protected void saveAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        ValueOutput output = ValueOutput.of(tag, registries);
+    *///?}
         for (int i = 0; i < BAYS; i++) {
             output.store("Bay" + i, ItemStack.OPTIONAL_CODEC, this.bays.getItem(i));
         }
     }
 
+    //? if >=1.21.6 {
     @Override
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
+    //?} else {
+    /*@Override
+    protected void loadAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        ValueInput input = ValueInput.of(tag, registries);
+    *///?}
         for (int i = 0; i < BAYS; i++) {
             this.bays.setItem(i, input.read("Bay" + i, ItemStack.OPTIONAL_CODEC).orElse(ItemStack.EMPTY));
         }

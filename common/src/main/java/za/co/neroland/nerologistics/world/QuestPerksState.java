@@ -58,7 +58,7 @@ public final class QuestPerksState extends SavedData {
     }
 
     public static final SavedDataType<QuestPerksState> TYPE =
-            new SavedDataType<>(ID, QuestPerksState::new, codec(), null);
+            za.co.neroland.nerolandcore.data.SavedDataCompat.type(ID, QuestPerksState::new, codec());
 
     private final Map<String, Perks> perks = new HashMap<>();
 

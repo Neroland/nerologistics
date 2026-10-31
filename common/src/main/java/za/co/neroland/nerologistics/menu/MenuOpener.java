@@ -70,7 +70,11 @@ public final class MenuOpener {
             // Nothing further to do; the client will resync on its own.
         }
         try {
+            //? if >=26.1 {
             player.sendSystemMessage(Component.translatable("gui.nerologistics.menu_open_failed"));
+            //?} else {
+            /*player.displayClientMessage(Component.translatable("gui.nerologistics.menu_open_failed"), false);
+            *///?}
         } catch (RuntimeException | LinkageError ignored) {
             // The player simply does not get the notice.
         }

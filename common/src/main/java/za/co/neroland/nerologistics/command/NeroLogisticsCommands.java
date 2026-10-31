@@ -17,7 +17,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.Entity;
+//? if >=1.21.2 {
 import net.minecraft.world.entity.EntitySpawnReason;
+//?}
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.decoration.ItemFrame;
@@ -158,7 +160,11 @@ public final class NeroLogisticsCommands {
             return 0;
         }
         player.sendSystemMessage(Component.translatable("nerologistics.ship.report.header"));
+        //? if >=1.21.6 {
         ShippingReport.send(player.level(), player.blockPosition(), player);
+        //?} else {
+        /*ShippingReport.send(player.serverLevel(), player.blockPosition(), player);
+        *///?}
         return 1;
     }
 
@@ -199,7 +205,11 @@ public final class NeroLogisticsCommands {
             source.sendFailure(Component.literal("The NeroLogistics gallery is creative-only."));
             return 0;
         }
+        //? if >=1.21.6 {
         ServerLevel level = player.level();
+        //?} else {
+        /*ServerLevel level = player.serverLevel();
+        *///?}
         BlockPos origin = player.blockPosition();
         int bx = origin.getX() + 2;
         int bz = origin.getZ() + 2;
@@ -384,7 +394,11 @@ public final class NeroLogisticsCommands {
             source.sendFailure(Component.literal("The NeroLogistics gallery is creative-only."));
             return 0;
         }
+        //? if >=1.21.6 {
         ServerLevel level = player.level();
+        //?} else {
+        /*ServerLevel level = player.serverLevel();
+        *///?}
         BlockPos origin = player.blockPosition();
         int bx = origin.getX() + 2;
         int bz = origin.getZ() + 2;
@@ -450,8 +464,21 @@ public final class NeroLogisticsCommands {
         tag.putString("billboard", "center");
         EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.getValue(
                 Identifier.fromNamespaceAndPath("minecraft", "text_display"));
+        //? if >=1.21.10 {
         Entity display = EntityType.loadEntityRecursive(type, tag, level, EntitySpawnReason.COMMAND,
                 entity -> {
+        //?}
+        //? if >=1.21.2 && <1.21.10 {
+        /*// Before 1.21.10 the entity type travels in the tag's "id".
+        tag.putString("id", BuiltInRegistries.ENTITY_TYPE.getKey(type).toString());
+        Entity display = EntityType.loadEntityRecursive(tag, level, EntitySpawnReason.COMMAND,
+                entity -> {
+        *///?}
+        //? if <1.21.2 {
+        /*tag.putString("id", BuiltInRegistries.ENTITY_TYPE.getKey(type).toString());
+        Entity display = EntityType.loadEntityRecursive(tag, level,
+                entity -> {
+        *///?}
                     entity.setPos(x, y, z);
                     return entity;
                 });

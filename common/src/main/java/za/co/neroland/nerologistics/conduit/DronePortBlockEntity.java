@@ -172,9 +172,16 @@ public class DronePortBlockEntity extends AbstractTerminalBlockEntity implements
         }
     }
 
+    //? if >=1.21.6 {
     @Override
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
+    //?} else {
+    /*@Override
+    protected void saveAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        ValueOutput output = ValueOutput.of(tag, registries);
+    *///?}
         output.putInt("Mode", this.mode.ordinal());
         output.putString("PortName", this.portName);
         // In-flight drones are saved entities, so the counter must survive a restart with them.
@@ -188,9 +195,16 @@ public class DronePortBlockEntity extends AbstractTerminalBlockEntity implements
         }
     }
 
+    //? if >=1.21.6 {
     @Override
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
+    //?} else {
+    /*@Override
+    protected void loadAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        ValueInput input = ValueInput.of(tag, registries);
+    *///?}
         int ordinal = input.getIntOr("Mode", Mode.EXPORT.ordinal());
         Mode[] modes = Mode.values();
         this.mode = ordinal >= 0 && ordinal < modes.length ? modes[ordinal] : Mode.EXPORT;

@@ -91,16 +91,30 @@ public class BufferBlockEntity extends AbstractTerminalBlockEntity implements Me
         return new BufferMenu(id, playerInventory, this);
     }
 
+    //? if >=1.21.6 {
     @Override
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
+    //?} else {
+    /*@Override
+    protected void saveAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        ValueOutput output = ValueOutput.of(tag, registries);
+    *///?}
         output.putInt("Mode", this.mode.ordinal());
         output.store("Target", ItemStack.OPTIONAL_CODEC, this.target.getItem(0));
     }
 
+    //? if >=1.21.6 {
     @Override
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
+    //?} else {
+    /*@Override
+    protected void loadAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        ValueInput input = ValueInput.of(tag, registries);
+    *///?}
         int ordinal = input.getIntOr("Mode", Mode.PASSIVE.ordinal());
         Mode[] modes = Mode.values();
         this.mode = ordinal >= 0 && ordinal < modes.length ? modes[ordinal] : Mode.PASSIVE;

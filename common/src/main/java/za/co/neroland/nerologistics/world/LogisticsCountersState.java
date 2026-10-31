@@ -46,7 +46,7 @@ public final class LogisticsCountersState extends SavedData {
     ).apply(inst, LogisticsCountersState::counters));
 
     public static final SavedDataType<LogisticsCountersState> TYPE =
-            new SavedDataType<>(ID, LogisticsCountersState::new, codec(), null);
+            za.co.neroland.nerolandcore.data.SavedDataCompat.type(ID, LogisticsCountersState::new, codec());
 
     /** Dimension id (e.g. {@code minecraft:overworld}) -> totals. */
     private final Map<String, LogisticsMetrics.Counters> byDimension = new HashMap<>();

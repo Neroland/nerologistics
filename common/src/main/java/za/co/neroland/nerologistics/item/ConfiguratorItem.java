@@ -75,7 +75,11 @@ public class ConfiguratorItem extends Item {
 
     private static void tell(UseOnContext context, Component message) {
         if (context.getPlayer() != null) {
+            //? if >=26.1 {
             context.getPlayer().sendSystemMessage(message);
+            //?} else {
+            /*context.getPlayer().displayClientMessage(message, false);
+            *///?}
         }
     }
 }

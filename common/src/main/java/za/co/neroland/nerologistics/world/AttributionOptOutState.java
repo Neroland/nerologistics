@@ -33,7 +33,7 @@ public final class AttributionOptOutState extends SavedData {
             Identifier.fromNamespaceAndPath(NeroLogisticsCommon.MOD_ID, "attribution_opt_out");
 
     public static final SavedDataType<AttributionOptOutState> TYPE =
-            new SavedDataType<>(ID, AttributionOptOutState::new, codec(), null);
+            za.co.neroland.nerolandcore.data.SavedDataCompat.type(ID, AttributionOptOutState::new, codec());
 
     private final Set<String> optedOut = new HashSet<>();
 

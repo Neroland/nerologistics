@@ -39,7 +39,7 @@ public final class RocketFlightsState extends SavedData {
     public static final Identifier ID = Identifier.fromNamespaceAndPath(NeroLogisticsCommon.MOD_ID, "rocket_flights");
 
     public static final SavedDataType<RocketFlightsState> TYPE =
-            new SavedDataType<>(ID, RocketFlightsState::new, codec(), null);
+            za.co.neroland.nerolandcore.data.SavedDataCompat.type(ID, RocketFlightsState::new, codec());
 
     /** Drop records kept for the dashboard hint (oldest evicted first). */
     public static final int MAX_DROPS = 16;

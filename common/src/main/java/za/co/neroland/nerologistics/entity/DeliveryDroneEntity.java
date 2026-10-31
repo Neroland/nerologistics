@@ -64,7 +64,11 @@ public class DeliveryDroneEntity extends Entity {
     }
 
     @Override
+    //? if >=1.21.2 {
     public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
+    //?} else {
+    /*public boolean hurt(DamageSource source, float amount) {
+    *///?}
         // A delivery drone is an inert courier — it ignores all damage.
         return false;
     }
@@ -136,8 +140,14 @@ public class DeliveryDroneEntity extends Entity {
         }
     }
 
+    //? if >=1.21.6 {
     @Override
     protected void readAdditionalSaveData(ValueInput input) {
+    //?} else {
+    /*@Override
+    protected void readAdditionalSaveData(net.minecraft.nbt.CompoundTag tag) {
+        ValueInput input = ValueInput.of(tag, this.registryAccess());
+    *///?}
         this.homePos = new BlockPos(input.getIntOr("HomeX", 0), input.getIntOr("HomeY", 0),
                 input.getIntOr("HomeZ", 0));
         this.targetPos = new BlockPos(input.getIntOr("TgtX", 0), input.getIntOr("TgtY", 0),
@@ -147,8 +157,14 @@ public class DeliveryDroneEntity extends Entity {
         this.dispatched = input.getIntOr("Dispatched", 0) != 0;
     }
 
+    //? if >=1.21.6 {
     @Override
     protected void addAdditionalSaveData(ValueOutput output) {
+    //?} else {
+    /*@Override
+    protected void addAdditionalSaveData(net.minecraft.nbt.CompoundTag tag) {
+        ValueOutput output = ValueOutput.of(tag, this.registryAccess());
+    *///?}
         output.putInt("HomeX", this.homePos.getX());
         output.putInt("HomeY", this.homePos.getY());
         output.putInt("HomeZ", this.homePos.getZ());

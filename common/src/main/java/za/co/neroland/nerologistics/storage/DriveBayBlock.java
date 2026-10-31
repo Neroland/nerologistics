@@ -64,9 +64,24 @@ public class DriveBayBlock extends BaseEntityBlock {
     }
 
     @Override
+    //? if >=1.21.9 {
     protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction) {
+    //?} else {
+    /*protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+    *///?}
         return level.getBlockEntity(pos) instanceof DriveBayBlockEntity drive
                 ? Mth.clamp((int) Math.round(drive.fillFraction() * 15.0), 0, 15)
                 : 0;
     }
+
+    //? if <1.21.5 {
+    /*// Before 1.21.5 removal side effects run from the block (block entities get preRemoveSideEffects later).
+    @Override
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof DriveBayBlockEntity drive) {
+            drive.preRemoveSideEffects(pos, state);
+        }
+        super.onRemove(state, level, pos, newState, movedByPiston);
+    }
+    *///?}
 }

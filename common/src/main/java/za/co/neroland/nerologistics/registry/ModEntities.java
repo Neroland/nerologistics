@@ -19,7 +19,11 @@ public final class ModEntities {
             key -> EntityType.Builder.<DeliveryDroneEntity>of(DeliveryDroneEntity::new, MobCategory.MISC)
                     .sized(0.5F, 0.5F)
                     .clientTrackingRange(8)
+                    //? if >=1.21.2 {
                     .build(key));
+                    //?} else {
+                    /*.build(key.location().toString()));
+                    *///?}
 
     private ModEntities() {
     }

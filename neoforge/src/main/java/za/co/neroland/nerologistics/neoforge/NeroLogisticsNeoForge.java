@@ -11,8 +11,10 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
+//? if >=1.21.9 {
 import net.neoforged.neoforge.transfer.item.VanillaContainerWrapper;
 import net.neoforged.neoforge.transfer.item.WorldlyContainerWrapper;
+//?}
 
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
@@ -54,7 +56,11 @@ public final class NeroLogisticsNeoForge {
         // /nerologistics gallery
         NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent event) ->
                 NeroLogisticsCommands.register(event.getDispatcher()));
+        //? if >=1.21.9 {
         if (FMLEnvironment.getDist() == Dist.CLIENT) {
+        //?} else {
+        /*if (FMLEnvironment.dist == Dist.CLIENT) {
+        *///?}
             NeoForgeClientSetup.init(modEventBus);
         }
     }
@@ -91,7 +97,14 @@ public final class NeroLogisticsNeoForge {
 
     private static <T extends AbstractTerminalBlockEntity> void itemCap(RegisterCapabilitiesEvent event,
             BlockEntityType<T> type) {
+        //? if >=1.21.9 {
         event.registerBlockEntity(Capabilities.Item.BLOCK, type,
                 (be, side) -> side != null ? new WorldlyContainerWrapper(be, side) : VanillaContainerWrapper.of(be));
+        //?} else {
+        /*// Before 1.21.9 NeoForge has no transfer API: the item surface is IItemHandler.
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, type,
+                (be, side) -> side != null ? new net.neoforged.neoforge.items.wrapper.SidedInvWrapper(be, side)
+                        : new net.neoforged.neoforge.items.wrapper.InvWrapper(be));
+        *///?}
     }
 }

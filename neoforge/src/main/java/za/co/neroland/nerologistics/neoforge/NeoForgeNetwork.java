@@ -3,7 +3,9 @@ package za.co.neroland.nerologistics.neoforge;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.IEventBus;
+//? if >=1.21.6 {
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
+//?}
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -56,6 +58,10 @@ public final class NeoForgeNetwork implements INetworkHelper {
 
     @Override
     public void sendToServer(CustomPacketPayload payload) {
+        //? if >=1.21.6 {
         ClientPacketDistributor.sendToServer(payload);
+        //?} else {
+        /*net.neoforged.neoforge.network.PacketDistributor.sendToServer(payload);
+        *///?}
     }
 }

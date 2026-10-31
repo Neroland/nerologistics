@@ -2,7 +2,11 @@ package za.co.neroland.nerologistics.forge;
 
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+//? if >=1.21.6 {
 import net.minecraftforge.eventbus.api.bus.BusGroup;
+//?} else {
+/*import net.minecraftforge.eventbus.api.IEventBus;
+*///?}
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 import za.co.neroland.nerologistics.client.AutoCrafterScreen;
@@ -24,10 +28,25 @@ public final class ForgeClientSetup {
     private ForgeClientSetup() {
     }
 
+    //? if >=1.21.9 {
     public static void init(BusGroup modBusGroup) {
         FMLClientSetupEvent.getBus(modBusGroup).addListener(ForgeClientSetup::onClientSetup);
         EntityRenderersEvent.RegisterRenderers.BUS.addListener(ForgeClientSetup::onRegisterEntityRenderers);
     }
+    //?}
+    //? if >=1.21.6 && <1.21.9 {
+    /*// Forge 1.21.6 - 1.21.8: mod-bus events are reached through their bus group.
+    public static void init(BusGroup modBusGroup) {
+        FMLClientSetupEvent.getBus(modBusGroup).addListener(ForgeClientSetup::onClientSetup);
+        EntityRenderersEvent.RegisterRenderers.getBus(modBusGroup).addListener(ForgeClientSetup::onRegisterEntityRenderers);
+    }
+    *///?}
+    //? if <1.21.6 {
+    /*public static void init(IEventBus modEventBus) {
+        modEventBus.addListener(ForgeClientSetup::onClientSetup);
+        modEventBus.addListener(ForgeClientSetup::onRegisterEntityRenderers);
+    }
+    *///?}
 
     private static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(ForgeClientSetup::registerScreens);

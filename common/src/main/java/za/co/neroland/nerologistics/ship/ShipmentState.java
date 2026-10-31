@@ -33,7 +33,7 @@ public final class ShipmentState extends SavedData {
     public static final Identifier ID = Identifier.fromNamespaceAndPath(NeroLogisticsCommon.MOD_ID, "shipments");
 
     public static final SavedDataType<ShipmentState> TYPE =
-            new SavedDataType<>(ID, ShipmentState::new, codec(), null);
+            za.co.neroland.nerolandcore.data.SavedDataCompat.type(ID, ShipmentState::new, codec());
 
     private final List<CargoManifest> shipments = new ArrayList<>();
 

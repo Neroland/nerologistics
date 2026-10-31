@@ -12,7 +12,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+//? if >=1.21.5 {
 import net.minecraft.world.item.component.TooltipDisplay;
+//?}
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
@@ -197,8 +199,18 @@ public class StorageCellItem extends Item {
     // --- Player interaction ---------------------------------------------------
 
     /** Sneak-use in air: open the partition/priority configuration menu for the held cell. */
+    //? if >=1.21.2 {
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
+    //?} else {
+    /*@Override
+    public net.minecraft.world.InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        // 1.21.1 pairs the result with the held stack; the shared logic stays in InteractionResult terms.
+        return new net.minecraft.world.InteractionResultHolder<>(useLegacy(level, player, hand), player.getItemInHand(hand));
+    }
+
+    private InteractionResult useLegacy(Level level, Player player, InteractionHand hand) {
+    *///?}
         if (!player.isShiftKeyDown()) {
             return InteractionResult.PASS;
         }
@@ -210,10 +222,18 @@ public class StorageCellItem extends Item {
         return InteractionResult.SUCCESS;
     }
 
+    //? if >=1.21.5 {
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
             Consumer<Component> tooltip, TooltipFlag flag) {
         super.appendHoverText(stack, context, display, tooltip, flag);
+    //?} else {
+    /*@Override
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, java.util.List<Component> lines,
+            TooltipFlag flag) {
+        super.appendHoverText(stack, context, lines, flag);
+        Consumer<Component> tooltip = lines::add;
+    *///?}
         CellSettings settings = settings(stack);
         if (this.kind == Kind.ITEM) {
             ItemCellContents contents = itemContents(stack);

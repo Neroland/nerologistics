@@ -2,6 +2,7 @@ package za.co.neroland.nerologistics.client;
 
 import java.util.Locale;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -62,13 +63,36 @@ public class LogisticsProcessorScreen extends AbstractContainerScreen<LogisticsP
     private static final int BTN_H = 12;
 
     public LogisticsProcessorScreen(LogisticsProcessorMenu menu, Inventory playerInventory, Component title) {
+        //? if >=26.1 {
         super(menu, playerInventory, title, 176, 260);
+        //?} else {
+        /*super(menu, playerInventory, title);
+        this.imageWidth = 176;
+        this.imageHeight = 260;
+        *///?}
         this.titleLabelX = 8;
         this.inventoryLabelX = 8;
         this.inventoryLabelY = 166;
     }
 
+    //? if <26.1 {
+    /*// Before 26.1 the panel is the container background (renderBg); render() then draws the slots, labels
+    // and tooltip on top, which 26.x does inside extractContents.
     @Override
+    protected void renderBg(GuiGraphicsExtractor extractor, float partialTick, int mouseX, int mouseY) {
+        extractContents(extractor, mouseX, mouseY, partialTick);
+    }
+
+    @Override
+    public void render(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+        super.render(extractor, mouseX, mouseY, partialTick);
+        this.renderTooltip(extractor, mouseX, mouseY);
+    }
+
+    *///?}
+    //? if >=26.1 {
+    @Override
+    //?}
     public void extractContents(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
         int x = this.leftPos;
         int y = this.topPos;
@@ -87,7 +111,9 @@ public class LogisticsProcessorScreen extends AbstractContainerScreen<LogisticsP
         for (int rule = 0; rule < RULES; rule++) {
             extractRuleRow(extractor, x, y + ROW_Y + rule * ROW_H, rule);
         }
+        //? if >=26.1 {
         super.extractContents(extractor, mouseX, mouseY, partialTick);
+        //?}
         extractStatusTooltip(extractor, mouseX, mouseY);
     }
 
@@ -178,8 +204,14 @@ public class LogisticsProcessorScreen extends AbstractContainerScreen<LogisticsP
         extractor.text(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, SUBTLE, false);
     }
 
+    //? if >=1.21.9 {
     @Override
     public boolean mouseClicked(MouseButtonEvent mouseButtonEvent, boolean doubleClick) {
+    //?} else {
+    /*@Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        MouseButtonEvent mouseButtonEvent = new MouseButtonEvent(mouseX, mouseY, button);
+    *///?}
         double mx = mouseButtonEvent.x();
         double my = mouseButtonEvent.y();
         for (int rule = 0; rule < RULES; rule++) {
@@ -196,7 +228,7 @@ public class LogisticsProcessorScreen extends AbstractContainerScreen<LogisticsP
                 op = LogisticsProcessorMenu.OP_THRESHOLD_UP + stepExponent(mouseButtonEvent);
             } else if (hit(mx, ACT_X, ACT_W)) {
                 // Right-click the action to cycle the rule's port condition; left-click cycles the action.
-                op = mouseButtonEvent.button() == 1 ? LogisticsProcessorMenu.OP_CYCLE_GATE
+                op = mouseButtonEvent.button() == InputConstants.MOUSE_BUTTON_RIGHT ? LogisticsProcessorMenu.OP_CYCLE_GATE
                         : LogisticsProcessorMenu.OP_CYCLE_ACTION;
             } else if (hit(mx, ON_X, ON_W)) {
                 op = LogisticsProcessorMenu.OP_TOGGLE_ENABLED;
@@ -208,7 +240,11 @@ public class LogisticsProcessorScreen extends AbstractContainerScreen<LogisticsP
                 return true;
             }
         }
+        //? if >=1.21.9 {
         return super.mouseClicked(mouseButtonEvent, doubleClick);
+        //?} else {
+        /*return super.mouseClicked(mouseX, mouseY, button);
+        *///?}
     }
 
     private boolean hit(double mx, int bx, int bw) {

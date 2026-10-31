@@ -419,9 +419,16 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
 
     // --- Persistence -------------------------------------------------------------
 
+    //? if >=1.21.6 {
     @Override
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
+    //?} else {
+    /*@Override
+    protected void saveAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        ValueOutput output = ValueOutput.of(tag, registries);
+    *///?}
         output.putInt("Channel", this.channel);
         if (this.destination != null) {
             output.putString("Dest", this.destination.serialize());
@@ -448,9 +455,16 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
         output.putLong("DispatcherLeast", this.dispatcher == null ? 0L : this.dispatcher.getLeastSignificantBits());
     }
 
+    //? if >=1.21.6 {
     @Override
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
+    //?} else {
+    /*@Override
+    protected void loadAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        ValueInput input = ValueInput.of(tag, registries);
+    *///?}
         this.channel = input.getIntOr("Channel", 0);
         this.destination = DestinationKey.parse(input.getStringOr("Dest", "")).orElse(null);
         // Pre-0.4 saves: only DestIndex (always written, default 0). Resolved once on first use.

@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
@@ -97,7 +98,13 @@ public class StorageTerminalScreen extends AbstractContainerScreen<StorageTermin
     private final List<StorageTerminalContentsPayload.FluidLine> fluidView = new ArrayList<>();
 
     public StorageTerminalScreen(StorageTerminalMenu menu, Inventory playerInventory, Component title) {
+        //? if >=26.1 {
         super(menu, playerInventory, title, W, H);
+        //?} else {
+        /*super(menu, playerInventory, title);
+        this.imageWidth = W;
+        this.imageHeight = H;
+        *///?}
         this.titleLabelX = 8;
         this.titleLabelY = 6;
         this.inventoryLabelX = StorageTerminalMenu.INV_X;
@@ -221,7 +228,24 @@ public class StorageTerminalScreen extends AbstractContainerScreen<StorageTermin
 
     // --- Rendering -----------------------------------------------------------
 
+    //? if <26.1 {
+    /*// Before 26.1 the panel is the container background (renderBg); render() then draws the slots, labels
+    // and tooltip on top, which 26.x does inside extractContents.
     @Override
+    protected void renderBg(GuiGraphicsExtractor extractor, float partialTick, int mouseX, int mouseY) {
+        extractContents(extractor, mouseX, mouseY, partialTick);
+    }
+
+    @Override
+    public void render(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+        super.render(extractor, mouseX, mouseY, partialTick);
+        this.renderTooltip(extractor, mouseX, mouseY);
+    }
+
+    *///?}
+    //? if >=26.1 {
+    @Override
+    //?}
     public void extractContents(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
         int x = this.leftPos;
         int y = this.topPos;
@@ -246,7 +270,9 @@ public class StorageTerminalScreen extends AbstractContainerScreen<StorageTermin
         extractGridEntries(extractor, mouseX, mouseY);
         extractScrollbar(extractor);
         extractButtons(extractor, mouseX, mouseY);
+        //? if >=26.1 {
         super.extractContents(extractor, mouseX, mouseY, partialTick);
+        //?}
     }
 
     private void extractGridEntries(GuiGraphicsExtractor extractor, int mouseX, int mouseY) {
@@ -380,8 +406,14 @@ public class StorageTerminalScreen extends AbstractContainerScreen<StorageTermin
                 && mouseY >= this.topPos + GRID_Y && mouseY < this.topPos + GRID_Y + ROWS * 18;
     }
 
+    //? if >=1.21.9 {
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+    //?} else {
+    /*@Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        MouseButtonEvent event = new MouseButtonEvent(mouseX, mouseY, button);
+    *///?}
         double mx = event.x();
         double my = event.y();
         // Sort button.
@@ -401,7 +433,11 @@ public class StorageTerminalScreen extends AbstractContainerScreen<StorageTermin
             handleGridClick(event, gridIndexAt(mx, my));
             return true;
         }
+        //? if >=1.21.9 {
         return super.mouseClicked(event, doubleClick);
+        //?} else {
+        /*return super.mouseClicked(mouseX, mouseY, button);
+        *///?}
     }
 
     private boolean hitButton(double mx, double my, int bx, int bw) {
@@ -411,14 +447,19 @@ public class StorageTerminalScreen extends AbstractContainerScreen<StorageTermin
     }
 
     private void handleGridClick(MouseButtonEvent event, int index) {
-        boolean rightClick = event.button() == 1;
+        boolean rightClick = event.button() == InputConstants.MOUSE_BUTTON_RIGHT;
         ItemStack carried = this.menu.getCarried();
         if (this.fluidTab) {
             if (carried.is(Items.BUCKET) && index >= 0 && index < this.fluidView.size()) {
                 send(StorageTerminalActionPayload.Action.FILL_BUCKET, ItemStack.EMPTY,
                         this.fluidView.get(index).fluidId());
+            //? if >=1.21.9 {
             } else if (carried.getItem() instanceof BucketItem bucket
                     && bucket.getContent() != Fluids.EMPTY) {
+            //?} else {
+            /*// Before 1.21.9 a bucket's fluid is private; any bucket but the empty one carries a fluid.
+            } else if (carried.getItem() instanceof BucketItem bucket && bucket != Items.BUCKET) {
+            *///?}
                 send(StorageTerminalActionPayload.Action.DRAIN_BUCKET, ItemStack.EMPTY, null);
             }
             return;
@@ -462,16 +503,31 @@ public class StorageTerminalScreen extends AbstractContainerScreen<StorageTermin
     }
 
     /** Let the focused search box swallow typing (incl. the inventory key) without closing. */
+    //? if >=1.21.9 {
     @Override
     public boolean keyPressed(KeyEvent event) {
-        if (event.key() == 256) { // Escape
+    //?} else {
+    /*@Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        KeyEvent event = new KeyEvent(keyCode, scanCode, modifiers);
+    *///?}
+        if (event.isEscape()) {
             this.onClose();
             return true;
         }
+        //? if >=1.21.9 {
         if (this.searchBox != null
                 && (this.searchBox.keyPressed(event) || this.searchBox.canConsumeInput())) {
+        //?} else {
+        /*if (this.searchBox != null
+                && (this.searchBox.keyPressed(keyCode, scanCode, modifiers) || this.searchBox.canConsumeInput())) {
+        *///?}
             return true;
         }
+        //? if >=1.21.9 {
         return super.keyPressed(event);
+        //?} else {
+        /*return super.keyPressed(keyCode, scanCode, modifiers);
+        *///?}
     }
 }

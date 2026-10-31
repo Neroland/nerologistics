@@ -36,10 +36,19 @@ public final class NeroLogisticsForgeCapabilities {
     }
 
     public static void register() {
+        //? if >=1.21.6 {
         AttachCapabilitiesEvent.BlockEntities.BUS.addListener(NeroLogisticsForgeCapabilities::onAttachBlockEntity);
+        //?} else {
+        /*net.minecraftforge.common.MinecraftForge.EVENT_BUS.addGenericListener(
+                net.minecraft.world.level.block.entity.BlockEntity.class, NeroLogisticsForgeCapabilities::onAttachBlockEntity);
+        *///?}
     }
 
+    //? if >=1.21.6 {
     private static void onAttachBlockEntity(AttachCapabilitiesEvent.BlockEntities event) {
+    //?} else {
+    /*private static void onAttachBlockEntity(AttachCapabilitiesEvent<net.minecraft.world.level.block.entity.BlockEntity> event) {
+    *///?}
         if (event.getObject() instanceof AbstractTerminalBlockEntity terminal) {
             TerminalProvider provider = new TerminalProvider(terminal);
             event.addCapability(TERMINAL_CAPS, provider);

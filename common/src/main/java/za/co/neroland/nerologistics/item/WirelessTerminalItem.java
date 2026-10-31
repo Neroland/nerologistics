@@ -15,7 +15,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+//? if >=1.21.5 {
 import net.minecraft.world.item.component.TooltipDisplay;
+//?}
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 
@@ -69,17 +71,33 @@ public class WirelessTerminalItem extends Item {
                     GlobalPos.of(level.dimension(), pos.immutable()));
             Player player = context.getPlayer();
             if (player != null) {
+                //? if >=26.1 {
                 player.sendSystemMessage(Component.translatable(
                         "item.nerologistics.wireless_terminal.bound",
                         pos.getX(), pos.getY(), pos.getZ()));
+                //?} else {
+                /*player.displayClientMessage(Component.translatable(
+                        "item.nerologistics.wireless_terminal.bound",
+                        pos.getX(), pos.getY(), pos.getZ()), false);
+                *///?}
             }
         }
         return InteractionResult.SUCCESS;
     }
 
     /** Use (not sneaking): open the storage terminal against the bound controller's network. */
+    //? if >=1.21.2 {
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
+    //?} else {
+    /*@Override
+    public net.minecraft.world.InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        // 1.21.1 pairs the result with the held stack; the shared logic stays in InteractionResult terms.
+        return new net.minecraft.world.InteractionResultHolder<>(useLegacy(level, player, hand), player.getItemInHand(hand));
+    }
+
+    private InteractionResult useLegacy(Level level, Player player, InteractionHand hand) {
+    *///?}
         if (player.isShiftKeyDown()) {
             return InteractionResult.PASS; // sneak is the binding gesture (useOn)
         }
@@ -127,10 +145,18 @@ public class WirelessTerminalItem extends Item {
         return InteractionResult.SUCCESS;
     }
 
+    //? if >=1.21.5 {
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
             Consumer<Component> tooltip, TooltipFlag flag) {
         super.appendHoverText(stack, context, display, tooltip, flag);
+    //?} else {
+    /*@Override
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, java.util.List<Component> lines,
+            TooltipFlag flag) {
+        super.appendHoverText(stack, context, lines, flag);
+        Consumer<Component> tooltip = lines::add;
+    *///?}
         GlobalPos target = boundTarget(stack);
         if (target == null) {
             tooltip.accept(Component.translatable("item.nerologistics.wireless_terminal.tooltip.unbound")
