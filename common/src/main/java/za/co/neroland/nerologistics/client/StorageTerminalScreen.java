@@ -9,6 +9,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.KeyEvent;
@@ -119,6 +120,8 @@ public class StorageTerminalScreen extends AbstractContainerScreen<StorageTermin
         this.searchBox.setMaxLength(64);
         this.searchBox.setBordered(true);
         this.searchBox.setHint(Component.translatable("gui.nerologistics.storage_terminal.search_hint"));
+        this.searchBox.setTooltip(Tooltip.create(
+                Component.translatable("gui.nerologistics.storage_terminal.search_help")));
         this.searchBox.setValue(this.searchText);
         this.searchBox.setResponder(text -> {
             this.searchText = text;
@@ -416,6 +419,20 @@ public class StorageTerminalScreen extends AbstractContainerScreen<StorageTermin
     *///?}
         double mx = event.x();
         double my = event.y();
+        // Search box: right-click clears it; a click anywhere else stops typing, so the inventory
+        // key and the grid behave normally again (the box otherwise keeps focus and swallows keys).
+        if (this.searchBox != null) {
+            boolean overSearch = this.searchBox.isMouseOver(mx, my);
+            if (overSearch && event.button() == InputConstants.MOUSE_BUTTON_RIGHT) {
+                this.searchBox.setValue("");
+                this.setFocused(this.searchBox);
+                this.searchBox.setFocused(true);
+                return true;
+            }
+            if (!overSearch && this.searchBox.isFocused()) {
+                stopSearching();
+            }
+        }
         // Sort button.
         if (hitButton(mx, my, SORT_X, SORT_W)) {
             this.sortMode = SortMode.values()[(this.sortMode.ordinal() + 1) % SortMode.values().length];
@@ -502,7 +519,18 @@ public class StorageTerminalScreen extends AbstractContainerScreen<StorageTermin
         return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
 
-    /** Let the focused search box swallow typing (incl. the inventory key) without closing. */
+    /** Drop keyboard focus from the search box; the filter text stays applied. */
+    private void stopSearching() {
+        this.searchBox.setFocused(false);
+        this.setFocused(null);
+    }
+
+    /**
+     * Escape always closes the terminal, even mid-search. Otherwise a focused search box swallows
+     * typing (including the inventory key) so letters go into the filter instead of closing.
+     * Escape must be tested with {@code isEscape()}: on 26.3 {@code key()} is an SDL scancode
+     * (Escape = 41), not the GLFW key code 256, so a raw-code check never matches there.
+     */
     //? if >=1.21.9 {
     @Override
     public boolean keyPressed(KeyEvent event) {

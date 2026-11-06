@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.2-beta.1] - 2026-11-06
+
+Bug-fix release. Existing worlds load unchanged; no new requirements.
+
+### Fixed
+
+- **Storage Terminal could trap you while searching.** On Minecraft 26.3, Escape did nothing while the
+  search box had focus, and every other key went into the search, so the only way out was to quit the
+  game. Escape now always closes the terminal. Click anywhere outside the search box to stop typing
+  (the filter stays applied), or right-click the box to clear it. Hovering the box shows these controls.
+
 ## [0.7.1-beta.1] - 2026-10-31
 
 First NeroLogistics builds for Minecraft 1.21.x. Existing worlds load unchanged. **Now requires Neroland
@@ -489,7 +500,8 @@ Initial release — **Stages 1–6** of the original flat, ownership-scoped logi
 - Command palette, mod logo and store descriptions.
 - In-repo wiki scaffold.
 
-[Unreleased]: https://github.com/Neroland/nerologistics/compare/v0.3.0-alpha.1...HEAD
+[Unreleased]: https://github.com/Neroland/nerologistics/compare/v0.7.2-beta.1...HEAD
+[0.7.2-beta.1]: https://github.com/Neroland/nerologistics/compare/v0.7.0-beta.1...v0.7.2-beta.1
 [0.3.0-alpha.1]: https://github.com/Neroland/nerologistics/compare/v0.2.0-alpha.1...v0.3.0-alpha.1
 [0.2.0-alpha.1]: https://github.com/Neroland/nerologistics/releases/tag/v0.2.0-alpha.1
 [0.1.0-alpha.1]: https://github.com/Neroland/nerologistics/compare/v0.0.1-alpha.2...v0.1.0-alpha.1

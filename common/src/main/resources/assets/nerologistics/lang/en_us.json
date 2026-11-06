@@ -52,6 +52,7 @@
   "block.nerologistics.storage_terminal.disabled": "The storage terminal is disabled on this server.",
   "gui.nerologistics.storage_terminal.search": "Search",
   "gui.nerologistics.storage_terminal.search_hint": "Search name or mod…",
+  "gui.nerologistics.storage_terminal.search_help": "Type to filter by name or mod. Right-click to clear. Click elsewhere to stop typing. Esc closes the terminal.",
   "gui.nerologistics.storage_terminal.sort.count": "Sort: Count",
   "gui.nerologistics.storage_terminal.sort.name": "Sort: Name",
   "gui.nerologistics.storage_terminal.sort.mod": "Sort: Mod",
