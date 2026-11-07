@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.3-beta.1] - 2026-11-07
+
+Build-only release so 0.7.2-beta.1 can actually ship. Existing worlds load unchanged.
+
+### Fixed
+
+- **Release builds failed before compiling.** NeroLogistics was built against Nerospace 2.0.1, a
+  version that was never published, so the release workflow could not download it and stopped. It
+  now builds against Nerospace **2.0.0-beta.1**, the current published release, which has the same
+  rocket-cargo API. 0.7.1-beta.1 and 0.7.2-beta.1 never reached players for this reason; this is
+  the first release that carries their changes, including the Storage Terminal search fix.
+
+### Changed
+
+- The optional Nerospace integration now accepts Nerospace **2.0.0-beta.1** or later (was 2.0.1).
+
 ## [0.7.2-beta.1] - 2026-11-06
 
 Bug-fix release. Existing worlds load unchanged; no new requirements.
@@ -500,8 +516,8 @@ Initial release — **Stages 1–6** of the original flat, ownership-scoped logi
 - Command palette, mod logo and store descriptions.
 - In-repo wiki scaffold.
 
-[Unreleased]: https://github.com/Neroland/nerologistics/compare/v0.7.2-beta.1...HEAD
-[0.7.2-beta.1]: https://github.com/Neroland/nerologistics/compare/v0.7.0-beta.1...v0.7.2-beta.1
+[Unreleased]: https://github.com/Neroland/nerologistics/compare/v0.7.3-beta.1...HEAD
+[0.7.3-beta.1]: https://github.com/Neroland/nerologistics/compare/v0.7.0-beta.1...v0.7.3-beta.1
 [0.3.0-alpha.1]: https://github.com/Neroland/nerologistics/compare/v0.2.0-alpha.1...v0.3.0-alpha.1
 [0.2.0-alpha.1]: https://github.com/Neroland/nerologistics/releases/tag/v0.2.0-alpha.1
 [0.1.0-alpha.1]: https://github.com/Neroland/nerologistics/compare/v0.0.1-alpha.2...v0.1.0-alpha.1
