@@ -7,9 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.4-beta.1] - 2026-11-16
+
+### Added
+
+- Map layers for Neroland Core's map API (drawn by NeroMaps and the companion app): drone ports and train stations within 64 blocks of you, while you are online and in that dimension. No names, no storage, no networks and no rocket flights are listed.
+
+### Changed
+
+- The Fabric metadata now caps the Neroland Core dependency below 2.0.0, matching Forge and NeoForge.
+
 ### Dependencies
 
-- Updated Neroland Core from 1.17.0 to 1.17.6.
+- Updated Neroland Core from 1.17.0 to 1.19.0 (map layer API).
 - Updated NeroEconomy from 0.5.0-beta.1 to 0.5.1-beta.1.
 - Updated Nerospace from 2.0.0-beta.1 to 2.2.0.
 - Updated Fabric Loader from 0.19.5 to 0.20.1.

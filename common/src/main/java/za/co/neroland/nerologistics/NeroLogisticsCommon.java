@@ -73,5 +73,6 @@ public final class NeroLogisticsCommon {
         // after everything above so a client is never told about a subsystem the mod has not finished
         // wiring, and wrapped internally so a link failure can never take the mod down.
         NeroLogisticsLinkModule.init();
+        za.co.neroland.nerologistics.map.NeroLogisticsMapLayers.register(); // Core map layers (NeroMaps); additive, swallows failure
     }
 }

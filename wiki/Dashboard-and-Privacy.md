@@ -83,6 +83,8 @@ pads only and does not launch until someone right-clicks it.
 This mirrors the ecosystem-wide pattern: any mod that stores player data routes erasure through Core
 so a single request clears a player everywhere.
 
+Map layers: with a Neroland map installed, drone ports and train stations within 64 blocks of you show on the map while you stand there; NeroLogistics records no owners, so nothing farther away, no names and no storage are ever listed.
+
 ### Crash reporting
 
 NeroLogistics sends anonymous crash reports to the developers via Sentry (EU servers): the stack trace
