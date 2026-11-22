@@ -41,6 +41,11 @@ duct (universal ducts join it to both at once).
 - The drive bay is **not** a vanilla inventory — ducts and hoppers can never pull the cell items
   out of it, because cells are digital media, not cargo. The network sees only the cells'
   *contents*.
+- **Filling from ducts.** Set the duct face next to a chest, machine or tank to **Input** with the
+  Configurator: what it pulls goes into the cells first and spills into other chests or tanks once
+  the cells are full or refuse it. Faces on the default **IO** only move things between chests and
+  tanks and never fill cells, so a line of chests is not drained into the bay. The duct face
+  touching the drive bay must not be **Disabled**, and an item duct's filter applies.
 - Insertion honours cell settings network-wide: the highest-priority accepting cell fills first;
   partitioned cells that match take the resource before unpartitioned ones.
 - **Comparator** output reads the average cell fill (0–15).

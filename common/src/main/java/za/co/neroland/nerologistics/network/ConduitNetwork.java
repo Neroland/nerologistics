@@ -1,6 +1,7 @@
 package za.co.neroland.nerologistics.network;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,6 +27,7 @@ import za.co.neroland.nerologistics.conduit.NetworkControllerBlockEntity;
 import za.co.neroland.nerologistics.config.NeroLogisticsConfig;
 import za.co.neroland.nerologistics.dashboard.LogisticsMetrics;
 import za.co.neroland.nerologistics.storage.NetworkStorageIndex;
+import za.co.neroland.nerologistics.storage.StorageNode;
 import za.co.neroland.nerologistics.transport.InventoryTransfer;
 
 /**
@@ -220,6 +222,7 @@ public final class ConduitNetwork {
         // back in the same pass. Any inventory that received an item this tick is excluded as a
         // source for the remainder of the pass; round-robin source order is otherwise unchanged.
         Set<BlockPos> receivedThisTick = new HashSet<>();
+        List<ConduitEndpoint> storageSinks = storageSinks(level, sinks);
         for (ConduitEndpoint src : eps) {
             if (budget <= 0) {
                 break;
@@ -241,6 +244,23 @@ public final class ConduitNetwork {
                 }
                 int want = Math.min(stack.getCount(), budget);
                 int movedTotal = 0;
+                // Drive-bay cells first (highest priority first), but only for faces explicitly set to
+                // INPUT: default IO faces would otherwise drain every chest on the line into the cells.
+                if (src.mode() == SideMode.INPUT) {
+                    for (ConduitEndpoint sink : storageSinks) {
+                        if (budget <= 0 || movedTotal >= want) {
+                            break;
+                        }
+                        StorageNode node = storageNodeAt(level, sink.neighborPos());
+                        AbstractConduitBlockEntity sinkBe = conduitBe(level, sink.conduitPos());
+                        if (node == null || sinkBe == null || !sinkBe.itemPasses(sink.face(), stack)) {
+                            continue;
+                        }
+                        int inserted = (int) node.insertItem(stack, want - movedTotal, false);
+                        movedTotal += inserted;
+                        budget -= inserted;
+                    }
+                }
                 for (ConduitEndpoint sink : sinks) {
                     if (budget <= 0 || movedTotal >= want) {
                         break;
@@ -330,6 +350,7 @@ public final class ConduitNetwork {
         // Same ping-pong guard as the item pass: tanks that received fluid this tick are not drained
         // again as sources within the same pass.
         Set<BlockPos> receivedThisTick = new HashSet<>();
+        List<ConduitEndpoint> storageSinks = storageSinks(level, sinks);
         for (ConduitEndpoint src : eps) {
             if (budget <= 0) {
                 break;
@@ -345,6 +366,30 @@ public final class ConduitNetwork {
             Fluid fluid = from.getFluid();
             if (fluid == Fluids.EMPTY || from.getAmount() <= 0 || !srcBe.fluidPasses(src.face(), fluid)) {
                 continue;
+            }
+            // Drive-bay fluid cells first, INPUT faces only (same rule as the item pass).
+            if (src.mode() == SideMode.INPUT) {
+                for (ConduitEndpoint sink : storageSinks) {
+                    if (budget <= 0) {
+                        break;
+                    }
+                    StorageNode node = storageNodeAt(level, sink.neighborPos());
+                    AbstractConduitBlockEntity sinkBe = conduitBe(level, sink.conduitPos());
+                    if (node == null || sinkBe == null || !sinkBe.fluidPasses(sink.face(), fluid)) {
+                        continue;
+                    }
+                    long drainSim = from.drain(budget, true);
+                    if (drainSim <= 0) {
+                        break;
+                    }
+                    long fillSim = node.insertFluid(fluid, drainSim, true);
+                    if (fillSim <= 0) {
+                        continue;
+                    }
+                    long drained = from.drain(fillSim, false);
+                    node.insertFluid(fluid, drained, false);
+                    budget -= drained;
+                }
             }
             for (ConduitEndpoint sink : sinks) {
                 if (budget <= 0) {
@@ -385,6 +430,33 @@ public final class ConduitNetwork {
             }
         }
         return sinks;
+    }
+
+    /**
+     * The sink endpoints whose neighbour is an active drive bay (any {@link StorageNode}), highest
+     * storage priority first, one entry per node. Duct transport otherwise only reaches vanilla
+     * containers and Core fluid storages, which a drive bay deliberately is not.
+     */
+    private static List<ConduitEndpoint> storageSinks(Level level, List<ConduitEndpoint> sinks) {
+        List<ConduitEndpoint> out = new ArrayList<>();
+        Set<BlockPos> seen = new HashSet<>();
+        for (ConduitEndpoint sink : sinks) {
+            if (storageNodeAt(level, sink.neighborPos()) != null && seen.add(sink.neighborPos())) {
+                out.add(sink);
+            }
+        }
+        if (out.size() > 1) {
+            out.sort(Comparator.comparingInt((ConduitEndpoint ep) -> {
+                StorageNode node = storageNodeAt(level, ep.neighborPos());
+                return node == null ? Integer.MIN_VALUE : node.storagePriority();
+            }).reversed());
+        }
+        return out;
+    }
+
+    private static StorageNode storageNodeAt(Level level, BlockPos pos) {
+        BlockEntity be = level.getBlockEntity(pos);
+        return be instanceof StorageNode node && node.storageNodeActive() ? node : null;
     }
 
     private static AbstractConduitBlockEntity conduitBe(Level level, BlockPos pos) {

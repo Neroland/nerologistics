@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.6] - 2026-11-26
+
+### Fixed
+
+- Ducts now fill drive bays. A duct face set to **Input** pulls items (or fluids) from the block on it into the drive bay cells on the same network, highest priority first, and only spills into chests and tanks when the cells are full or refuse it. Before, duct transport only reached chests and tanks, so the cells never filled from a pipe. Faces on the default IO still only move things between chests and tanks, so the cells don't drain every chest on the line.
+
 ## [0.7.5] - 2026-11-26
 
 ### Added
