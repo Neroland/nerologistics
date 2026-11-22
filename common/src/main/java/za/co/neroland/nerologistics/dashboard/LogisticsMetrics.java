@@ -213,6 +213,16 @@ public final class LogisticsMetrics {
         AttributionOptOutState.get(server).setOptedOut(player, false);
     }
 
+    /**
+     * The player's opt-in attribution record for their data export: {@code {lastActiveEpochDay, shipmentCount}},
+     * or {@code null} when none is held. A copy; read-only.
+     */
+    @Nullable
+    public static long[] attributionOf(UUID player) {
+        long[] record = ATTRIBUTION.get(player);
+        return record == null ? null : record.clone();
+    }
+
     /** In-game opt-out: drop the player's attribution record now (the aggregates are untouched). */
     public static void forgetAttribution(UUID player) {
         ATTRIBUTION.remove(player);

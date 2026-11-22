@@ -60,6 +60,7 @@ public final class NeroLogisticsCommon {
         // erase request (or the inactivity sweep) purges a player here too — both the in-memory
         // attribution map and any rocket-cargo-port owner UUIDs (loaded ports immediately; unloaded
         // ports via the durable tombstone list they consult on next load), plus any quest-unlocked perks.
+        za.co.neroland.nerologistics.privacy.LogisticsDataExport.register();
         PlayerDataErasure.register((server, player) -> {
             LogisticsMetrics.erasePlayer(server, player);
             RocketCargoPortBlockEntity.erasePlayer(server, player);

@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-11-22
+
+### Added
+
+- NeroLogistics' data is part of Neroland Core's `/neroland data exportme`: your shipment attribution and opt-out, quest perks and saved cell preset, and loaded rocket cargo ports that name you. Built in memory, never written to disk. Requires Neroland Core 1.20.1.
+
+### Fixed
+
+- Error reporting no longer shares Sentry's global client with other mods. Every Neroland mod bundles the same Sentry library, so only the last mod to start kept reporting and its filter dropped everyone else's reports; NeroLogistics now reports through its own client. Nothing about what is sent changed.
+
 ## [0.7.6] - 2026-11-26
 
 ### Fixed

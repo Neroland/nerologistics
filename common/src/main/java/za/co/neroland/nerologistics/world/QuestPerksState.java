@@ -82,6 +82,11 @@ public final class QuestPerksState extends SavedData {
         setDirty();
     }
 
+    /** The player's perks for their data export (an empty record when none). Read-only. */
+    public Perks perksOf(UUID player) {
+        return of(player);
+    }
+
     public boolean hasDashboardBadge(UUID player) {
         return of(player).dashboardBadge();
     }

@@ -586,6 +586,27 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
                 ErasedOwnersState.ID.toString());
     }
 
+    /** A loaded port that records {@code player}, for their data export. */
+    public record PortRole(Identifier dimension, BlockPos pos, boolean owner, boolean dispatcher) {
+    }
+
+    /**
+     * The loaded rocket cargo ports that record {@code player} as their opt-in owner or as their dispatcher,
+     * for Core's data export. Only loaded ports are listed: ports keep this in their own block data, and an
+     * export must not load chunks. Read-only; server thread.
+     */
+    public static List<PortRole> loadedPortsOf(UUID player) {
+        List<PortRole> out = new ArrayList<>();
+        for (RocketCargoPortBlockEntity port : LOADED) {
+            boolean owns = player.equals(port.owner);
+            boolean dispatches = player.equals(port.dispatcher);
+            if ((owns || dispatches) && port.level != null) {
+                out.add(new PortRole(port.level.dimension().identifier(), port.worldPosition, owns, dispatches));
+            }
+        }
+        return out;
+    }
+
     /**
      * {@code /nerologistics privacy optout}: scrub the analytics owner from every loaded port (unloaded
      * ports scrub themselves on their next load against the opt-out set). The dispatcher is untouched —

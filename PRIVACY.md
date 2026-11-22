@@ -176,6 +176,12 @@ retained only for Sentry's standard retention period before automatic deletion.
 In-world data (attribution when a server has opted in, the dispatcher, quest perks) is held by that
 server's operator and is erased through Core's data-erasure hook.
 
+**Getting a copy.** `/neroland data exportme` (Neroland Core's export for every Neroland mod) includes what
+NeroLogistics keeps about you: your shipment attribution and opt-out, your quest perks and saved cell preset,
+and the rocket cargo ports in loaded chunks that name you as opt-in owner or dispatcher (ports keep this in
+their own block data, and an export does not load the world). It is built in memory and shown to you as
+click-to-copy text; nothing is written to a file or logged.
+
 ## Contact
 
 To exercise any data-subject right (access, deletion, objection) for an error report, contact

@@ -10,7 +10,12 @@ import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
 
 import io.sentry.Breadcrumb;
-import io.sentry.Sentry;
+import io.sentry.IScopes;
+import io.sentry.Scope;
+import io.sentry.Scopes;
+import io.sentry.SentryClient;
+import io.sentry.SentryOptions;
+import io.sentry.UncaughtExceptionHandlerIntegration;
 import io.sentry.SentryEvent;
 import io.sentry.SentryLevel;
 import io.sentry.protocol.Message;
@@ -64,6 +69,14 @@ public final class NeroLogisticsTelemetry {
             Pattern.compile("(?i)(?:[A-Z]:)?[/\\\\](?:Users|home)[/\\\\][^/\\\\\\s:;,'\"]+");
 
     private static volatile boolean active;
+
+    /** This mod's own, non-global Sentry scopes; {@code null} until telemetry starts. */
+
+    private static volatile IScopes scopes;
+
+    /** The uncaught-exception integration bound to {@link #scopes}; never closed (process lifetime). */
+
+    private static UncaughtExceptionHandlerIntegration uncaughtHandler;
     private static final AtomicInteger eventsSent = new AtomicInteger();
     private static final Set<String> seenFingerprints = ConcurrentHashMap.newKeySet();
     private static SentryLogAppender appender;
@@ -89,28 +102,31 @@ public final class NeroLogisticsTelemetry {
             return;
         }
         boolean dev = Services.PLATFORM.isDevelopmentEnvironment();
-        Sentry.init(options -> {
-            options.setDsn(DSN);
-            options.setRelease("nerologistics@" + MOD_VERSION);
-            options.setEnvironment(dev ? "development" : environmentOf(MOD_VERSION));
-            options.setSendDefaultPii(false);          // POPIA/GDPR: never the sender's IP/identity
-            options.setAttachServerName(false);        // hostname is identifying
-            options.setEnableUncaughtExceptionHandler(true);
-            options.setEnableAutoSessionTracking(false);
-            options.setBeforeSend((event, hint) -> ForeignMixinFailure.matches(event) ? null : filterAndScrub(event));
-        });
-        Sentry.configureScope(scope -> {
+        SentryOptions options = new SentryOptions();
+        options.setDsn(DSN);
+        options.setRelease("nerologistics@" + MOD_VERSION);
+        options.setEnvironment(dev ? "development" : environmentOf(MOD_VERSION));
+        options.setSendDefaultPii(false);          // POPIA/GDPR: never the sender's IP/identity
+        options.setAttachServerName(false);        // hostname is identifying
+        options.setEnableUncaughtExceptionHandler(true);
+        options.setEnableAutoSessionTracking(false);
+        options.setBeforeSend((event, hint) -> ForeignMixinFailure.matches(event) ? null : filterAndScrub(event));
+        // Never the global hub: other mods' Sentry.init must not replace or silence this client.
+        options.setEnableShutdownHook(false);
+        IScopes own = isolatedScopes(options, "nerologistics");
+        scopes = own;
+        own.configureScope(scope -> {
             scope.setTag("loader", Services.PLATFORM.getPlatformName().toLowerCase(Locale.ROOT));
             scope.setTag("dist", Services.PLATFORM.isClient() ? "client" : "dedicated_server");
             scope.setTag("runtime", dev ? "development" : "production");
             scope.setTag("cfg_player_attribution",
                     Boolean.toString(NeroLogisticsConfig.perPlayerThroughputAttribution()));
         });
-        Sentry.startSession();
+        own.startSession();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
-                Sentry.endSession();
-                Sentry.flush(2000L);
+                own.endSession();
+                own.flush(2000L);
             } catch (RuntimeException ignored) {
                 // best-effort flush on shutdown
             }
@@ -135,7 +151,11 @@ public final class NeroLogisticsTelemetry {
         crumb.setCategory(category);
         crumb.setLevel(SentryLevel.INFO);
         crumb.setMessage(scrub(message));
-        Sentry.addBreadcrumb(crumb);
+        IScopes target = scopes;
+        if (target == null) {
+            return;
+        }
+        target.addBreadcrumb(crumb);
     }
 
     private static String environmentOf(String version) {
@@ -176,7 +196,11 @@ public final class NeroLogisticsTelemetry {
         if (!active || t == null) {
             return;
         }
-        Sentry.captureException(t);
+        IScopes target = scopes;
+        if (target == null) {
+            return;
+        }
+        target.captureException(t);
     }
 
     /** Capture a handled exception if it is still clearly from NeroLogistics code. */
@@ -199,7 +223,11 @@ public final class NeroLogisticsTelemetry {
         Message msg = new Message();
         msg.setFormatted(scrubbed);
         event.setMessage(msg);
-        Sentry.captureEvent(event);
+        IScopes target = scopes;
+        if (target == null) {
+            return;
+        }
+        target.captureEvent(event);
     }
 
     private static SentryEvent filterAndScrub(SentryEvent event) {
@@ -294,5 +322,23 @@ public final class NeroLogisticsTelemetry {
     /** Replaces home-directory paths (which contain the OS account name) with a neutral marker. */
     static String scrub(String text) {
         return USER_PATH.matcher(text).replaceAll("/~");
+    }
+
+    /**
+     * Builds non-global scopes bound to their own {@link SentryClient}: nothing here reads or writes the static
+     * {@code Sentry} hub, so another mod's {@code Sentry.init} cannot replace or silence this mod's client.
+     * Package-private for tests.
+     */
+    static IScopes isolatedScopes(SentryOptions options, String creator) {
+        // What Sentry.init would do for the options: start the executors it uses for lazy work and timers.
+        options.activate();
+        Scopes own = new Scopes(new Scope(options), new Scope(options), new Scope(options), creator);
+        own.bindClient(new SentryClient(options));
+        if (options.isEnableUncaughtExceptionHandler()) {
+            // Chains to the previous default handler; kept for the life of the JVM, never closed.
+            uncaughtHandler = new UncaughtExceptionHandlerIntegration();
+            uncaughtHandler.register(own, options);
+        }
+        return own;
     }
 }
