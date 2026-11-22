@@ -138,7 +138,11 @@ NeroLogistics stores a small per-player entry in the world (`nerologistics:quest
 The quest pack also reads one progression gate, `nerologistics:first_shipment`, opened for the player a
 rocket cargo port's accepted launch is attributed to (dispatcher, opt-in owner, or the player who last picked
 the destination — the last of those is held in memory only and never written to disk). Gate rows are stored
-and erased by Neroland Core under its own privacy notice. The world-log threshold channels NeroLogistics
+and erased by Neroland Core under its own privacy notice. Two more gates work the same way:
+`nerologistics:first_drone_dispatch` (the first drone sent by a drone hub or drone port you placed or
+configured) and `nerologistics:storage_network_online` (a network controller you placed or configured takes
+charge of a network). The player to credit is held in memory only, for that block, until it is credited, the
+block unloads, the server stops or the player is erased; it is never written to disk or logged. The world-log threshold channels NeroLogistics
 publishes carry a dimension id as their scope — never a player, UUID or coordinates.
 
 ### NeroLink companion module

@@ -18,6 +18,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 import za.co.neroland.nerolandcore.registry.BlockCodecs;
+import za.co.neroland.nerologistics.item.ConfiguratorItem;
 import za.co.neroland.nerologistics.menu.MenuOpener;
 import za.co.neroland.nerologistics.network.NetworkMedium;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
@@ -44,6 +45,11 @@ public class ItemDuctBlock extends AbstractConduitBlock {
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
             BlockHitResult hit) {
+        // Vanilla falls through to useWithoutItem even with an item in hand, so without this the GUI
+        // swallows the Configurator's click and its useOn never runs (face modes stuck at IO).
+        if (player.getMainHandItem().getItem() instanceof ConfiguratorItem) {
+            return InteractionResult.PASS;
+        }
         // Bare-hand right-click opens the whitelist filter GUI (the Configurator sets face modes instead).
         if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer
                 && level.getBlockEntity(pos) instanceof MenuProvider provider) {

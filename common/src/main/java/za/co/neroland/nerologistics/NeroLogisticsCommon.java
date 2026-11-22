@@ -63,6 +63,7 @@ public final class NeroLogisticsCommon {
         PlayerDataErasure.register((server, player) -> {
             LogisticsMetrics.erasePlayer(server, player);
             RocketCargoPortBlockEntity.erasePlayer(server, player);
+            za.co.neroland.nerologistics.progression.OperatorCredit.erasePlayer(player);
             QuestPerksState perks = QuestPerksState.get(server);
             if (perks.erase(player)) {
                 za.co.neroland.nerolandcore.data.SavedDataRecovery.backupNow(server.overworld(),

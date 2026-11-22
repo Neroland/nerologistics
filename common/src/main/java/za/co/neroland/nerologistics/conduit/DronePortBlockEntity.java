@@ -303,6 +303,8 @@ public class DronePortBlockEntity extends AbstractTerminalBlockEntity implements
             this.buffer.setChanged();
             this.energy.consume(perStack);
             LogisticsMetrics.recordDrone(level);
+            za.co.neroland.nerologistics.progression.OperatorCredit.credit(level.getServer(), this,
+                    za.co.neroland.nerologistics.progression.OperatorCredit.FIRST_DRONE_DISPATCH);
         }
         setChanged();
     }

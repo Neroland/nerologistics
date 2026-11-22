@@ -138,6 +138,11 @@ public class NetworkControllerBlockEntity extends AbstractTerminalBlockEntity {
         int percent = Math.min(100 + this.moduleCount * bonus, NeroLogisticsConfig.controllerMaxPercent());
         this.capacityMultiplier = powered ? percent / 100.0 : 1.0;
         this.status = resolveStatus(level, pos);
+        if (this.status == Status.ACTIVE && oldStatus != Status.ACTIVE) {
+            // Credit the player who placed or configured this controller this session (in memory only).
+            za.co.neroland.nerologistics.progression.OperatorCredit.credit(level.getServer(), this,
+                    za.co.neroland.nerologistics.progression.OperatorCredit.STORAGE_NETWORK_ONLINE);
+        }
         // Only persist when the saved state actually changed; the multiplier is derived live and the
         // status is transient, so an unconditional setChanged() would dirty the chunk every second.
         if (this.moduleCount != oldModules || this.status != oldStatus) {

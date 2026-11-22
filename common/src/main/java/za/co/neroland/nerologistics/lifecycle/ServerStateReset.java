@@ -38,6 +38,7 @@ public final class ServerStateReset {
         RouteProviders.resetAll(); // origin-pad id cache + queued Nerospace flight events
         LogisticsMetrics.clearAll();
         RocketCargoPortBlockEntity.clearAll();
+        za.co.neroland.nerologistics.progression.OperatorCredit.clearAll();
         QuestHooks.clearAll();
         NeroLogisticsLinkEvents.reset();
     }

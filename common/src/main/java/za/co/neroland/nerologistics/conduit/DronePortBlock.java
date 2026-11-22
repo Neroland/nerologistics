@@ -61,6 +61,10 @@ public class DronePortBlock extends BaseEntityBlock {
         if (custom != null && level.getBlockEntity(pos) instanceof DronePortBlockEntity port) {
             port.setPortName(custom.getString());
         }
+        // Transient, in-memory only: who to credit when this port first sends a drone (see OperatorCredit).
+        if (!level.isClientSide() && placer instanceof Player player && level.getBlockEntity(pos) instanceof DronePortBlockEntity port) {
+            za.co.neroland.nerologistics.progression.OperatorCredit.note(port, player.getUUID());
+        }
     }
 
     @Override
@@ -68,6 +72,7 @@ public class DronePortBlock extends BaseEntityBlock {
             BlockHitResult hit) {
         if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer
                 && level.getBlockEntity(pos) instanceof DronePortBlockEntity port) {
+            za.co.neroland.nerologistics.progression.OperatorCredit.note(port, serverPlayer.getUUID());
             if (player.isShiftKeyDown()) {
                 DronePortBlockEntity.Mode mode = port.cycleMode();
                 serverPlayer.sendSystemMessage(Component.translatable(

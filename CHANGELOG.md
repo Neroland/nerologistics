@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.5] - 2026-11-26
+
+### Added
+
+- Public storage API for other mods, `za.co.neroland.nerologistics.api.NeroLogisticsStorage`: `insertAt` puts items into a drive bay, and `insertIntoNetwork` puts them into the item storage network reached from a position (a conduit, or a block next to one). Both are owner-free and stateless, and never load chunks. Use this instead of the internal `StorageNode` interface, whose insertion methods keep their signatures.
+- Two progression gates for trophies and quest packs: `nerologistics:first_drone_dispatch` (the first drone sent by a drone hub or drone port you placed or configured) and `nerologistics:storage_network_online` (a network controller you placed or configured takes charge of a network). The player is remembered in memory only until they are credited; nothing new is saved.
+
+### Fixed
+
+- The Configurator now changes face modes on Item Ducts and Universal Ducts. Right-clicking one with the Configurator opened the filter screen instead, so their faces stayed on IO. Right-click with the Configurator cycles the face (Disabled → Input → Output → IO); a bare-hand right-click still opens the filter.
+
 ## [0.7.4] - 2026-11-21
 
 ### Changed

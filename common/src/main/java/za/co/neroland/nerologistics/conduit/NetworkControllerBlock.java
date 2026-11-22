@@ -6,7 +6,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
@@ -19,6 +21,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 import za.co.neroland.nerolandcore.registry.BlockCodecs;
+import za.co.neroland.nerologistics.progression.OperatorCredit;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 
 /**
@@ -50,10 +53,21 @@ public class NetworkControllerBlock extends BaseEntityBlock {
     }
 
     @Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer,
+            ItemStack stack) {
+        super.setPlacedBy(level, pos, state, placer, stack);
+        // Transient, in-memory only: who to credit when this block first does its job (see OperatorCredit).
+        if (!level.isClientSide() && placer instanceof Player player && level.getBlockEntity(pos) instanceof NetworkControllerBlockEntity be) {
+            OperatorCredit.note(be, player.getUUID());
+        }
+    }
+
+    @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
             BlockHitResult hit) {
         if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer
                 && level.getBlockEntity(pos) instanceof NetworkControllerBlockEntity controller) {
+            OperatorCredit.note(controller, serverPlayer.getUUID());
             NetworkControllerBlockEntity.Status status = controller.status();
             int percent = (int) Math.round(controller.capacityMultiplier() * 100.0);
             serverPlayer.sendSystemMessage(Component.translatable(

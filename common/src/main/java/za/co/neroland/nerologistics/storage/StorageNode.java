@@ -26,6 +26,10 @@ import net.minecraft.world.level.material.Fluid;
  * </ul>
  *
  * <p>All state is block/network-scoped — no player data (POPIA/GDPR).</p>
+ *
+ * <p>Other mods should insert through {@code za.co.neroland.nerologistics.api.NeroLogisticsStorage}.
+ * {@link #storageNodeActive()} and {@link #insertItem} keep their signatures for callers compiled
+ * against earlier releases.</p>
  */
 public interface StorageNode {
 

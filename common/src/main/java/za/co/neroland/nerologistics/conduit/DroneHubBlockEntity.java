@@ -114,6 +114,8 @@ public class DroneHubBlockEntity extends AbstractTerminalBlockEntity {
             this.buffer.setItem(slot, ItemStack.EMPTY);
             this.energy.consume(perDelivery);
             LogisticsMetrics.recordDrone(level);
+            za.co.neroland.nerologistics.progression.OperatorCredit.credit(level.getServer(), this,
+                    za.co.neroland.nerologistics.progression.OperatorCredit.FIRST_DRONE_DISPATCH);
             setChanged();
             return; // one dispatch per window
         }
