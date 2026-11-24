@@ -13,6 +13,8 @@ plugins {
 
 // MC version comes from the Stonecutter node (e.g. :fabric:26.1.2), not a global property.
 def mc = stonecutter.current.version
+def spaceApiMc = mc.startsWith('1.20.') ? '1.21.1' : mc
+def economyApiMc = mc.startsWith('1.20.') ? '1.21.1' : mc
 // Minecraft before 26.1 ships obfuscated, so those cells need mappings and a remapped jar.
 def obfuscated = mc.startsWith('1.')
 apply plugin: obfuscated ? 'net.fabricmc.fabric-loom-remap' : 'net.fabricmc.fabric-loom'
@@ -129,12 +131,12 @@ dependencies {
     // so default runs keep exercising the stub route provider.
     if (nerospaceVersion && obfuscated) {
         // 1.21.x: Nerospace is an intermediary-named mod jar there, so Loom must remap it.
-        modCompileOnly "za.co.neroland.nerospace:nerospace-fabric-${mc}:${nerospaceVersion}"
+        modCompileOnly "za.co.neroland.nerospace:nerospace-fabric-${spaceApiMc}:${nerospaceVersion}"
         if (project.hasProperty('withNerospace')) {
             modRuntimeOnly "za.co.neroland.nerospace:nerospace-fabric-${mc}:${nerospaceVersion}"
         }
     } else if (nerospaceVersion) {
-        compileOnly "za.co.neroland.nerospace:nerospace-fabric-${mc}:${nerospaceVersion}"
+        compileOnly "za.co.neroland.nerospace:nerospace-fabric-${spaceApiMc}:${nerospaceVersion}"
         if (project.hasProperty('withNerospace')) {
             runtimeOnly "za.co.neroland.nerospace:nerospace-fabric-${mc}:${nerospaceVersion}"
         }
@@ -144,9 +146,9 @@ dependencies {
     // that touch it live in compat/neroeconomy, reached behind an isModLoaded("neroeconomy") guard.
     if (obfuscated) {
         // 1.21.x: NeroEconomy is an intermediary-named mod jar there, so Loom must remap it.
-        modCompileOnly "za.co.neroland.neroeconomy:neroeconomy-fabric-${mc}:${project.findProperty('neroeconomy_version')}"
+        modCompileOnly "za.co.neroland.neroeconomy:neroeconomy-fabric-${economyApiMc}:${project.findProperty('neroeconomy_version')}"
     } else {
-        compileOnly "za.co.neroland.neroeconomy:neroeconomy-fabric-${mc}:${project.findProperty('neroeconomy_version')}"
+        compileOnly "za.co.neroland.neroeconomy:neroeconomy-fabric-${economyApiMc}:${project.findProperty('neroeconomy_version')}"
     }
 }
 

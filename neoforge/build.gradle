@@ -12,6 +12,8 @@ plugins {
 
 // MC version comes from the Stonecutter node (e.g. :neoforge:26.1.2), not a global property.
 def mc = stonecutter.current.version
+def spaceApiMc = mc.startsWith('1.20.') ? '1.21.1' : mc
+def economyApiMc = mc.startsWith('1.20.') ? '1.21.1' : mc
 def neoVersion = project.findProperty("neo_version_${mc}")
 def jeiVersion = project.findProperty("jei_version_${mc}")
 def emiFile = project.findProperty("emi_file_neoforge_${mc}")
@@ -78,7 +80,7 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     // The denial/state contract tests compare NeroLogistics' mirrors against Nerospace's enums by name.
     if (nerospaceVersion) {
-        testImplementation "za.co.neroland.nerospace:nerospace-neoforge-${mc}:${nerospaceVersion}"
+        testImplementation "za.co.neroland.nerospace:nerospace-neoforge-${spaceApiMc}:${nerospaceVersion}"
     }
 }
 
@@ -120,7 +122,7 @@ dependencies {
     // first, then Nerospace's GitHub Packages feed). Dev clients load Nerospace only with -PwithNerospace,
     // so default runs keep exercising the stub route provider.
     if (nerospaceVersion) {
-        compileOnly "za.co.neroland.nerospace:nerospace-neoforge-${mc}:${nerospaceVersion}"
+        compileOnly "za.co.neroland.nerospace:nerospace-neoforge-${spaceApiMc}:${nerospaceVersion}"
         if (project.hasProperty('withNerospace')) {
             runtimeOnly "za.co.neroland.nerospace:nerospace-neoforge-${mc}:${nerospaceVersion}"
         }
@@ -128,7 +130,7 @@ dependencies {
 
     // NeroEconomy — OPTIONAL freight fee. Compile-time only: never bundled, never required; the only classes
     // that touch it live in compat/neroeconomy, reached behind an isModLoaded("neroeconomy") guard.
-    compileOnly "za.co.neroland.neroeconomy:neroeconomy-neoforge-${mc}:${project.findProperty('neroeconomy_version')}"
+    compileOnly "za.co.neroland.neroeconomy:neroeconomy-neoforge-${economyApiMc}:${project.findProperty('neroeconomy_version')}"
 }
 
 // Expand neoforge.mods.toml from src/main/templates into a generated resources dir

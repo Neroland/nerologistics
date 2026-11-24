@@ -111,8 +111,7 @@ public class DeliveryDroneRenderer extends EntityRenderer<DeliveryDroneEntity, D
         poseStack.scale(-1.0F, -1.0F, 1.0F);
         poseStack.translate(0.0F, -1.5F, 0.0F);
         poseStack.mulPose(Axis.YP.rotationDegrees((drone.tickCount + partialTick) * 12.0F));
-        this.model.renderToBuffer(poseStack, buffers.getBuffer(this.model.renderType(TEXTURE)),
-                FULL_BRIGHT, OverlayTexture.NO_OVERLAY, -1);
+        renderBody(poseStack, buffers);
         poseStack.popPose();
         super.render(drone, entityYaw, partialTick, poseStack, buffers, light);
     }
@@ -120,6 +119,18 @@ public class DeliveryDroneRenderer extends EntityRenderer<DeliveryDroneEntity, D
     @Override
     public Identifier getTextureLocation(DeliveryDroneEntity drone) {
         return TEXTURE;
+    }
+    *///?}
+
+    //? if >=1.21 && <1.21.2 {
+    /*private void renderBody(PoseStack poseStack, net.minecraft.client.renderer.MultiBufferSource buffers) {
+        this.model.renderToBuffer(poseStack, buffers.getBuffer(this.model.renderType(TEXTURE)),
+                FULL_BRIGHT, OverlayTexture.NO_OVERLAY, -1);
+    }
+    *///?} else if <1.21 {
+    /*private void renderBody(PoseStack poseStack, net.minecraft.client.renderer.MultiBufferSource buffers) {
+        this.model.renderToBuffer(poseStack, buffers.getBuffer(this.model.renderType(TEXTURE)),
+                FULL_BRIGHT, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
     }
     *///?}
 }

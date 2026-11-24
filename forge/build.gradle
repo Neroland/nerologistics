@@ -10,6 +10,8 @@ plugins {
 
 // MC version comes from the Stonecutter node (e.g. :forge:26.1.2), not a global property.
 def mc = stonecutter.current.version
+def spaceApiMc = mc.startsWith('1.20.') ? '1.21.1' : mc
+def economyApiMc = mc.startsWith('1.20.') ? '1.21.1' : mc
 def forgeVersion = project.findProperty("forge_version_${mc}")
 def jeiVersion = project.findProperty("jei_version_${mc}")
 def emiFile = project.findProperty("emi_file_neoforge_${mc}")
@@ -135,7 +137,7 @@ dependencies {
     // first, then Nerospace's GitHub Packages feed). Dev clients load Nerospace only with -PwithNerospace,
     // so default runs keep exercising the stub route provider.
     if (nerospaceVersion) {
-        compileOnly "za.co.neroland.nerospace:nerospace-forge-${mc}:${nerospaceVersion}"
+        compileOnly "za.co.neroland.nerospace:nerospace-forge-${spaceApiMc}:${nerospaceVersion}"
         if (project.hasProperty('withNerospace')) {
             runtimeOnly "za.co.neroland.nerospace:nerospace-forge-${mc}:${nerospaceVersion}"
         }
@@ -143,7 +145,7 @@ dependencies {
 
     // NeroEconomy — OPTIONAL freight fee. Compile-time only: never bundled, never required; the only classes
     // that touch it live in compat/neroeconomy, reached behind an isModLoaded("neroeconomy") guard.
-    compileOnly "za.co.neroland.neroeconomy:neroeconomy-forge-${mc}:${project.findProperty('neroeconomy_version')}"
+    compileOnly "za.co.neroland.neroeconomy:neroeconomy-forge-${economyApiMc}:${project.findProperty('neroeconomy_version')}"
 }
 
 // Expand mods.toml from src/main/templates into generated resources.

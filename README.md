@@ -12,8 +12,10 @@
 
 ## Build targets
 
-- **Minecraft:** 26.1.2, 26.2 and 26.3
-- **Loaders:** NeoForge, MinecraftForge/Forge, Fabric (the "9 cells")
+- **Minecraft 1.20.5** on Fabric and **1.20.6** on Fabric, Forge and NeoForge.
+- **Fabric, Forge and NeoForge** also support Minecraft 1.21.1, 1.21.4, 1.21.5, 1.21.7–1.21.8,
+  1.21.9–1.21.10, 1.21.11, 26.1.2, 26.2 and 26.3.
+- **Requires Neroland Core 1.23.0 or newer** (below 2.0).
 - **Java:** 25
 - Mod id: `nerologistics` · package `za.co.neroland.nerologistics`
 
