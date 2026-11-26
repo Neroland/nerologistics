@@ -2,6 +2,7 @@ package za.co.neroland.nerologistics.client;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
@@ -19,18 +20,42 @@ public class FilterScreen extends AbstractContainerScreen<FilterMenu> {
     private static final int WELL = 0xFF8B8B8B;
     private static final int WELL_EDGE = 0xFF373737;
     private static final int TITLE = 0xFFD6ECFF;
+    private final Button[] faceButtons = new Button[FilterMenu.FACES];
     private static final int SUBTLE = 0xFF8DA0B4;
 
     public FilterScreen(FilterMenu menu, Inventory playerInventory, Component title) {
         //? if >=26.1 {
-        super(menu, playerInventory, title, 176, 166);
+        super(menu, playerInventory, title, 224, 222);
         //?} else {
         /*super(menu, playerInventory, title);
-        this.imageWidth = 176;
-        this.imageHeight = 166;
+        this.imageWidth = 224;
+        this.imageHeight = 222;
         *///?}
         this.titleLabelX = 8;
         this.inventoryLabelX = 8;
+        this.inventoryLabelY = 129;
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        for (int face = 0; face < FilterMenu.FACES; face++) {
+            int id = face;
+            this.faceButtons[face] = addRenderableWidget(Button.builder(this.menu.faceLabel(face), button -> {
+                if (this.minecraft != null && this.minecraft.gameMode != null) {
+                    this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, id);
+                }
+            }).bounds(this.leftPos + FilterMenu.faceX(face), this.topPos + FilterMenu.faceY(face),
+                    FilterMenu.FACE_WIDTH, FilterMenu.FACE_HEIGHT).build());
+        }
+    }
+
+    @Override
+    protected void containerTick() {
+        super.containerTick();
+        for (int face = 0; face < FilterMenu.FACES; face++) {
+            this.faceButtons[face].setMessage(this.menu.faceLabel(face));
+        }
     }
 
     //? if <26.1 {
@@ -59,6 +84,7 @@ public class FilterScreen extends AbstractContainerScreen<FilterMenu> {
         extractor.fill(x - 1, y - 1, x + w + 1, y + h + 1, EDGE);
         extractor.fill(x, y, x + w, y + h, PANEL);
         for (Slot slot : this.menu.slots) {
+            if (!slot.isActive()) continue;
             int sx = x + slot.x;
             int sy = y + slot.y;
             extractor.fill(sx - 1, sy - 1, sx + 17, sy + 17, WELL_EDGE);
@@ -72,6 +98,17 @@ public class FilterScreen extends AbstractContainerScreen<FilterMenu> {
     @Override
     protected void extractLabels(GuiGraphicsExtractor extractor, int mouseX, int mouseY) {
         extractor.text(this.font, this.title, this.titleLabelX, this.titleLabelY, TITLE, false);
+        if (this.menu.showsFluids()) {
+            extractor.text(this.font, Component.translatable("gui.nerologistics.duct.fluid"), 8, 84, TITLE, false);
+        }
+        if (this.menu.showsItems()) {
+            extractor.text(this.font, Component.translatable("gui.nerologistics.duct.item"),
+                    8, this.menu.showsFluids() ? 118 : 86, TITLE, false);
+        }
+        if (this.menu.showsEnergy()) {
+            extractor.text(this.font, Component.translatable("gui.nerologistics.duct.energy", this.menu.energyRate()),
+                    8, 89, TITLE, false);
+        }
         extractor.text(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, SUBTLE, false);
     }
 }

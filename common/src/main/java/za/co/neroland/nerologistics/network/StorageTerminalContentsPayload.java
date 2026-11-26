@@ -52,8 +52,13 @@ public record StorageTerminalContentsPayload(int containerId, int revision,
     /** Hard cap on lines per payload — mirrors the index's own distinct-type cap. */
     public static final int MAX_LINES = NetworkStorageIndex.MAX_TRACKED_TYPES;
 
+    //? if >=1.20.5 {
     public static final Type<StorageTerminalContentsPayload> TYPE =
             new Type<>(Identifier.fromNamespaceAndPath(NeroLogisticsCommon.MOD_ID, "storage_terminal_contents"));
+    //?} else {
+    /*public static final Type<StorageTerminalContentsPayload> TYPE =
+            new Type<>(Identifier.fromNamespaceAndPath(NeroLogisticsCommon.MOD_ID, "storage_terminal_contents"), StorageTerminalContentsPayload.class);
+    *///?}
 
     public static final StreamCodec<RegistryFriendlyByteBuf, StorageTerminalContentsPayload> STREAM_CODEC =
             StreamCodec.of(StorageTerminalContentsPayload::write, StorageTerminalContentsPayload::read);

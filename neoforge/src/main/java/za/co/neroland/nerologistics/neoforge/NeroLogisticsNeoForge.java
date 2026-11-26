@@ -10,7 +10,9 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
+//? if >=1.20.5 {
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
+//?}
 //? if >=1.21.9 {
 import net.neoforged.neoforge.transfer.item.VanillaContainerWrapper;
 import net.neoforged.neoforge.transfer.item.WorldlyContainerWrapper;
@@ -47,10 +49,19 @@ public final class NeroLogisticsNeoForge {
         modEventBus.addListener(NeroLogisticsNeoForge::onRegisterCapabilities);
         // Drive cross-dimension shipment arrivals once per server tick, and capture the running server
         // for the NeroLink module (Core's SPI hands a provider nothing but a player UUID).
+        //? if >=1.20.5 {
         NeoForge.EVENT_BUS.addListener((ServerTickEvent.Post event) -> {
             NeroLogisticsLinkModule.rememberServer(event.getServer());
             ShipmentManager.tick(event.getServer());
         });
+        //?} else {
+        /*NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.TickEvent.ServerTickEvent event) -> {
+            if (event.phase == net.neoforged.neoforge.event.TickEvent.Phase.END) {
+                NeroLogisticsLinkModule.rememberServer(event.getServer());
+                ShipmentManager.tick(event.getServer());
+            }
+        });
+        *///?}
         // Clear the common server-scoped static caches so nothing leaks into the next (single-player) world.
         NeoForge.EVENT_BUS.addListener((ServerStoppedEvent event) -> ServerStateReset.serverStopped());
         // /nerologistics gallery

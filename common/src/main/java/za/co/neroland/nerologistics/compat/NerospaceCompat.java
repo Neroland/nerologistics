@@ -1,6 +1,20 @@
 package za.co.neroland.nerologistics.compat;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+
+import org.jetbrains.annotations.Nullable;
+
+import za.co.neroland.nerolandcore.energy.NeroEnergyStorage;
+import za.co.neroland.nerolandcore.fluid.NeroFluidStorage;
+import za.co.neroland.nerolandcore.platform.EnergyLookup;
+import za.co.neroland.nerolandcore.platform.FluidLookup;
 import za.co.neroland.nerolandcore.platform.Services;
+import za.co.neroland.nerologistics.compat.nerospace.NerospacePipeEndpoints;
+import za.co.neroland.nerologistics.network.NetworkMedium;
 
 import za.co.neroland.nerologistics.NeroLogisticsCommon;
 import za.co.neroland.nerologistics.compat.nerospace.NerospaceRouteProvider;
@@ -22,6 +36,39 @@ public final class NerospaceCompat {
     /** Nerospace's mod id, as declared optional in all three loader manifests. */
     public static final String NEROSPACE_MOD_ID = "nerospace";
 
+    private static boolean pipeIntegration;
+
+    public static boolean isPipe(@Nullable BlockEntity entity) {
+        return pipeIntegration && NerospacePipeEndpoints.isPipe(entity);
+    }
+
+    public static boolean connects(BlockEntity entity, Direction side, NetworkMedium medium) {
+        return NerospacePipeEndpoints.connects(entity, side, medium);
+    }
+
+    public static boolean allowsItem(Object endpoint, Direction side, ItemStack stack, boolean insert) {
+        return !(endpoint instanceof BlockEntity entity) || !isPipe(entity)
+                || NerospacePipeEndpoints.allowsItem(entity, side, stack, insert);
+    }
+
+    @Nullable
+    public static NeroEnergyStorage energy(Level level, BlockPos pos, Direction side, boolean insert) {
+        BlockEntity entity = pipeIntegration ? level.getBlockEntity(pos) : null;
+        if (entity != null && isPipe(entity)) {
+            return NerospacePipeEndpoints.energy(entity, side, insert);
+        }
+        return EnergyLookup.INSTANCE.find(level, pos, side);
+    }
+
+    @Nullable
+    public static NeroFluidStorage fluid(Level level, BlockPos pos, Direction side, boolean insert) {
+        BlockEntity entity = pipeIntegration ? level.getBlockEntity(pos) : null;
+        if (entity != null && isPipe(entity)) {
+            return NerospacePipeEndpoints.fluid(entity, side, insert);
+        }
+        return FluidLookup.INSTANCE.find(level, pos, side);
+    }
+
     private NerospaceCompat() {
     }
 
@@ -36,6 +83,7 @@ public final class NerospaceCompat {
         try {
             // Static call into a separate class: nothing Nerospace-typed is resolved until this line runs.
             NerospaceRouteProvider.install();
+            pipeIntegration = true;
             NeroLogisticsCommon.LOGGER.info(
                     "[NeroLogistics] Nerospace detected — rocket cargo flies as Nerospace cargo flights "
                     + "(route API); set nerospaceRouting=false to keep the stub");

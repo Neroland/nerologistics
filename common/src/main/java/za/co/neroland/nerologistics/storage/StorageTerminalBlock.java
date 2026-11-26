@@ -8,7 +8,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -16,6 +15,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import org.jetbrains.annotations.Nullable;
 
+import za.co.neroland.nerologistics.conduit.OrientedDeviceBlock;
 import za.co.neroland.nerolandcore.registry.BlockCodecs;
 import za.co.neroland.nerologistics.config.NeroLogisticsConfig;
 import za.co.neroland.nerologistics.menu.MenuOpener;
@@ -25,7 +25,7 @@ import za.co.neroland.nerologistics.menu.MenuOpener;
  * {@link StorageTerminalBlockEntity}). With {@code enableStorageTerminal=false} the block stays
  * placeable but refuses to open, telling the player why (clean degrade).
  */
-public class StorageTerminalBlock extends BaseEntityBlock {
+public class StorageTerminalBlock extends OrientedDeviceBlock {
 
     public static final MapCodec<StorageTerminalBlock> CODEC = BlockCodecs.simple(StorageTerminalBlock::new);
 

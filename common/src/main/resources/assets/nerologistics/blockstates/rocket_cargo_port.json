@@ -1,1 +1,19 @@
-{"variants":{"":{"model":"nerologistics:block/rocket_cargo_port"}}}
+{
+  "variants": {
+    "facing=north": {
+      "model": "nerologistics:block/rocket_cargo_port"
+    },
+    "facing=east": {
+      "model": "nerologistics:block/rocket_cargo_port",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "nerologistics:block/rocket_cargo_port",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "nerologistics:block/rocket_cargo_port",
+      "y": 270
+    }
+  }
+}

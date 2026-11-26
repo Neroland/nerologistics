@@ -21,6 +21,7 @@ import za.co.neroland.nerolandcore.fluid.NeroFluidStorage;
 import za.co.neroland.nerolandcore.platform.FluidLookup;
 
 import za.co.neroland.nerologistics.config.NeroLogisticsConfig;
+import za.co.neroland.nerologistics.compat.NerospaceCompat;
 import za.co.neroland.nerologistics.network.ConduitEndpoint;
 import za.co.neroland.nerologistics.network.ConduitNetwork;
 import za.co.neroland.nerologistics.network.NetworkMedium;
@@ -344,6 +345,9 @@ public final class NetworkStorageIndex {
                 continue;
             }
             BlockEntity be = level.getBlockEntity(neighbor);
+            if (NerospaceCompat.isPipe(be)) {
+                continue; // Pipe buffers hold cargo in transit and are not network storage.
+            }
             if (be instanceof StorageNode) {
                 this.nodes.add(new NodeRef(neighbor.immutable()));
             } else if (this.sources.size() < MAX_READTHROUGH_SOURCES) {

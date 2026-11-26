@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": "nerologistics:item_cell_1k"
+            "items": ["nerologistics:item_cell_1k"]
           }
         ]
       },

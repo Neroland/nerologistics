@@ -25,7 +25,12 @@ import za.co.neroland.nerologistics.telemetry.NeroLogisticsTelemetry;
 @Mod(NeroLogisticsCommon.MOD_ID)
 public final class NeroLogisticsForge {
 
+    //? if >=1.20.5 {
     public NeroLogisticsForge(FMLJavaModLoadingContext context) {
+    //?} else {
+    /*public NeroLogisticsForge() {
+        FMLJavaModLoadingContext context = FMLJavaModLoadingContext.get();
+    *///?}
         NeroLogisticsCommon.LOGGER.info("[NeroLogistics] Forge bootstrap");
         // Forge before 1.21.6 runs EventBus 6: one mod event bus, and game events go through MinecraftForge.EVENT_BUS.
         //? if >=1.21.6 {
@@ -62,10 +67,7 @@ public final class NeroLogisticsForge {
         // /nerologistics gallery
         RegisterCommandsEvent.BUS.addListener(event -> NeroLogisticsCommands.register(event.getDispatcher()));
         //?} else {
-        /*net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener((TickEvent.ServerTickEvent.Post event) -> {
-            NeroLogisticsLinkModule.rememberServer(event.getServer());
-            ShipmentManager.tick(event.getServer());
-        });
+        /*registerLegacyTick();
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener((ServerStoppedEvent event) ->
                 ServerStateReset.serverStopped());
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener((RegisterCommandsEvent event) ->
@@ -75,4 +77,23 @@ public final class NeroLogisticsForge {
             ForgeClientSetup.init(modBusGroup);
         }
     }
+
+    //? if <1.21.6 {
+    /*private static void registerLegacyTick() {
+        //? if >=1.20.6 {
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener((TickEvent.ServerTickEvent.Post event) -> tick(event.getServer()));
+        //?} else {
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener((TickEvent.ServerTickEvent event) -> {
+            if (event.phase == TickEvent.Phase.END) {
+                tick(event.getServer());
+            }
+        });
+        //?}
+    }
+
+    private static void tick(net.minecraft.server.MinecraftServer server) {
+        NeroLogisticsLinkModule.rememberServer(server);
+        ShipmentManager.tick(server);
+    }
+    *///?}
 }

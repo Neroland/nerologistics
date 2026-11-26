@@ -10,7 +10,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -25,7 +24,7 @@ import za.co.neroland.nerologistics.progression.OperatorCredit;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 
 /** Drone hub block — right-click to cycle the delivery channel. */
-public class DroneHubBlock extends BaseEntityBlock {
+public class DroneHubBlock extends OrientedDeviceBlock {
 
     public static final MapCodec<DroneHubBlock> CODEC = BlockCodecs.simple(DroneHubBlock::new);
 

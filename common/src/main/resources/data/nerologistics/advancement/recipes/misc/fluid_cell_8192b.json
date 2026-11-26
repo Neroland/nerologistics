@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": "nerologistics:fluid_cell_1024b"
+            "items": ["nerologistics:fluid_cell_1024b"]
           }
         ]
       },

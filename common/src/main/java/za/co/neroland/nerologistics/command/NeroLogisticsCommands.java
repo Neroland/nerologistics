@@ -11,7 +11,9 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.chat.Component;
+//? if >=1.20.5 {
 import net.minecraft.network.chat.ComponentSerialization;
+//?}
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -458,9 +460,13 @@ public final class NeroLogisticsCommands {
                         .append(Component.literal("\n"))
                         .append(Component.literal(usage).withStyle(ChatFormatting.GRAY));
         CompoundTag tag = new CompoundTag();
+        //? if >=1.20.5 {
         ComponentSerialization.CODEC
                 .encodeStart(level.registryAccess().createSerializationContext(NbtOps.INSTANCE), text)
                 .result().ifPresent(encoded -> tag.put("text", encoded));
+        //?} else {
+        /*tag.putString("text", Component.Serializer.toJson(text));
+        *///?}
         tag.putString("billboard", "center");
         EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.getValue(
                 Identifier.fromNamespaceAndPath("minecraft", "text_display"));

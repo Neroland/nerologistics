@@ -1,1 +1,19 @@
-{"variants":{"":{"model":"nerologistics:block/wireless_cargo_terminal"}}}
+{
+  "variants": {
+    "facing=north": {
+      "model": "nerologistics:block/wireless_cargo_terminal"
+    },
+    "facing=east": {
+      "model": "nerologistics:block/wireless_cargo_terminal",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "nerologistics:block/wireless_cargo_terminal",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "nerologistics:block/wireless_cargo_terminal",
+      "y": 270
+    }
+  }
+}

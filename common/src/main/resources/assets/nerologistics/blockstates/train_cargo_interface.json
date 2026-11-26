@@ -1,1 +1,19 @@
-{"variants":{"":{"model":"nerologistics:block/train_cargo_interface"}}}
+{
+  "variants": {
+    "facing=north": {
+      "model": "nerologistics:block/train_cargo_interface"
+    },
+    "facing=east": {
+      "model": "nerologistics:block/train_cargo_interface",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "nerologistics:block/train_cargo_interface",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "nerologistics:block/train_cargo_interface",
+      "y": 270
+    }
+  }
+}

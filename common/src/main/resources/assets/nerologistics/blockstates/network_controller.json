@@ -1,1 +1,19 @@
-{"variants":{"":{"model":"nerologistics:block/network_controller"}}}
+{
+  "variants": {
+    "facing=north": {
+      "model": "nerologistics:block/network_controller"
+    },
+    "facing=east": {
+      "model": "nerologistics:block/network_controller",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "nerologistics:block/network_controller",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "nerologistics:block/network_controller",
+      "y": 270
+    }
+  }
+}

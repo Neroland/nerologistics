@@ -3,7 +3,9 @@ package za.co.neroland.nerologistics.conduit;
 import com.mojang.serialization.MapCodec;
 
 import net.minecraft.core.BlockPos;
+//? if >=1.20.5 {
 import net.minecraft.core.component.DataComponents;
+//?}
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
@@ -11,7 +13,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -30,7 +31,7 @@ import za.co.neroland.nerologistics.registry.ModBlockEntities;
  * An anvil-renamed station item sets the station's line on placement (used for routing). A server ticker
  * drives load-station hauling.
  */
-public class TrainStationBlock extends BaseEntityBlock {
+public class TrainStationBlock extends OrientedDeviceBlock {
 
     public static final MapCodec<TrainStationBlock> CODEC = BlockCodecs.simple(TrainStationBlock::new);
 
@@ -57,7 +58,11 @@ public class TrainStationBlock extends BaseEntityBlock {
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer,
             ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
+        //? if >=1.20.5 {
         Component custom = stack.get(DataComponents.CUSTOM_NAME);
+        //?} else {
+        /*Component custom = stack.hasCustomHoverName() ? stack.getHoverName() : null;
+        *///?}
         if (custom != null && level.getBlockEntity(pos) instanceof TrainStationBlockEntity station) {
             station.setLine(custom.getString());
         }

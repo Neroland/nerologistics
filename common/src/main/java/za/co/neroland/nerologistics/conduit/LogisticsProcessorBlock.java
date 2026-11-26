@@ -10,7 +10,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -31,7 +30,7 @@ import za.co.neroland.nerologistics.registry.ModBlockEntities;
  * stays placeable but refuses to open and rules stop evaluating, telling the player why (clean
  * degrade, same posture as the storage terminal).
  */
-public class LogisticsProcessorBlock extends BaseEntityBlock {
+public class LogisticsProcessorBlock extends OrientedDeviceBlock {
 
     public static final MapCodec<LogisticsProcessorBlock> CODEC = BlockCodecs.simple(LogisticsProcessorBlock::new);
 

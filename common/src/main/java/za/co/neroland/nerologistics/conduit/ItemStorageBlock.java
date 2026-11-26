@@ -8,7 +8,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -23,7 +22,7 @@ import za.co.neroland.nerologistics.menu.MenuOpener;
  * Item Storage block — a passive native warehouse on the network. Right-click opens its vanilla
  * double-chest GUI; ducts and the terminal index see its contents through the vanilla container contract.
  */
-public class ItemStorageBlock extends BaseEntityBlock {
+public class ItemStorageBlock extends OrientedDeviceBlock {
 
     public static final MapCodec<ItemStorageBlock> CODEC = BlockCodecs.simple(ItemStorageBlock::new);
 

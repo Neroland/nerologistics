@@ -428,7 +428,7 @@ public class LogisticsProcessorBlockEntity extends AbstractTerminalBlockEntity i
         if (inserted <= 0) {
             return RuleStatus.BLOCKED;
         }
-        this.energy.consume(energyCost);
+        consumeEnergy(energyCost);
         setChanged();
         return RuleStatus.ACTED;
     }

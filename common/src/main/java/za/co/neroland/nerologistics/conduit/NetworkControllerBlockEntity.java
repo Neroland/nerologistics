@@ -122,7 +122,7 @@ public class NetworkControllerBlockEntity extends AbstractTerminalBlockEntity {
         // Draw a small upkeep each tick; whether powered gates the capacity boost (not management).
         boolean powered = be.energyBuffer().getAmount() >= NeroLogisticsConfig.controllerUpkeepPerTick();
         if (powered) {
-            be.energyBuffer().consume(NeroLogisticsConfig.controllerUpkeepPerTick());
+            be.consumeEnergy(NeroLogisticsConfig.controllerUpkeepPerTick());
         }
         if (level.getGameTime() % REFRESH_INTERVAL == 0L) {
             be.refresh(serverLevel, pos, powered);

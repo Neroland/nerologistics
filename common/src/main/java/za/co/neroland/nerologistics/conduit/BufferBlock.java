@@ -8,7 +8,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -26,7 +25,7 @@ import za.co.neroland.nerologistics.registry.ModBlockEntities;
  * Buffer block — right-click opens the target GUI; <b>sneak</b>-right-click toggles between keep-stocked
  * and passive mode. A server ticker drives the keep-stocked leveling.
  */
-public class BufferBlock extends BaseEntityBlock {
+public class BufferBlock extends OrientedDeviceBlock {
 
     public static final MapCodec<BufferBlock> CODEC = BlockCodecs.simple(BufferBlock::new);
 

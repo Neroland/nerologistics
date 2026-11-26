@@ -2,6 +2,8 @@ package za.co.neroland.nerologistics.conduit;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.WorldlyContainer;
@@ -13,6 +15,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
+import za.co.neroland.nerolandcore.energy.EnergyRate;
+import za.co.neroland.nerolandcore.sideconfig.ConfiguratorTool;
 import za.co.neroland.nerolandcore.energy.EnergyBuffer;
 import za.co.neroland.nerolandcore.energy.NeroEnergyStorage;
 
@@ -23,10 +27,29 @@ import za.co.neroland.nerolandcore.energy.NeroEnergyStorage;
  * Core {@link EnergyBuffer} (cables power it via Core's energy capability, registered per loader). The
  * buffer is exposed by delegating the {@link Container} contract to the inner {@link SimpleContainer}.
  */
-public abstract class AbstractTerminalBlockEntity extends BlockEntity implements WorldlyContainer {
+public abstract class AbstractTerminalBlockEntity extends BlockEntity implements WorldlyContainer, ConfiguratorTool.PowerReadout {
 
     protected final SimpleContainer buffer;
     protected final EnergyBuffer energy;
+    private EnergyRate consumption;
+
+    protected void consumeEnergy(int amount) {
+        long before = this.energy.getAmount();
+        this.energy.consume(amount);
+        if (this.level != null && before > this.energy.getAmount()) {
+            if (this.consumption == null) {
+                this.consumption = new EnergyRate();
+            }
+            this.consumption.record(this.level.getGameTime(), before - this.energy.getAmount());
+        }
+    }
+
+    @Override
+    public void showPower(ServerPlayer player, long tick) {
+        long rate = this.consumption == null ? 0 : Math.round(this.consumption.perTick(tick));
+        player.sendSystemMessage(Component.translatable("block.nerologistics.power.readout",
+                this.energy.getAmount(), this.energy.getCapacity(), rate), true);
+    }
 
     protected AbstractTerminalBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state,
             int bufferSize, int energyCapacity, int energyMaxIo) {

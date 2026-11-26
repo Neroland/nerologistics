@@ -5,21 +5,13 @@ import java.util.Set;
 import com.mojang.serialization.MapCodec;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
 
 import org.jetbrains.annotations.Nullable;
 
 import za.co.neroland.nerolandcore.registry.BlockCodecs;
-import za.co.neroland.nerologistics.item.ConfiguratorItem;
-import za.co.neroland.nerologistics.menu.MenuOpener;
 import za.co.neroland.nerologistics.network.NetworkMedium;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 
@@ -44,21 +36,6 @@ public class UniversalDuctBlock extends AbstractConduitBlock {
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new UniversalDuctBlockEntity(pos, state);
-    }
-
-    @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
-            BlockHitResult hit) {
-        // Vanilla falls through to useWithoutItem even with an item in hand, so without this the GUI
-        // swallows the Configurator's click and its useOn never runs (face modes stuck at IO).
-        if (player.getMainHandItem().getItem() instanceof ConfiguratorItem) {
-            return InteractionResult.PASS;
-        }
-        if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer
-                && level.getBlockEntity(pos) instanceof MenuProvider provider) {
-            MenuOpener.open(serverPlayer, provider);
-        }
-        return InteractionResult.SUCCESS;
     }
 
     @Override

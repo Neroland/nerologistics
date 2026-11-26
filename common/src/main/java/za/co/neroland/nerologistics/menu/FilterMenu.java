@@ -1,92 +1,191 @@
 package za.co.neroland.nerologistics.menu;
 
+import java.util.Locale;
+
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.material.Fluids;
 
 import org.jetbrains.annotations.Nullable;
 
-import za.co.neroland.nerologistics.conduit.ItemDuctBlockEntity;
+import za.co.neroland.nerolandcore.sideconfig.SideMode;
+import za.co.neroland.nerologistics.conduit.AbstractConduitBlockEntity;
+import za.co.neroland.nerologistics.network.NetworkMedium;
+import za.co.neroland.nerologistics.filter.FluidFilter;
 import za.co.neroland.nerologistics.registry.ModMenuTypes;
 
-/**
- * Menu for an item duct's whitelist filter. The top row is "ghost" filter slots: <b>shift-click an item
- * in your inventory</b> to stamp a count-1 copy as a filter rule (your item is not consumed), and
- * <b>shift-click a filter slot</b> to clear it. The filter slots can't be picked up or dropped into
- * directly, so the stamps stay virtual (nothing to lose on break).
- *
- * <p>The server-side menu holds the owning duct block entity so every filter edit is persisted
- * ({@code setChanged()}) and the menu closes when the duct is broken or the player walks away
- * ({@link #stillValid}); the client-side menu (2-arg constructor) has neither and mirrors state via
- * normal slot sync.
- */
 public class FilterMenu extends AbstractContainerMenu {
 
-    private static final int FILTER = ItemDuctBlockEntity.FILTER_SLOTS;
+    public static final int FACES = 6;
+    public static final int ITEM_FILTER_SLOTS = 9;
+    public static final int FACE_X = 8;
+    public static final int FACE_Y = 20;
+    public static final int FACE_WIDTH = 72;
+    public static final int FACE_HEIGHT = 18;
+    public static final int COLUMN_STEP = 112;
+    public static final int ROW_STEP = 21;
+    private static final int GHOST_SLOTS = FACES + ITEM_FILTER_SLOTS;
+    private static final int MEDIA = FACES;
+    private static final int FLOW = FACES + 1;
+    private static final int ITEM = 1;
+    private static final int FLUID = 2;
+    private static final int ENERGY = 4;
+    private static final SideMode[] MODES = SideMode.values();
 
-    private final Container filter;
-    /** Owning duct on the server; {@code null} on the client (and for the display-only fallback). */
+    private final SimpleContainerData data = new SimpleContainerData(FACES + 3);
+    private final Container itemFilter;
     @Nullable
-    private final BlockEntity blockEntity;
+    private final AbstractConduitBlockEntity duct;
 
-    public FilterMenu(int id, Inventory playerInventory) {
-        this(id, playerInventory, new SimpleContainer(FILTER), null);
+    public FilterMenu(int id, Inventory inventory) {
+        this(id, inventory, new SimpleContainer(ITEM_FILTER_SLOTS), null);
     }
 
-    public FilterMenu(int id, Inventory playerInventory, Container filter, @Nullable BlockEntity blockEntity) {
+    public FilterMenu(int id, Inventory inventory, Container itemFilter, @Nullable AbstractConduitBlockEntity duct) {
         super(ModMenuTypes.FILTER.get(), id);
-        this.filter = filter;
-        this.blockEntity = blockEntity;
-        for (int col = 0; col < FILTER; col++) {
-            this.addSlot(new FilterSlot(filter, col, 8 + col * 18, 18));
+        this.duct = duct;
+        this.itemFilter = itemFilter;
+        Container fluidSamples = duct == null ? new SimpleContainer(FACES) : duct.fluidSamples();
+        for (int face = 0; face < FACES; face++) {
+            this.addSlot(new GhostSlot(fluidSamples, face, faceX(face) + FACE_WIDTH + 5, faceY(face) + 1, FLUID));
+        }
+        for (int col = 0; col < ITEM_FILTER_SLOTS; col++) {
+            this.addSlot(new GhostSlot(itemFilter, col, 8 + col * 18, 100, ITEM));
         }
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
-                this.addSlot(new Slot(playerInventory, col + row * 9 + 9, 8 + col * 18, 84 + row * 18));
+                this.addSlot(new Slot(inventory, col + row * 9 + 9, 8 + col * 18, 140 + row * 18));
             }
         }
         for (int col = 0; col < 9; col++) {
-            this.addSlot(new Slot(playerInventory, col, 8 + col * 18, 142));
+            this.addSlot(new Slot(inventory, col, 8 + col * 18, 198));
         }
+        updateData();
+        addDataSlots(this.data);
+    }
+
+    public static int faceX(int face) {
+        return FACE_X + (face / 3) * COLUMN_STEP;
+    }
+
+    public static int faceY(int face) {
+        return FACE_Y + (face % 3) * ROW_STEP;
+    }
+
+    public Component faceLabel(int index) {
+        Direction direction = Direction.from3DDataValue(index);
+        SideMode mode = MODES[this.data.get(index)];
+        return Component.translatable("gui.nerologistics.duct.face",
+                Component.translatable("gui.nerologistics.duct.face." + direction.getName()),
+                Component.translatable("gui.nerologistics.duct.mode." + mode.name().toLowerCase(Locale.ROOT)));
+    }
+
+    public boolean showsItems() {
+        return shows(ITEM);
+    }
+
+    public boolean showsFluids() {
+        return shows(FLUID);
+    }
+
+    public boolean showsEnergy() {
+        return shows(ENERGY);
+    }
+
+    public int energyRate() {
+        return (this.data.get(FLOW + 1) << 16) | (this.data.get(FLOW) & 0xffff);
+    }
+
+    private boolean shows(int medium) {
+        return (this.data.get(MEDIA) & medium) != 0;
+    }
+
+    private void updateData() {
+        if (this.duct != null) {
+            int flags = 0;
+            if (this.duct.media().contains(NetworkMedium.ITEM)) flags |= ITEM;
+            if (this.duct.media().contains(NetworkMedium.FLUID)) flags |= FLUID;
+            if (this.duct.media().contains(NetworkMedium.ENERGY)) flags |= ENERGY;
+            this.data.set(MEDIA, flags);
+            for (Direction face : Direction.values()) {
+                this.data.set(face.get3DDataValue(), this.duct.faceMode(face).ordinal());
+            }
+            int rate = (int) Math.min(Integer.MAX_VALUE, Math.round(this.duct.energyRate()));
+            this.data.set(FLOW, rate & 0xffff);
+            this.data.set(FLOW + 1, rate >>> 16);
+        }
+    }
+
+    @Override
+    public void broadcastChanges() {
+        updateData();
+        super.broadcastChanges();
+    }
+
+    @Override
+    public boolean clickMenuButton(Player player, int id) {
+        if (this.duct == null || id < 0 || id >= FACES || !stillValid(player)) {
+            return false;
+        }
+        this.duct.cycleFaceMode(Direction.from3DDataValue(id));
+        updateData();
+        return true;
     }
 
     @Override
     public boolean stillValid(Player player) {
-        if (this.blockEntity == null) {
-            return true; // client mirror — the server-side menu is authoritative
+        if (this.duct == null) {
+            return true;
         }
-        if (this.blockEntity.isRemoved() || this.blockEntity.getLevel() == null
-                || this.blockEntity.getLevel().getBlockEntity(this.blockEntity.getBlockPos()) != this.blockEntity) {
-            return false;
-        }
-        return player.distanceToSqr(this.blockEntity.getBlockPos().getX() + 0.5D,
-                this.blockEntity.getBlockPos().getY() + 0.5D,
-                this.blockEntity.getBlockPos().getZ() + 0.5D) <= 64.0D;
+        var level = this.duct.getLevel();
+        var pos = this.duct.getBlockPos();
+        return !this.duct.isRemoved() && level instanceof ServerLevel serverLevel && player.level() == level
+                && level.getBlockEntity(pos) == this.duct && player.mayInteract(serverLevel, pos)
+                && player.distanceToSqr(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) <= 64.0;
     }
 
-    /**
-     * Ghost-filter handling via shift-click: shift-clicking a filter slot clears it; shift-clicking a
-     * player item stamps a count-1 copy into the first empty filter slot. The player's item is never
-     * moved, so {@link ItemStack#EMPTY} is always returned. Every edit is persisted to the owning duct.
-     */
+    @Override
+    public void clicked(int slotId, int button, ContainerInput input, Player player) {
+        if (slotId < 0 || slotId >= GHOST_SLOTS) {
+            super.clicked(slotId, button, input, player);
+            return;
+        }
+        Slot slot = this.slots.get(slotId);
+        if (!slot.isActive() || !stillValid(player)) {
+            return;
+        }
+        if (input == ContainerInput.QUICK_MOVE) {
+            slot.set(ItemStack.EMPTY);
+            filterChanged();
+        } else if (input == ContainerInput.PICKUP) {
+            ItemStack sample = getCarried();
+            if (sample.isEmpty() || slotId >= FACES || FluidFilter.sampleFluid(sample) != Fluids.EMPTY) {
+                slot.set(sample.copyWithCount(1));
+                filterChanged();
+            }
+        }
+    }
+
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
-        if (index >= 0 && index < FILTER) {
-            this.filter.setItem(index, ItemStack.EMPTY);
-            filterChanged();
+        if (index < GHOST_SLOTS || index >= this.slots.size() || !showsItems() || !stillValid(player)) {
             return ItemStack.EMPTY;
         }
-        Slot slot = this.slots.get(index);
-        if (slot != null && slot.hasItem()) {
-            ItemStack stack = slot.getItem();
-            for (int i = 0; i < FILTER; i++) {
-                if (this.filter.getItem(i).isEmpty()) {
-                    this.filter.setItem(i, stack.copyWithCount(1));
+        ItemStack stack = this.slots.get(index).getItem();
+        if (!stack.isEmpty()) {
+            for (int i = 0; i < ITEM_FILTER_SLOTS; i++) {
+                if (this.itemFilter.getItem(i).isEmpty()) {
+                    this.itemFilter.setItem(i, stack.copyWithCount(1));
                     filterChanged();
                     break;
                 }
@@ -95,17 +194,23 @@ public class FilterMenu extends AbstractContainerMenu {
         return ItemStack.EMPTY;
     }
 
-    /** Persist a filter edit — without this the whitelist silently reverts on chunk unload. */
     private void filterChanged() {
-        if (this.blockEntity != null) {
-            this.blockEntity.setChanged();
+        if (this.duct != null) {
+            this.duct.setChanged();
         }
     }
 
-    /** Display-only filter slot: never picked up or placed into directly; set via shift-click. */
-    private static final class FilterSlot extends Slot {
-        FilterSlot(Container container, int index, int x, int y) {
+    private final class GhostSlot extends Slot {
+        private final int medium;
+
+        GhostSlot(Container container, int index, int x, int y, int medium) {
             super(container, index, x, y);
+            this.medium = medium;
+        }
+
+        @Override
+        public boolean isActive() {
+            return shows(this.medium);
         }
 
         @Override
@@ -116,11 +221,6 @@ public class FilterMenu extends AbstractContainerMenu {
         @Override
         public boolean mayPlace(ItemStack stack) {
             return false;
-        }
-
-        @Override
-        public int getMaxStackSize() {
-            return 1;
         }
     }
 }

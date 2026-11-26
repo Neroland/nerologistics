@@ -73,26 +73,26 @@ public class StorageCellItem extends Item {
 
     /** The settings (partition + priority) on {@code cell}, or defaults. */
     public static CellSettings settings(ItemStack cell) {
-        return cell.getOrDefault(ModDataComponents.CELL_SETTINGS.get(), CellSettings.DEFAULT);
+        return ModDataComponents.CELL_SETTINGS.getOrDefault(cell, CellSettings.DEFAULT);
     }
 
     /** Store {@code settings} on {@code cell} (removes the component when default-equivalent). */
     public static void storeSettings(ItemStack cell, CellSettings settings) {
         if (!settings.isPartitioned() && settings.priority() == 0) {
-            cell.remove(ModDataComponents.CELL_SETTINGS.get());
+            ModDataComponents.CELL_SETTINGS.remove(cell);
         } else {
-            cell.set(ModDataComponents.CELL_SETTINGS.get(), settings);
+            ModDataComponents.CELL_SETTINGS.set(cell, settings);
         }
     }
 
     /** The stored item contents of {@code cell} (empty for fluid cells / non-cells). */
     public static ItemCellContents itemContents(ItemStack cell) {
-        return cell.getOrDefault(ModDataComponents.ITEM_CELL_CONTENTS.get(), ItemCellContents.EMPTY);
+        return ModDataComponents.ITEM_CELL_CONTENTS.getOrDefault(cell, ItemCellContents.EMPTY);
     }
 
     /** The stored fluid contents of {@code cell} (empty for item cells / non-cells). */
     public static FluidCellContents fluidContents(ItemStack cell) {
-        return cell.getOrDefault(ModDataComponents.FLUID_CELL_CONTENTS.get(), FluidCellContents.EMPTY);
+        return ModDataComponents.FLUID_CELL_CONTENTS.getOrDefault(cell, FluidCellContents.EMPTY);
     }
 
     // --- Cell transfer ops (drive bay + index call these) --------------------
@@ -116,7 +116,7 @@ public class StorageCellItem extends Item {
             return 0;
         }
         if (!simulate) {
-            cell.set(ModDataComponents.ITEM_CELL_CONTENTS.get(), contents.grown(prototype, (int) accepted));
+            ModDataComponents.ITEM_CELL_CONTENTS.set(cell, contents.grown(prototype, (int) accepted));
         }
         return accepted;
     }
@@ -135,9 +135,9 @@ public class StorageCellItem extends Item {
         if (!simulate) {
             ItemCellContents shrunk = contents.shrunk(prototype, (int) Math.min(taken, Integer.MAX_VALUE));
             if (shrunk.entries().isEmpty()) {
-                cell.remove(ModDataComponents.ITEM_CELL_CONTENTS.get());
+                ModDataComponents.ITEM_CELL_CONTENTS.remove(cell);
             } else {
-                cell.set(ModDataComponents.ITEM_CELL_CONTENTS.get(), shrunk);
+                ModDataComponents.ITEM_CELL_CONTENTS.set(cell, shrunk);
             }
         }
         return taken;
@@ -161,7 +161,7 @@ public class StorageCellItem extends Item {
             return 0;
         }
         if (!simulate) {
-            cell.set(ModDataComponents.FLUID_CELL_CONTENTS.get(), contents.grown(fluid, accepted));
+            ModDataComponents.FLUID_CELL_CONTENTS.set(cell, contents.grown(fluid, accepted));
         }
         return accepted;
     }
@@ -180,9 +180,9 @@ public class StorageCellItem extends Item {
         if (!simulate) {
             FluidCellContents shrunk = contents.shrunk(fluid, taken);
             if (shrunk.entries().isEmpty()) {
-                cell.remove(ModDataComponents.FLUID_CELL_CONTENTS.get());
+                ModDataComponents.FLUID_CELL_CONTENTS.remove(cell);
             } else {
-                cell.set(ModDataComponents.FLUID_CELL_CONTENTS.get(), shrunk);
+                ModDataComponents.FLUID_CELL_CONTENTS.set(cell, shrunk);
             }
         }
         return taken;

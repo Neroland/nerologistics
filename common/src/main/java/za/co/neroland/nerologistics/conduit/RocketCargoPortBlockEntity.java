@@ -9,6 +9,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -25,6 +27,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 
 import org.jetbrains.annotations.Nullable;
 
+import za.co.neroland.nerolandcore.sideconfig.ConfiguratorTool;
 import za.co.neroland.nerolandcore.data.SavedDataRecovery;
 import za.co.neroland.nerolandcore.progression.ProgressionGates;
 
@@ -79,7 +82,20 @@ import za.co.neroland.nerologistics.world.ErasedOwnersState;
  *       public pads only and unable to launch until someone configures it again.</li>
  * </ul>
  */
-public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
+public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity implements ConfiguratorTool.Target {
+    @Override
+    public InteractionResult configure(UseOnContext context) {
+        if (!context.isSecondaryUseActive()) {
+            return InteractionResult.PASS;
+        }
+        if (context.getLevel() instanceof ServerLevel level
+                && context.getPlayer() instanceof net.minecraft.server.level.ServerPlayer player) {
+            RocketCargoPortBlock.cycleSchedule(level, player, this);
+            showPower(player, level.getGameTime());
+        }
+        return InteractionResult.SUCCESS;
+    }
+
 
     public static final int BUFFER_SIZE = 10;
     public static final int ENERGY_CAPACITY = 500_000;
@@ -738,7 +754,7 @@ public class RocketCargoPortBlockEntity extends AbstractTerminalBlockEntity {
         this.freightPrepaid = false;
         this.freightRefusalKey = null;
         // Accepted: the provider owns the cargo now. Charge energy (+ stub fuel) and clear the slots.
-        this.energy.consume(energyCost);
+        consumeEnergy(energyCost);
         if (fuelNeed > 0) {
             this.buffer.getItem(fuelSlot).shrink(fuelNeed);
         }

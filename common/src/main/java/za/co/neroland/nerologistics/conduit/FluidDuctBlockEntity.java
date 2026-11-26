@@ -39,7 +39,7 @@ public class FluidDuctBlockEntity extends AbstractConduitBlockEntity {
     @Override
     public boolean fluidPasses(Direction face, Fluid fluid) {
         FluidFilter filter = this.filters.get(face);
-        return filter == null || filter.test(fluid);
+        return super.fluidPasses(face, fluid) && (filter == null || filter.test(fluid));
     }
 
     //? if >=1.21.6 {

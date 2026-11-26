@@ -9,7 +9,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -17,6 +16,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import org.jetbrains.annotations.Nullable;
 
+import za.co.neroland.nerologistics.conduit.OrientedDeviceBlock;
 import za.co.neroland.nerolandcore.registry.BlockCodecs;
 import za.co.neroland.nerologistics.menu.MenuOpener;
 
@@ -25,7 +25,7 @@ import za.co.neroland.nerologistics.menu.MenuOpener;
  * storage index reads the {@link DriveBayBlockEntity} through the {@code StorageNode} contract.
  * Comparator output is the average cell fill (0–15).
  */
-public class DriveBayBlock extends BaseEntityBlock {
+public class DriveBayBlock extends OrientedDeviceBlock {
 
     public static final MapCodec<DriveBayBlock> CODEC = BlockCodecs.simple(DriveBayBlock::new);
 

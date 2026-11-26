@@ -10,6 +10,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 
 import org.jetbrains.annotations.Nullable;
 
+import za.co.neroland.nerologistics.compat.NerospaceCompat;
+
 /**
  * Loader-neutral item movement over vanilla {@link Container} / {@link WorldlyContainer}.
  * Covers vanilla inventories and every Nero machine (they implement {@code WorldlyContainer}
@@ -41,6 +43,9 @@ public final class InventoryTransfer {
     }
 
     private static boolean canTake(Container container, int slot, ItemStack stack, Direction side) {
+        if (!NerospaceCompat.allowsItem(container, side, stack, false)) {
+            return false;
+        }
         if (container instanceof WorldlyContainer worldly) {
             return worldly.canTakeItemThroughFace(slot, stack, side);
         }
@@ -48,7 +53,7 @@ public final class InventoryTransfer {
     }
 
     private static boolean canPlace(Container container, int slot, ItemStack stack, Direction side) {
-        if (!container.canPlaceItem(slot, stack)) {
+        if (!container.canPlaceItem(slot, stack) || !NerospaceCompat.allowsItem(container, side, stack, true)) {
             return false;
         }
         if (container instanceof WorldlyContainer worldly) {

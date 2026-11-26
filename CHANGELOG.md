@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.1]
+
+### Added
+
+- Fabric supports Minecraft 1.20 through 1.20.6. Forge supports 1.20 through 1.20.4 and 1.20.6. NeoForge supports 1.20.4 through 1.20.6, with the Forge jar for legacy NeoForge 1.20.1.
+- Use the matching Neroland Core build at version 1.24.0 or newer (below 2.0).
+- The Auto-Crafter recipe uses a dropper on Minecraft 1.20.x.
+
+- A six-face configuration panel for ducts and Energy Cables. Right-click with an empty hand or
+  sneak-use a Configurator to change any face while adjacent containers stay in place.
+- Per-face fluid filters for Universal and Fluid Ducts. Use a filled bucket as a sample to allow
+  its fluid through the face. The bucket and its contents stay in your inventory.
+- Adjacent Nerospace Universal Pipes can exchange items and fluids with ducts and energy with
+  Energy Cables. The connection respects the configured modes and filters.
+- Energy Cables show recent network throughput in NE/t. Sneak-use a Configurator on a powered
+  logistics device to see its stored energy and recent consumption.
+
+### Changed
+
+- Configurators from NeroLogistics, Nerospace and NeroTech can all configure logistics conduits.
+  The NeroLogistics Configurator also handles basic pipe and machine face controls in those mods.
+- Requires Neroland Core 1.24.0 or a newer 1.x release.
+
+### Fixed
+
+- Newly placed logistics devices turn their front texture toward the player.
+- The Universal Duct has a distinct crafting recipe from the 1k Item Cell. It still yields eight ducts.
+
 ## [0.9.0] - 2026-11-24
 
 ### Added

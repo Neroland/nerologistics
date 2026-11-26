@@ -258,5 +258,21 @@
   "map.layer.nerologistics.drone_ports": "Drone ports nearby",
   "map.layer.nerologistics.train_stations": "Train stations nearby",
   "map.marker.nerologistics.drone_port": "Drone port",
-  "map.marker.nerologistics.train_station": "Train station"
+  "map.marker.nerologistics.train_station": "Train station",
+  "gui.nerologistics.duct.face": "%1$s %2$s",
+  "gui.nerologistics.duct.face.down": "Down",
+  "gui.nerologistics.duct.face.up": "Up",
+  "gui.nerologistics.duct.face.north": "North",
+  "gui.nerologistics.duct.face.south": "South",
+  "gui.nerologistics.duct.face.west": "West",
+  "gui.nerologistics.duct.face.east": "East",
+  "gui.nerologistics.duct.mode.disabled": "Off",
+  "gui.nerologistics.duct.mode.input": "In",
+  "gui.nerologistics.duct.mode.output": "Out",
+  "gui.nerologistics.duct.mode.io": "Both",
+  "gui.nerologistics.duct.mode.push": "Push",
+  "gui.nerologistics.duct.fluid": "Fluid per face: click with a filled bucket",
+  "gui.nerologistics.duct.item": "Item filter: click with a sample item",
+  "gui.nerologistics.duct.energy": "Cable network: %s NE/t (last 20 ticks)",
+  "block.nerologistics.power.readout": "Stored: %1$s/%2$s NE | Used: %3$s NE/t (last 20 ticks)"
 }

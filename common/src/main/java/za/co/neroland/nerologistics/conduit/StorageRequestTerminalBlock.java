@@ -8,7 +8,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -23,7 +22,7 @@ import za.co.neroland.nerologistics.menu.MenuOpener;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 
 /** Storage request terminal block — right-click opens the request GUI. */
-public class StorageRequestTerminalBlock extends BaseEntityBlock {
+public class StorageRequestTerminalBlock extends OrientedDeviceBlock {
 
     public static final MapCodec<StorageRequestTerminalBlock> CODEC = BlockCodecs.simple(StorageRequestTerminalBlock::new);
 

@@ -5,6 +5,9 @@ import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.Container;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -27,11 +30,13 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import org.jetbrains.annotations.Nullable;
 
+import za.co.neroland.nerologistics.menu.MenuOpener;
 import za.co.neroland.nerolandcore.platform.EnergyLookup;
 import za.co.neroland.nerolandcore.platform.FluidLookup;
 import za.co.neroland.nerolandcore.sideconfig.SideMode;
 
 import za.co.neroland.nerologistics.network.NetworkMedium;
+import za.co.neroland.nerologistics.compat.NerospaceCompat;
 import za.co.neroland.nerologistics.storage.StorageNode;
 
 /**
@@ -69,6 +74,18 @@ public abstract class AbstractConduitBlock extends BaseEntityBlock {
             base = base.setValue(prop, false);
         }
         registerDefaultState(base);
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
+            BlockHitResult hit) {
+        if (!player.getMainHandItem().isEmpty()) {
+            return InteractionResult.PASS;
+        }
+        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof AbstractConduitBlockEntity conduit) {
+            MenuOpener.open(player, conduit);
+        }
+        return InteractionResult.SUCCESS;
     }
 
     /** The concrete conduit block-entity type, for the ticker. */
@@ -197,6 +214,9 @@ public abstract class AbstractConduitBlock extends BaseEntityBlock {
             return true;
         }
         Direction side = dir.getOpposite();
+        if (NerospaceCompat.isPipe(neighbour)) {
+            return media.stream().anyMatch(medium -> NerospaceCompat.connects(neighbour, side, medium));
+        }
         for (NetworkMedium m : media) {
             boolean ok = switch (m) {
                 case ITEM -> neighbour instanceof Container || neighbour instanceof StorageNode;

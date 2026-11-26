@@ -54,7 +54,7 @@ public class WirelessTerminalItem extends Item {
     /** The bound controller of {@code stack}, or {@code null} when unbound. */
     @Nullable
     public static GlobalPos boundTarget(ItemStack stack) {
-        return stack.get(ModDataComponents.WIRELESS_TARGET.get());
+        return ModDataComponents.WIRELESS_TARGET.get(stack);
     }
 
     /** Sneak-use on a network controller: bind this terminal to it. */
@@ -67,7 +67,7 @@ public class WirelessTerminalItem extends Item {
             return InteractionResult.PASS;
         }
         if (!level.isClientSide()) {
-            context.getItemInHand().set(ModDataComponents.WIRELESS_TARGET.get(),
+            ModDataComponents.WIRELESS_TARGET.set(context.getItemInHand(),
                     GlobalPos.of(level.dimension(), pos.immutable()));
             Player player = context.getPlayer();
             if (player != null) {

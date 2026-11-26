@@ -8,7 +8,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -22,7 +21,7 @@ import za.co.neroland.nerolandcore.registry.BlockCodecs;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 
 /** Wireless cargo terminal block — right-click to cycle its channel. */
-public class WirelessCargoTerminalBlock extends BaseEntityBlock {
+public class WirelessCargoTerminalBlock extends OrientedDeviceBlock {
 
     public static final MapCodec<WirelessCargoTerminalBlock> CODEC = BlockCodecs.simple(WirelessCargoTerminalBlock::new);
 

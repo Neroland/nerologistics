@@ -1,1 +1,19 @@
-{"variants":{"":{"model":"nerologistics:block/buffer"}}}
+{
+  "variants": {
+    "facing=north": {
+      "model": "nerologistics:block/buffer"
+    },
+    "facing=east": {
+      "model": "nerologistics:block/buffer",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "nerologistics:block/buffer",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "nerologistics:block/buffer",
+      "y": 270
+    }
+  }
+}

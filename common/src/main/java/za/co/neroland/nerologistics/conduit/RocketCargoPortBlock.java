@@ -13,7 +13,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -29,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 import za.co.neroland.nerolandcore.registry.BlockCodecs;
 import za.co.neroland.nerologistics.config.NeroLogisticsConfig;
-import za.co.neroland.nerologistics.item.ConfiguratorItem;
+import za.co.neroland.nerolandcore.sideconfig.ConfiguratorTool;
 import za.co.neroland.nerologistics.registry.ModBlockEntities;
 import za.co.neroland.nerologistics.ship.PortSchedule;
 import za.co.neroland.nerologistics.ship.RouteDestination;
@@ -45,7 +44,7 @@ import za.co.neroland.nerologistics.world.AttributionOptOutState;
  * sneak-right-click cycles the launch schedule (every interval → when full → manual) and prints the
  * status. In the manual schedule a redstone pulse into the port launches once.
  */
-public class RocketCargoPortBlock extends BaseEntityBlock {
+public class RocketCargoPortBlock extends OrientedDeviceBlock {
 
     public static final MapCodec<RocketCargoPortBlock> CODEC = BlockCodecs.simple(RocketCargoPortBlock::new);
 
@@ -89,7 +88,7 @@ public class RocketCargoPortBlock extends BaseEntityBlock {
                 && level instanceof ServerLevel serverLevel
                 && level.getBlockEntity(pos) instanceof RocketCargoPortBlockEntity port) {
             boolean nerospace = RouteProviders.get().needsDispatcher();
-            boolean configurator = player.getMainHandItem().getItem() instanceof ConfiguratorItem;
+            boolean configurator = player.getMainHandItem().getItem() instanceof ConfiguratorTool;
             if (configurator && player.isShiftKeyDown()) {
                 // Normally unreachable (vanilla skips block use while sneaking with an item — the
                 // Configurator handles that case itself); kept for loaders that do call it.

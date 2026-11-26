@@ -1,1 +1,19 @@
-{"variants":{"":{"model":"nerologistics:block/logistics_dashboard"}}}
+{
+  "variants": {
+    "facing=north": {
+      "model": "nerologistics:block/logistics_dashboard"
+    },
+    "facing=east": {
+      "model": "nerologistics:block/logistics_dashboard",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "nerologistics:block/logistics_dashboard",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "nerologistics:block/logistics_dashboard",
+      "y": 270
+    }
+  }
+}

@@ -31,6 +31,9 @@ Configurator hides its arm.
 The look is cosmetic only. Networks, endpoints and throughput are exactly as before, and the hitbox
 follows the tube, so you can walk beside a line instead of on it.
 
+The front textures on logistics devices face the player when placed. Existing devices keep the
+orientation they had before the update.
+
 ## Networks
 
 Conduits of the **same medium** that touch each other form a single **network**. Networks are tracked
@@ -42,6 +45,9 @@ Networks work out of the box — no progression unlock or configuration required
 NeroLogistics standalone or alongside the other Nero mods.
 
 ## Per-face modes
+
+Right-click with an empty hand or sneak-use a NeroLogistics, Nerospace or NeroTech Configurator to
+open the face panel. Right-click a face while holding a Configurator to cycle it directly.
 
 Every conduit face carries a Core **side-config** mode for its medium's channel, exactly like a
 machine face:
@@ -57,13 +63,9 @@ interacts with the **external** (non-conduit) block on it.
 
 ## Filters
 
-Item and fluid ducts carry a **per-face filter**:
-
-- **Item filter** — match by exact item, item tag (e.g. `c:ingots`), mod id, or full
-  data-component (NBT) match. Whitelist or blacklist.
-- **Fluid filter** — match by fluid, fluid tag, or mod id. Whitelist or blacklist.
-
-A face with no filter passes everything; a whitelist with no rules passes nothing.
+Item and Universal Ducts have an item whitelist. Fluid and Universal Ducts have one fluid sample
+slot per face. Use a filled bucket as the sample, then click the slot with an empty cursor to
+clear it. A face without a fluid sample passes all fluids.
 
 ## Throughput & limits
 
@@ -72,11 +74,18 @@ fluids and energy), and transport runs at most **once per network per tick**. A 
 grow past `maxNodesPerNetwork` refuses to connect the new conduit (it stays isolated) rather than
 costing tick time. See [Configuration](Configuration.md).
 
+Right-click an Energy Cable with an empty hand to see the network's recent NE/t. Sneak-use a
+Configurator on a powered logistics device to see stored energy and actual energy spent over
+the last 20 ticks. Some devices only draw power when they complete a job.
+
 ## What it connects to
 
 Item ducts move items via the vanilla `Container` / `WorldlyContainer` contract, which covers vanilla
 blocks (chests, barrels, furnaces) and every Nero machine. Energy uses Core's energy lookup; fluids
-use Core's fluid lookup. Loader-native transfer-API and AE2 discovery are a planned enhancement.
+use Core's fluid lookup. A duct or cable can also move its supported resources to or from an adjacent Nerospace Universal
+Pipe. To send from a pipe to NeroLogistics, set the pipe side to **Out** and the duct face to **In**.
+Reverse the two modes to send the other way. The pipe buffer hands off the resource between
+networks.
 
 ## See also
 

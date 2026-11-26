@@ -1,1 +1,19 @@
-{"variants":{"":{"model":"nerologistics:block/item_storage"}}}
+{
+  "variants": {
+    "facing=north": {
+      "model": "nerologistics:block/item_storage"
+    },
+    "facing=east": {
+      "model": "nerologistics:block/item_storage",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "nerologistics:block/item_storage",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "nerologistics:block/item_storage",
+      "y": 270
+    }
+  }
+}

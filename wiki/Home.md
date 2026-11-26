@@ -4,8 +4,9 @@ Player- and contributor-facing documentation for **NeroLogistics**, part of the 
 sci-fi Minecraft mod ecosystem. Built on **Neroland Core**.
 
 NeroLogistics moves items, fluids, energy and cargo within a base, wirelessly, by drone and between
-dimensions. It requires **Neroland Core 1.23.0 or newer** (below 2.0). Minecraft 1.20.5 runs on
-Fabric, and 1.20.6 runs on Fabric, Forge and NeoForge.
+dimensions. Use the matching Neroland Core build at version 1.24.0 or newer (below 2.0).
+
+Fabric supports Minecraft 1.20 through 1.20.6. Forge supports 1.20 through 1.20.4 and 1.20.6. NeoForge supports 1.20.4 through 1.20.6, with the Forge jar for legacy NeoForge 1.20.1.
 
 ## Contents
 

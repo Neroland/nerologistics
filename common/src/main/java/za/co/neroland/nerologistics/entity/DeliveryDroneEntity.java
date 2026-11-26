@@ -58,8 +58,13 @@ public class DeliveryDroneEntity extends Entity {
         return this.homePos;
     }
 
+    //? if >=1.20.5 {
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
+    //?} else {
+    /*@Override
+    protected void defineSynchedData() {
+    *///?}
         // No synced state: the client renders from the tracked position only.
     }
 

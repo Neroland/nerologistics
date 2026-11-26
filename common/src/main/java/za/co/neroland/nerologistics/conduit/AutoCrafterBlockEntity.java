@@ -148,7 +148,7 @@ public class AutoCrafterBlockEntity extends AbstractTerminalBlockEntity implemen
             }
             consumeIngredients(sources, demand);
             InventoryTransfer.insert(this, Direction.UP, output, output.getCount());
-            this.energy.consume(perCraft);
+            consumeEnergy(perCraft);
             setChanged();
         }
     }

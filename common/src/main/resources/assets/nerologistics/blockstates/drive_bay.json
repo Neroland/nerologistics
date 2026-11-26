@@ -1,1 +1,19 @@
-{"variants":{"":{"model":"nerologistics:block/drive_bay"}}}
+{
+  "variants": {
+    "facing=north": {
+      "model": "nerologistics:block/drive_bay"
+    },
+    "facing=east": {
+      "model": "nerologistics:block/drive_bay",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "nerologistics:block/drive_bay",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "nerologistics:block/drive_bay",
+      "y": 270
+    }
+  }
+}

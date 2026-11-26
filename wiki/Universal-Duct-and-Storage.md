@@ -7,14 +7,18 @@ network — and **native storage** that the network indexes.
 
 The universal duct is the new default conduit. A single line carries **both items and fluids**
 (energy stays on [Energy Cables](Conduits.md)); each resource is routed to the matching neighbour —
-items to inventories, fluids to fluid storages. It is **cheap** to craft (8 per recipe).
+items to inventories, fluids to fluid storages. The crafting recipe makes eight ducts. Use copper in the corners, glass in the top and bottom
+middle slots, iron on either side of the centre, and redstone in the centre.
 
 - **One line, two media.** Internally the duct joins both the item and fluid networks at the same
   positions, so you no longer run parallel item and fluid lines.
-- **Faces.** Set per-face input / output / disabled with the **Configurator**; the mode applies to
-  both items and fluids on that face.
-- **Item filter.** Bare-hand right-click opens a whitelist: drop sample items into the slots and only
-  those pass; an empty filter passes everything. (Per-face *fluid* filters are a later refinement.)
+- **Faces.** Right-click with an empty hand or sneak-use a Configurator to open all six face controls.
+  Click any face to cycle Off, In, Out and Both. The mode applies to both items and fluids.
+- **Item filter.** Click a filter slot with a sample item, or shift-click a sample in your inventory.
+  An empty item filter lets all items through.
+- **Fluid filter.** Click a face's slot with a filled bucket to allow that fluid through the face.
+  Click with an empty cursor to clear the rule. The filter keeps a sample and returns the bucket
+  and its contents to you.
 - **Interop.** A universal duct placed against a legacy **Item Duct** merges with its item network, and
   against a **Fluid Duct** merges with its fluid network — so old and new lines mix freely.
 

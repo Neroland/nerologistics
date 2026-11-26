@@ -27,8 +27,7 @@ import za.co.neroland.nerologistics.registry.ModBlockEntities;
  * same member positions ({@link #media()}), so one physical line moves both, content-routed by the
  * existing per-medium transport — items flow to item inventories, fluids to fluid storages. Faces are
  * configured once (Configurator) and apply to both media. Items are filtered by a single whitelist set
- * in the duct's GUI (bare-hand right-click), like the legacy item duct; fluids pass freely (per-face
- * fluid filters are a later refinement).
+ * in the duct's GUI (bare-hand right-click), like the legacy item duct; fluids can be filtered independently on each face.
  *
  * <p>This is the Stage-8 default duct. The legacy item/fluid ducts remain for migration and still
  * interoperate — a universal duct placed against an item duct merges with its {@code ITEM} network, and

@@ -3,7 +3,9 @@ package za.co.neroland.nerologistics.conduit;
 import com.mojang.serialization.MapCodec;
 
 import net.minecraft.core.BlockPos;
+//? if >=1.20.5 {
 import net.minecraft.core.component.DataComponents;
+//?}
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
@@ -11,7 +13,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -30,7 +31,7 @@ import za.co.neroland.nerologistics.registry.ModBlockEntities;
  * toggles import/export. An anvil-renamed port item names the port on placement (used for routing). A
  * server ticker drives export dispatch.
  */
-public class DronePortBlock extends BaseEntityBlock {
+public class DronePortBlock extends OrientedDeviceBlock {
 
     public static final MapCodec<DronePortBlock> CODEC = BlockCodecs.simple(DronePortBlock::new);
 
@@ -57,7 +58,11 @@ public class DronePortBlock extends BaseEntityBlock {
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer,
             ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
+        //? if >=1.20.5 {
         Component custom = stack.get(DataComponents.CUSTOM_NAME);
+        //?} else {
+        /*Component custom = stack.hasCustomHoverName() ? stack.getHoverName() : null;
+        *///?}
         if (custom != null && level.getBlockEntity(pos) instanceof DronePortBlockEntity port) {
             port.setPortName(custom.getString());
         }

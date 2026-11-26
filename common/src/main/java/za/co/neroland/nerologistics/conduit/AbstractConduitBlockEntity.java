@@ -4,6 +4,15 @@ import java.util.Set;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -15,6 +24,10 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
 import za.co.neroland.nerolandcore.sideconfig.Channel;
+import za.co.neroland.nerolandcore.sideconfig.ConfiguratorTool;
+import za.co.neroland.nerologistics.menu.FilterMenu;
+import za.co.neroland.nerologistics.filter.FluidFilter;
+import za.co.neroland.nerologistics.menu.MenuOpener;
 import za.co.neroland.nerolandcore.sideconfig.RelativeFace;
 import za.co.neroland.nerolandcore.sideconfig.SideConfig;
 import za.co.neroland.nerolandcore.sideconfig.SideMode;
@@ -34,7 +47,7 @@ import za.co.neroland.nerologistics.network.NetworkMedium;
  * -conduit connectivity is graph membership, independent of face mode. Faces default to {@link
  * SideMode#IO} so a freshly-placed line balances adjacent inventories before the player refines it.
  */
-public abstract class AbstractConduitBlockEntity extends BlockEntity {
+public abstract class AbstractConduitBlockEntity extends BlockEntity implements MenuProvider, ConfiguratorTool.Target {
 
     /** Ticks between a conduit's cosmetic arm re-checks (staggered by position so a line never spikes). */
     private static final int CONNECTION_REFRESH_TICKS = 100;
@@ -44,6 +57,56 @@ public abstract class AbstractConduitBlockEntity extends BlockEntity {
 
     protected final SideConfig sideConfig;
     private boolean joined;
+    private final SimpleContainer fluidSamples = new SimpleContainer(6);
+
+    public double energyRate() {
+        var level = this.level;
+        if (level == null || !media().contains(NetworkMedium.ENERGY)) {
+            return 0;
+        }
+        var network = NetworkManager.networkAt(level, NetworkMedium.ENERGY, this.worldPosition);
+        return network == null ? 0 : network.energyRate(level.getGameTime());
+    }
+
+    public SimpleContainer fluidSamples() {
+        return this.fluidSamples;
+    }
+
+    @Override
+    public Component getDisplayName() {
+        return getBlockState().getBlock().getName();
+    }
+
+    @Override
+    public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
+        return new FilterMenu(id, inventory, new SimpleContainer(FilterMenu.ITEM_FILTER_SLOTS), this);
+    }
+
+    @Override
+    public InteractionResult configure(UseOnContext context) {
+        if (context.getPlayer() instanceof ServerPlayer player) {
+            if (context.isSecondaryUseActive()) {
+                MenuOpener.open(player, this);
+            } else {
+                Direction face = context.getClickedFace();
+                SideMode mode = cycleFaceMode(face);
+                player.sendSystemMessage(Component.translatable("item.nerologistics.configurator.set",
+                        face.getName(), mode.lowerName()), true);
+            }
+        }
+        return InteractionResult.SUCCESS;
+    }
+
+    public SideMode cycleFaceMode(Direction face) {
+        SideMode mode = switch (faceMode(face)) {
+            case DISABLED -> SideMode.INPUT;
+            case INPUT -> SideMode.OUTPUT;
+            case OUTPUT -> SideMode.IO;
+            default -> SideMode.DISABLED;
+        };
+        setFaceMode(face, mode);
+        return mode;
+    }
 
     protected AbstractConduitBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -102,7 +165,7 @@ public abstract class AbstractConduitBlockEntity extends BlockEntity {
 
     /** Whether {@code fluid} may pass this conduit's {@code face}. Overridden by fluid ducts. */
     public boolean fluidPasses(Direction face, Fluid fluid) {
-        return true;
+        return FluidFilter.matchesSample(this.fluidSamples.getItem(face.get3DDataValue()), fluid);
     }
 
     public SideConfig sideConfig() {
@@ -120,6 +183,12 @@ public abstract class AbstractConduitBlockEntity extends BlockEntity {
         ValueOutput output = ValueOutput.of(tag, registries);
     *///?}
         this.sideConfig.save(output);
+        if (media().contains(NetworkMedium.FLUID)) {
+            for (Direction face : Direction.values()) {
+                int slot = face.get3DDataValue();
+                output.store("FluidSample" + slot, ItemStack.OPTIONAL_CODEC, this.fluidSamples.getItem(slot));
+            }
+        }
     }
 
     //? if >=1.21.6 {
@@ -133,6 +202,13 @@ public abstract class AbstractConduitBlockEntity extends BlockEntity {
         ValueInput input = ValueInput.of(tag, registries);
     *///?}
         this.sideConfig.load(input);
+        if (media().contains(NetworkMedium.FLUID)) {
+            for (Direction face : Direction.values()) {
+                int slot = face.get3DDataValue();
+                this.fluidSamples.setItem(slot, input.read("FluidSample" + slot, ItemStack.OPTIONAL_CODEC)
+                        .orElse(ItemStack.EMPTY));
+            }
+        }
     }
 
     @Override

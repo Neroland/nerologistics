@@ -17,9 +17,9 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 
 import za.co.neroland.nerolandcore.energy.NeroEnergyStorage;
+import za.co.neroland.nerolandcore.energy.EnergyRate;
 import za.co.neroland.nerolandcore.fluid.NeroFluidStorage;
-import za.co.neroland.nerolandcore.platform.EnergyLookup;
-import za.co.neroland.nerolandcore.platform.FluidLookup;
+import za.co.neroland.nerologistics.compat.NerospaceCompat;
 import za.co.neroland.nerolandcore.sideconfig.SideMode;
 
 import za.co.neroland.nerologistics.conduit.AbstractConduitBlockEntity;
@@ -42,6 +42,11 @@ public final class ConduitNetwork {
     private final Set<BlockPos> members = new HashSet<>();
     private List<ConduitEndpoint> endpoints;
     private long lastTickGame = -1L;
+    private EnergyRate energyMoved;
+
+    public double energyRate(long tick) {
+        return this.energyMoved == null ? 0 : this.energyMoved.perTick(tick);
+    }
 
     /** Lazily-created digital storage index for this network (see {@link #storageIndex()}). */
     private NetworkStorageIndex storageIndex;
@@ -306,7 +311,7 @@ public final class ConduitNetwork {
             if (!src.isSource() || receivedThisTick.contains(src.neighborPos())) {
                 continue;
             }
-            NeroEnergyStorage from = EnergyLookup.INSTANCE.find(level, src.neighborPos(), src.neighborSide());
+            NeroEnergyStorage from = NerospaceCompat.energy(level, src.neighborPos(), src.neighborSide(), false);
             if (from == null || !from.canExtract()) {
                 continue;
             }
@@ -317,7 +322,7 @@ public final class ConduitNetwork {
                 if (sink.neighborPos().equals(src.neighborPos())) {
                     continue;
                 }
-                NeroEnergyStorage to = EnergyLookup.INSTANCE.find(level, sink.neighborPos(), sink.neighborSide());
+                NeroEnergyStorage to = NerospaceCompat.energy(level, sink.neighborPos(), sink.neighborSide(), true);
                 if (to == null) {
                     continue;
                 }
@@ -337,7 +342,14 @@ public final class ConduitNetwork {
                 budget -= moved;
             }
         }
-        LogisticsMetrics.recordEnergy(level, startBudget - budget);
+        long moved = startBudget - budget;
+        if (moved > 0) {
+            if (this.energyMoved == null) {
+                this.energyMoved = new EnergyRate();
+            }
+            this.energyMoved.record(level.getGameTime(), moved);
+            LogisticsMetrics.recordEnergy(level, moved);
+        }
     }
 
     private void tickFluids(Level level, List<ConduitEndpoint> eps, double mult) {
@@ -358,7 +370,7 @@ public final class ConduitNetwork {
             if (!src.isSource() || receivedThisTick.contains(src.neighborPos())) {
                 continue;
             }
-            NeroFluidStorage from = FluidLookup.INSTANCE.find(level, src.neighborPos(), src.neighborSide());
+            NeroFluidStorage from = NerospaceCompat.fluid(level, src.neighborPos(), src.neighborSide(), false);
             AbstractConduitBlockEntity srcBe = conduitBe(level, src.conduitPos());
             if (from == null || srcBe == null) {
                 continue;
@@ -398,7 +410,7 @@ public final class ConduitNetwork {
                 if (sink.neighborPos().equals(src.neighborPos())) {
                     continue;
                 }
-                NeroFluidStorage to = FluidLookup.INSTANCE.find(level, sink.neighborPos(), sink.neighborSide());
+                NeroFluidStorage to = NerospaceCompat.fluid(level, sink.neighborPos(), sink.neighborSide(), true);
                 AbstractConduitBlockEntity sinkBe = conduitBe(level, sink.conduitPos());
                 if (to == null || sinkBe == null || !sinkBe.fluidPasses(sink.face(), fluid)) {
                     continue;

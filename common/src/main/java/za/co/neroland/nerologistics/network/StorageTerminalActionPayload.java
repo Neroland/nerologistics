@@ -57,8 +57,13 @@ public record StorageTerminalActionPayload(int containerId, Action action,
         static final Action[] VALUES = values();
     }
 
+    //? if >=1.20.5 {
     public static final Type<StorageTerminalActionPayload> TYPE =
             new Type<>(Identifier.fromNamespaceAndPath(NeroLogisticsCommon.MOD_ID, "storage_terminal_action"));
+    //?} else {
+    /*public static final Type<StorageTerminalActionPayload> TYPE =
+            new Type<>(Identifier.fromNamespaceAndPath(NeroLogisticsCommon.MOD_ID, "storage_terminal_action"), StorageTerminalActionPayload.class);
+    *///?}
 
     public static final StreamCodec<RegistryFriendlyByteBuf, StorageTerminalActionPayload> STREAM_CODEC =
             StreamCodec.of(StorageTerminalActionPayload::write, StorageTerminalActionPayload::read);

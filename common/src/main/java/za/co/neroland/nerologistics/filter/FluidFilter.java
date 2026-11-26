@@ -7,6 +7,9 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -113,6 +116,26 @@ public final class FluidFilter {
                     : TagKey.create(Registries.FLUID, Identifier.parse(tagStr));
             this.rules.add(new Rule(kind, fluidId, tag));
         }
+    }
+
+    public static boolean matchesSample(ItemStack bucket, Fluid candidate) {
+        Fluid sample = sampleFluid(bucket);
+        return sample == Fluids.EMPTY || sample == candidate;
+    }
+
+    public static Fluid sampleFluid(ItemStack stack) {
+        if (stack.getItem() instanceof BucketItem bucket) {
+            //? if >=1.21.9 {
+            return bucket.getContent();
+            //?} else {
+            /*for (Fluid fluid : net.minecraft.core.registries.BuiltInRegistries.FLUID) {
+                if (fluid.getBucket() == bucket && fluid.defaultFluidState().isSource()) {
+                    return fluid;
+                }
+            }
+            *///?}
+        }
+        return Fluids.EMPTY;
     }
 
     private static Kind parseKind(String s) {
