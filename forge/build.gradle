@@ -21,7 +21,7 @@ def forgeVersion = project.findProperty("forge_version_${mc}")
 def jeiVersion = project.findProperty("jei_version_${mc}")
 def emiFile = project.findProperty("emi_file_neoforge_${mc}")
 def nerolandcoreVersion = project.findProperty('nerolandcore_version')
-def nerospaceVersion = project.findProperty(preComponents ? 'nerospace_version_pre_components' : 'nerospace_version')
+def nerospaceVersion = rootProject.property('nerospace_version')
 // Minecraft range: 1.21.x cells are bounded to their API line (gradle.properties); 26.x keep [mc,).
 def mcCeiling = project.findProperty("mc_ceiling_${mc}")
 def mcFloor = project.findProperty("mc_floor_${mc}") ?: mc
@@ -150,7 +150,7 @@ dependencies {
 
     // NeroEconomy — OPTIONAL freight fee. Compile-time only: never bundled, never required; the only classes
     // that touch it live in compat/neroeconomy, reached behind an isModLoaded("neroeconomy") guard.
-    compileOnly "za.co.neroland.neroeconomy:neroeconomy-forge-${economyApiMc}:${project.findProperty(preComponents ? 'neroeconomy_version_pre_components' : 'neroeconomy_version')}"
+    compileOnly "za.co.neroland.neroeconomy:neroeconomy-forge-${economyApiMc}:${rootProject.property('neroeconomy_version')}"
 }
 
 // Expand mods.toml from src/main/templates into generated resources.

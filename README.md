@@ -16,7 +16,7 @@
   Use the matching Neroland Core build at version 1.24.0 or newer (below 2.0).
 - **Fabric, Forge and NeoForge** also support Minecraft 1.21.1, 1.21.4, 1.21.5, 1.21.7–1.21.8,
   1.21.9–1.21.10, 1.21.11, 26.1.2, 26.2 and 26.3.
-- **Requires Neroland Core 1.23.0 or newer** (below 2.0).
+- **Requires Neroland Core 1.24.0 or newer** (below 2.0).
 - **Java:** 25
 - Mod id: `nerologistics` · package `za.co.neroland.nerologistics`
 
